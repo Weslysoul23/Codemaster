@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
@@ -51,27 +50,45 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Example Team Member Cards */}
           <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
-            <img src="https://scontent.fmnl17-6.fna.fbcdn.net/v/t39.30808-1/488905348_4002329013427316_2377804480582801052_n.jpg?stp=cp6_dst-jpg_s200x200_tt6&_nc_cat=109&ccb=1-7&_nc_sid=1d2534&_nc_eui2=AeFiKMnqBMUPL-CdRrL7_JSTvlsM6Dlc31a-WwzoOVzfVk4U7f1YKUBrgzykJ2Oa2y2baftLmBXTuj_5F2pDZKF9&_nc_ohc=LG-dKi0iYlYQ7kNvwEw48V8&_nc_oc=Adlazm0snoi4PgIJwS3rHEPQcJKvCp3NlanBD4TwLVzJ7Tt5iit4UwTLfTE9pIXy2PY&_nc_zt=24&_nc_ht=scontent.fmnl17-6.fna&_nc_gid=lauJpPnZ16BwE_zPNvmi7Q&oh=00_AfEa49FsYckuVk4BpeKqIUqj9TXIiGIRZaE_955BLdqJ9A&oe=6817E030" alt="Developer 1" className="rounded-full mx-auto mb-2" />
+            <img 
+              src="https://scontent.fmnl17-8.fna.fbcdn.net/v/t1.15752-9/494359667_2078125056015762_5687764432066165806_n.jpg?stp=dst-jpg_s480x480_tt6&_nc_cat=104&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeHpzGsfJDx_LOZ8IjvOoP68OVjpwmb9uf85WOnCZv25_1gzcOUiTVxePk8OQE6xeDm0ctwFieuCYvBKkXDfad5y&_nc_ohc=KjGxHcW69xYQ7kNvwGmkJWv&_nc_oc=AdkyjvYTf4gFo07tZDhJaygUg6WlDzDdqSDRRsMpvInYy7NdDfleDVori8Ox0AGooVU&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-8.fna&oh=03_Q7cD2AEhwv0tNgMsE_Vspin31t9j4vH3TmvLmpOLUbjgjp-O-A&oe=683A862A" 
+              alt="Developer 1" 
+              className="rounded-full mx-auto mb-2" 
+              style={{ width: "120px", height: "120px", objectFit: "cover" }}
+            />
             <h3 className="text-xl font-semibold text-center">Kate Crystal Miranda</h3>
             <p className="text-center">Project Manager</p>
           </div>
           <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
-            <img src="https://scontent.fmnl17-5.fna.fbcdn.net/v/t39.30808-1/466511401_1303190731052429_7539106753055886799_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=102&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeGX67vAxoLE_imbXFTNh9gwcek4G0Zw5KBx6TgbRnDkoP_j5NI1ZIJ50BuZZCHr00YR9DdRm350eZCjrhibrtRB&_nc_ohc=Xs7pp97wxg8Q7kNvwEVoTz7&_nc_oc=AdmOk2gfdHNULuB9ViM2WDvoM17deZRfT17FTau77KCCk5DwbZZyC4n6KsOxCn8FNiY&_nc_zt=24&_nc_ht=scontent.fmnl17-5.fna&_nc_gid=B50dPKVacjYb77zJzAt7OA&oh=00_AfHUkB2ecHiQ6t-r8lWBOLeheZSGpc364N59Eb6MuvPU7g&oe=681803D9" alt="Developer 2" className="rounded-full mx-auto mb-2" />
+            <img 
+              src="https://scontent.fmnl17-1.fna.fbcdn.net/v/t1.15752-9/494362110_1013423480879738_3474745705217736698_n.jpg?stp=dst-jpg_s480x480_tt6&_nc_cat=100&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeHN877OYNEUl9kT9UIOeqT5kbczeZe4LNqRtzN5l7gs2uYLJXKCT0QhYM1fy9DiMzCXeCoukXhk3-OQxVk5gGSu&_nc_ohc=pzAsv_PnQU8Q7kNvwEv3Egs&_nc_oc=Adm5aNnEKHO_r7ryUE1r2nwNTMKK-CZqDk2N-MbnpWjxBH5klvJByexeVBh4GLN_kpM&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-1.fna&oh=03_Q7cD2AGpN5jVfvjfpNHe9dy0WtzI4_YnB1N_PUEnXId1EbTBVg&oe=683A8CAD" 
+              alt="Developer 2" 
+              className="rounded-full mx-auto mb-2" 
+              style={{ width: "120px", height: "120px", objectFit: "cover" }}
+            />
             <h3 className="text-xl font-semibold text-center">April Joy Garcia</h3>
             <p className="text-center">Game Designer</p>
           </div>
 
           <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
-            <img src="https://scontent.fmnl17-8.fna.fbcdn.net/v/t39.30808-1/492358102_3998366777051860_3884219696951427170_n.jpg?stp=cp6_dst-jpg_s200x200_tt6&_nc_cat=104&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeFrGnJDte2LQWxoXHmszCqZ8RoZmD6ej8XxGhmYPp6PxX7yjPXa39oVzcFhGax48aQJBXj9HImHEmI_vvGJfH0k&_nc_ohc=DLUlh-9Hx28Q7kNvwEzIgVM&_nc_oc=AdkADOhJISnH4aeodUmUcoShd2CpiqLCh48ETSbWRqGJ1wT4BEj4EDutg38f8dFzyg0&_nc_zt=24&_nc_ht=scontent.fmnl17-8.fna&_nc_gid=NG8IhMP2zPY4yTwdkXx2IA&oh=00_AfESRpfG1-mpTxCoXJCeMlkYbfW7z_EMlgdyoTC5vsor4w&oe=68180732" alt="Developer 3" className="rounded-full mx-auto mb-2" />
-            <h3 className="text-xl font-semibold text-center">Gem Anthoinette Abad </h3>
+            <img 
+              src="https://scontent.fmnl17-5.fna.fbcdn.net/v/t1.15752-9/494358169_536722239281862_5047116024796021418_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=102&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeEyy4j6eCSE_lqz3ZFqGelGLUT9xKg2MWctRP3EqDYxZ_epzSHtAz3OZ_nKj8hxr6bvQp1OTh1P2K9rlLtsgzGc&_nc_ohc=IwR_Xuv1cSEQ7kNvwFC429c&_nc_oc=Adm7Dj3uomLrWCsaLrFIE6JD7BOB5nDvpdoaffCoyb8qi-Hq8kEjFmDlJuA-MplGRJU&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-5.fna&oh=03_Q7cD2AFDwiSXz4ynP3jQ7ed2RLXHJk2nVDganpNZSmgKsUqKyQ&oe=683A8F62" 
+              alt="Developer 3" 
+              className="rounded-full mx-auto mb-2" 
+              style={{ width: "120px", height: "120px", objectFit: "cover" }}
+            />
+            <h3 className="text-xl font-semibold text-center">Gem Anthoinette Abad</h3>
             <p className="text-center">Game Design Document</p>
-            
           </div>
           <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
-            <img src="https://scontent.fmnl17-3.fna.fbcdn.net/v/t39.30808-6/480439068_945483927670069_2434577321862454364_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeGOzCEJvtYgSq9kAtjKusEgiQ-htmMcP_qJD6G2Yxw_-putO_BGBNF0qwozjyFrbmDv-GvvgXcCO90awC9K4j_9&_nc_ohc=h1CXXOR5pCgQ7kNvwGWHPtF&_nc_oc=AdncJPOWmVc87U3F6tsEbW8pK1v97uXM1V41P1OFpLeAKvmm98t_JykpoRWmP1AikC8&_nc_zt=23&_nc_ht=scontent.fmnl17-3.fna&_nc_gid=YXO8DtNBU7vQ7pwHriidPQ&oh=00_AfGxJHIBzzDX-o2ewrcVZjyBP3uBYNn35-GESa8K-4qRxg&oe=6817E5D4" alt="Developer 3" className="rounded-full mx-auto mb-2" />
-            <h3 className="text-xl font-semibold text-center">Wesly Saul </h3>
+            <img 
+              src="https://scontent.fmnl17-2.fna.fbcdn.net/v/t1.15752-9/494357715_1342605843701353_680978572436998624_n.jpg?stp=dst-jpg_p480x480_tt6&_nc_cat=111&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeF3cSwo7qKJdhGZLcpF8Y4k16xqzpU-DerXrGrOlT4N6rJLGR4cx4YQW1gaD_k1b2o7cQG9-gZ9hSMyx-mOucKW&_nc_ohc=KMRlz-0bQLUQ7kNvwHGXspF&_nc_oc=Adkb2Z56q88eIVpzpdlbZkKvMMGGnjV5PiNRDNbVjW-TQeevxXVSvIkWRq-QMvXAAAI&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-2.fna&oh=03_Q7cD2AFGp-jyMflK96n_knuqs5XE8NdfWD2nTPVaBw50NzS_rw&oe=683A7F17" 
+              alt="Developer 4" 
+              className="rounded-full mx-auto mb-2" 
+              style={{ width: "120px", height: "120px", objectFit: "cover" }}
+            />
+            <h3 className="text-xl font-semibold text-center">Wesly Saul</h3>
             <p className="text-center">Game Programmer</p>
-            
           </div>
         </div>
       </section>
