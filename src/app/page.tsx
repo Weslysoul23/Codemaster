@@ -47,18 +47,22 @@ export default function Home() {
       {/* Developers/Team Section */}
       <section className="mb-16">
         <h2 className="text-3xl font-semibold mb-4 glitch glitch-text" data-text="Developers/Team">Developers/Team</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Example Team Member Cards */}
-          <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
-            <img 
-              src="https://scontent.fmnl17-8.fna.fbcdn.net/v/t1.15752-9/494359667_2078125056015762_5687764432066165806_n.jpg?stp=dst-jpg_s480x480_tt6&_nc_cat=104&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeHpzGsfJDx_LOZ8IjvOoP68OVjpwmb9uf85WOnCZv25_1gzcOUiTVxePk8OQE6xeDm0ctwFieuCYvBKkXDfad5y&_nc_ohc=KjGxHcW69xYQ7kNvwGmkJWv&_nc_oc=AdkyjvYTf4gFo07tZDhJaygUg6WlDzDdqSDRRsMpvInYy7NdDfleDVori8Ox0AGooVU&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-8.fna&oh=03_Q7cD2AEhwv0tNgMsE_Vspin31t9j4vH3TmvLmpOLUbjgjp-O-A&oe=683A862A" 
-              alt="Developer 1" 
-              className="rounded-full mx-auto mb-2" 
-              style={{ width: "120px", height: "120px", objectFit: "cover" }}
-            />
-            <h3 className="text-xl font-semibold text-center">Kate Crystal Miranda</h3>
-            <p className="text-center">Project Manager</p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Top Center Card */}
+          <div className="lg:col-span-3 flex justify-center">
+            <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
+              <img 
+                src="https://scontent.fmnl17-8.fna.fbcdn.net/v/t1.15752-9/494359667_2078125056015762_5687764432066165806_n.jpg?stp=dst-jpg_s480x480_tt6&_nc_cat=104&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeHpzGsfJDx_LOZ8IjvOoP68OVjpwmb9uf85WOnCZv25_1gzcOUiTVxePk8OQE6xeDm0ctwFieuCYvBKkXDfad5y&_nc_ohc=KjGxHcW69xYQ7kNvwGmkJWv&_nc_oc=AdkyjvYTf4gFo07tZDhJaygUg6WlDzDdqSDRRsMpvInYy7NdDfleDVori8Ox0AGooVU&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-8.fna&oh=03_Q7cD2AEhwv0tNgMsE_Vspin31t9j4vH3TmvLmpOLUbjgjp-O-A&oe=683A862A" 
+                alt="Developer 1" 
+                className="rounded-full mx-auto mb-2" 
+                style={{ width: "120px", height: "120px", objectFit: "cover" }}
+              />
+              <h3 className="text-xl font-semibold text-center">Kate Crystal Miranda</h3>
+              <p className="text-center">Project Manager</p>
+            </div>
           </div>
+
+          {/* Bottom Row Cards */}
           <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
             <img 
               src="https://scontent.fmnl17-1.fna.fbcdn.net/v/t1.15752-9/494362110_1013423480879738_3474745705217736698_n.jpg?stp=dst-jpg_s480x480_tt6&_nc_cat=100&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeHN877OYNEUl9kT9UIOeqT5kbczeZe4LNqRtzN5l7gs2uYLJXKCT0QhYM1fy9DiMzCXeCoukXhk3-OQxVk5gGSu&_nc_ohc=pzAsv_PnQU8Q7kNvwEv3Egs&_nc_oc=Adm5aNnEKHO_r7ryUE1r2nwNTMKK-CZqDk2N-MbnpWjxBH5klvJByexeVBh4GLN_kpM&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-1.fna&oh=03_Q7cD2AGpN5jVfvjfpNHe9dy0WtzI4_YnB1N_PUEnXId1EbTBVg&oe=683A8CAD" 
@@ -69,7 +73,6 @@ export default function Home() {
             <h3 className="text-xl font-semibold text-center">April Joy Garcia</h3>
             <p className="text-center">Game Designer</p>
           </div>
-
           <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
             <img 
               src="https://scontent.fmnl17-5.fna.fbcdn.net/v/t1.15752-9/494358169_536722239281862_5047116024796021418_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=102&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeEyy4j6eCSE_lqz3ZFqGelGLUT9xKg2MWctRP3EqDYxZ_epzSHtAz3OZ_nKj8hxr6bvQp1OTh1P2K9rlLtsgzGc&_nc_ohc=IwR_Xuv1cSEQ7kNvwFC429c&_nc_oc=Adm7Dj3uomLrWCsaLrFIE6JD7BOB5nDvpdoaffCoyb8qi-Hq8kEjFmDlJuA-MplGRJU&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-5.fna&oh=03_Q7cD2AFDwiSXz4ynP3jQ7ed2RLXHJk2nVDganpNZSmgKsUqKyQ&oe=683A8F62" 
