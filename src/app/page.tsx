@@ -25,7 +25,7 @@ export default function Home() {
         </section>
 
         {/* Videos Section */}
-        <section className="mb-16">
+        <section id="videos" className="mb-16">
           <h2 className="text-3xl font-semibold mb-4 glitch glitch-text" data-text="Videos">Videos</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Example Video Cards */}
@@ -42,13 +42,13 @@ export default function Home() {
         </section>
 
         {/* About Us Section */}
-        <section className="mb-16">
+        <section id="about" className="mb-16">
           <h2 className="text-3xl font-semibold mb-4 glitch glitch-text" data-text="About Us">About Us</h2>
           <p className="text-lg">We are a team of passionate developers dedicated to creating immersive and innovative gaming experiences. Our mission is to push the boundaries of technology and storytelling.</p>
         </section>
 
         {/* Developers/Team Section */}
-        <section className="mb-16">
+        <section id="team" className="mb-16">
           <h2 className="text-3xl font-semibold mb-4 glitch glitch-text" data-text="Developers/Team">Developers/Team</h2>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Top Center Card */}
@@ -100,7 +100,7 @@ export default function Home() {
         </section>
 
         {/* Contact Section */}
-        <section className="mb-16">
+        <section id="contact" className="mb-16">
           <h2 className="text-3xl font-semibold mb-4 glitch glitch-text" data-text="Contact">Contact</h2>
           <p className="text-lg">Reach out to us for collaborations, feedback, or any inquiries.</p>
           <p>Email: CODEMASTER@example.com</p>

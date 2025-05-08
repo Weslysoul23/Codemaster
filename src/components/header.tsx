@@ -1,8 +1,9 @@
 import Link from 'next/link'
+import { Button } from "./ui/button"
 
 export default function Header() {
   return (
-    <header className="bg-secondary/10 backdrop-blur-sm fixed w-full top-0 z-50">
+    <header className="bg-secondary/10 backdrop-blur-sm fixed w-full top-0 z-50 border-b border-secondary/20">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -11,8 +12,8 @@ export default function Header() {
           </Link>
 
           {/* Navigation */}
-          <nav>
-            <ul className="flex space-x-6">
+          <nav className="hidden md:block">
+            <ul className="flex space-x-8">
               <li>
                 <Link href="#about" className="hover:text-primary transition-colors">
                   About
@@ -35,6 +36,19 @@ export default function Header() {
               </li>
             </ul>
           </nav>
+
+          {/* CTA Button */}
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" asChild>
+              <Link href="/signin">Sign In</Link>
+            </Button>
+            <Button variant="secondary" asChild>
+              <Link href="/signup">Sign Up</Link>
+            </Button>
+            <Button variant="secondary" className="hidden md:block">
+              Download Now
+            </Button>
+          </div>
         </div>
       </div>
     </header>
