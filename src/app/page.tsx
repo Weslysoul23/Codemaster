@@ -11,9 +11,12 @@ export default function Home() {
           <div>
             <h1 className="text-4xl font-bold mb-4 glitch glitch-text" data-text="CODEMASTER">CODEMASTER</h1>
             <p className="text-lg mb-8">Dive into the cyberpunk world of Codemaster, a 3D game where reality glitches and code is your weapon.</p>
-            <Button variant="secondary">
-              Download Now
-            </Button>
+            <a href="/downloads/codemaster.zip" download>
+              <Button variant="secondary">
+                Download Now
+                </Button>
+                </a>
+
           </div>
           <div>
             <img
@@ -103,7 +106,7 @@ export default function Home() {
         <section id="contact" className="mb-16">
           <h2 className="text-3xl font-semibold mb-4 glitch glitch-text" data-text="Contact">Contact</h2>
           <p className="text-lg">Reach out to us for collaborations, feedback, or any inquiries.</p>
-          <p>Email: CODEMASTER@example.com</p>
+          <p>Email: CODEMASTER@gmail.com</p>
           <p>Phone: +639451502417</p>
         </section>
       </div>
