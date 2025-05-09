@@ -11,7 +11,7 @@ export default function Home() {
           <div>
             <h1 className="text-4xl font-bold mb-4 glitch glitch-text" data-text="CODEMASTER">CODEMASTER</h1>
             <p className="text-lg mb-8">Dive into the cyberpunk world of Codemaster, a 3D game where reality glitches and code is your weapon.</p>
-            <a href="/downloads/codemaster.zip" download>
+            <a href="icon.zip" download>
               <Button variant="secondary">
                 Download Now
                 </Button>
