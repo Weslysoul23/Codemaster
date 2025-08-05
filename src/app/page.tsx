@@ -125,7 +125,7 @@ export default function Home() {
             <div className="lg:col-span-3 flex justify-center">
               <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
                 <img 
-                  src="https://scontent.fmnl17-8.fna.fbcdn.net/v/t1.15752-9/494359667_2078125056015762_5687764432066165806_n.jpg?stp=dst-jpg_s480x480_tt6&_nc_cat=104&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeHpzGsfJDx_LOZ8IjvOoP68OVjpwmb9uf85WOnCZv25_1gzcOUiTVxePk8OQE6xeDm0ctwFieuCYvBKkXDfad5y&_nc_ohc=KjGxHcW69xYQ7kNvwGmkJWv&_nc_oc=AdkyjvYTf4gFo07tZDhJaygUg6WlDzDdqSDRRsMpvInYy7NdDfleDVori8Ox0AGooVU&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-8.fna&oh=03_Q7cD2AEhwv0tNgMsE_Vspin31t9j4vH3TmvLmpOLUbjgjp-O-A&oe=683A862A" 
+                  src="https://scontent.fmnl25-5.fna.fbcdn.net/v/t39.30808-1/524297456_4115834188743464_1339123451807112066_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=109&ccb=1-7&_nc_sid=1d2534&_nc_eui2=AeFtzCQgiEsX5GH1BVUZUZZVo2F8ZyfAKw2jYXxnJ8ArDd9ik-tAAvQMo_vGUL6fE_B3tgP5NW9vUVxp3_fscsqL&_nc_ohc=cYu-JVMdU_QQ7kNvwGtPQxA&_nc_oc=Adn7Jqrn4MTTwVqFhHMFRfdK_rSWleBtQhdhtpvfstkTBLiOyyiqNfFNtj9mHaZpFH4cnMFy-Yg5ZPom-oJ7MB98&_nc_zt=24&_nc_ht=scontent.fmnl25-5.fna&_nc_gid=jDa-kVXXzPYE7bL2RA-zmg&oh=00_AfU8JVxFTDkFmopG2W270I-toUB3b2-z8JjBmxLsI8FulQ&oe=6898056F" 
                   alt="Developer 1" 
                   className="rounded-full mx-auto mb-2" 
                   style={{ width: "120px", height: "120px", objectFit: "cover" }}
@@ -158,7 +158,7 @@ export default function Home() {
             </div>
             <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
               <img 
-                src="https://scontent.fmnl17-2.fna.fbcdn.net/v/t1.15752-9/494357715_1342605843701353_680978572436998624_n.jpg?stp=dst-jpg_p480x480_tt6&_nc_cat=111&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeF3cSwo7qKJdhGZLcpF8Y4k16xqzpU-DerXrGrOlT4N6rJLGR4cx4YQW1gaD_k1b2o7cQG9-gZ9hSMyx-mOucKW&_nc_ohc=KMRlz-0bQLUQ7kNvwHGXspF&_nc_oc=Adkb2Z56q88eIVpzpdlbZkKvMMGGnjV5PiNRDNbVjW-TQeevxXVSvIkWRq-QMvXAAAI&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-2.fna&oh=03_Q7cD2AFGp-jyMflK96n_knuqs5XE8NdfWD2nTPVaBw50NzS_rw&oe=683A7F17" 
+                src="https://scontent.fmnl25-5.fna.fbcdn.net/v/t39.30808-1/515441790_1065951892289938_777606873120630039_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=109&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeGFdOA4BPlm6lrxIP4gVCqZJrr8lql3iIAmuvyWqXeIgLHOXCiIOQFm10YBSksZijPQ9RKBWoGnXvh9wE738Cuf&_nc_ohc=BpGzSoRLcJoQ7kNvwG7dZ5o&_nc_oc=AdnDD7OqKyIP0KHdKUq_7wWl_UtambljQ-xwTd_hd4_9cLxOpdME2oyvGMchiyTCRNNF6khdoYEGUSEoQkfWO0YR&_nc_zt=24&_nc_ht=scontent.fmnl25-5.fna&_nc_gid=RXU4Yr-yknVXRMfnXav51g&oh=00_AfV7EOa_ZUgQlYPS_sBZcYjcYWKSELIIfTGPtzRCauEnMA&oe=6897EA38" 
                 alt="Developer 4" 
                 className="rounded-full mx-auto mb-2" 
                 style={{ width: "120px", height: "120px", objectFit: "cover" }}
