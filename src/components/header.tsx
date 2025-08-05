@@ -36,19 +36,6 @@ export default function Header() {
               </li>
             </ul>
           </nav>
-
-          {/* CTA Button */}
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" asChild>
-              <Link href="/signin">Sign In</Link>
-            </Button>
-            <Button variant="secondary" asChild>
-              <Link href="/signup">Sign Up</Link>
-            </Button>
-            <Button variant="secondary" className="hidden md:block">
-              Download Now
-            </Button>
-          </div>
         </div>
       </div>
     </header>
