@@ -1,11 +1,78 @@
+"use client";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Header from '@/components/header'
 
 export default function Home() {
+  // Demo: Pre-registered accounts
+  const DEMO_USERS = [
+    { username: "codemaster", password: "123456" },
+    { username: "admin", password: "admin123" }
+  ];
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [error, setError] = useState("");
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    const found = DEMO_USERS.find(
+      user => user.username === username && user.password === password
+    );
+    if (found) {
+      setLoggedIn(true);
+      setCurrentUser(found.username);
+      setError("");
+    } else {
+      setError("Invalid credentials");
+    }
+  };
+
   return (
     <>
       <Header />
       <div className="container mx-auto px-4 py-8 pt-20">
+        {/* Sign In Section */}
+        {!loggedIn && (
+          <section className="mb-8 max-w-sm mx-auto">
+            <h2 className="text-2xl font-semibold mb-4 text-center">Sign In</h2>
+            <form onSubmit={handleLogin} className="bg-secondary/10 rounded-lg p-4 shadow-md flex flex-col gap-4">
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                className="p-2 rounded border"
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="p-2 rounded border"
+                required
+              />
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+              <Button type="submit" variant="secondary">Sign In</Button>
+              <p className="text-xs text-gray-500">
+                Demo: codemaster / 123456<br />
+                Admin: admin / admin123
+              </p>
+            </form>
+          </section>
+        )}
+
+        {loggedIn && (
+          <div className="mb-8 max-w-sm mx-auto text-center">
+            <p className="text-green-600 font-semibold">
+              Welcome, {currentUser}!
+            </p>
+          </div>
+        )}
+
         {/* Hero Section */}
         <section className="mb-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div>
