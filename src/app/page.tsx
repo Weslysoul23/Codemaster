@@ -70,6 +70,22 @@ export default function Home() {
             <p className="text-green-600 font-semibold">
               Welcome, {currentUser}!
             </p>
+            {currentUser === "admin" && (
+              <img
+                src="/admin.png" // Make sure this image exists in your public folder
+                alt="Admin"
+                className="mx-auto rounded-full mt-2"
+                style={{ width: "80px", height: "80px", objectFit: "cover" }}
+              />
+            )}
+            {currentUser === "codemaster" && (
+              <img
+                src="/codemaster.png" // Make sure this image exists in your public folder
+                alt="Codemaster"
+                className="mx-auto rounded-full mt-2"
+                style={{ width: "80px", height: "80px", objectFit: "cover" }}
+              />
+            )}
           </div>
         )}
 
