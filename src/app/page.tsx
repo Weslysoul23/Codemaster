@@ -141,7 +141,7 @@ export default function Home() {
             <div className="lg:col-span-3 flex justify-center">
               <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
                 <img 
-                  src="https://scontent.fmnl17-8.fna.fbcdn.net/v/t1.15752-9/494359667_2078125056015762_5687764432066165806_n.jpg?stp=dst-jpg_s480x480_tt6&_nc_cat=104&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeHpzGsfJDx_LOZ8IjvOoP68OVjpwmb9uf85WOnCZv25_1gzcOUiTVxePk8OQE6xeDm0ctwFieuCYvBKkXDfad5y&_nc_ohc=KjGxHcW69xYQ7kNvwGmkJWv&_nc_oc=AdkyjvYTf4gFo07tZDhJaygUg6WlDzDdqSDRRsMpvInYy7NdDfleDVori8Ox0AGooVU&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-8.fna&oh=03_Q7cD2AEhwv0tNgMsE_Vspin31t9j4vH3TmvLmpOLUbjgjp-O-A&oe=683A862A" 
+                  src="/Miranda.png" 
                   alt="Developer 1" 
                   className="rounded-full mx-auto mb-2" 
                   style={{ width: "120px", height: "120px", objectFit: "cover" }}
