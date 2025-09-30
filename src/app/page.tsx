@@ -1,198 +1,195 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import Header from '@/components/header'
+import "./globals.css";
 
 export default function Home() {
-  // Demo: Pre-registered accounts
-  const DEMO_USERS = [
-    { username: "codemaster", password: "123456" },
-    { username: "admin", password: "admin123" }
+  const [scrolled, setScrolled] = useState(false);
+  const [selectedChar, setSelectedChar] = useState<any>(null);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const characters = [
+    {
+      name: "Allie",
+      role: "Heroine",
+      description:
+        "Allie - A college girl who gets pulled into the digital world. She must restore peace in the chaotic realm to return home.",
+      img: "/Allie.png",
+    },
+    {
+      name: "Nexus",
+      role: "Guide / Teacher",
+      description:
+        "Nexus - An AI robot guide who mentors Allie, teaching her coding skills and strategies to defeat enemies.",
+      img: "/Nexus.png",
+    },
+    {
+      name: "Cyber Zombie",
+      role: "Enemy",
+      description:
+        "Cyber Zombie - Corrupted beings of the digital world, spreading chaos and standing in the way of peace.",
+      img: "/CyberZombies.png",
+    },
   ];
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
-  const [error, setError] = useState("");
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    const found = DEMO_USERS.find(
-      user => user.username === username && user.password === password
-    );
-    if (found) {
-      setLoggedIn(true);
-      setCurrentUser(found.username);
-      setError("");
-    } else {
-      setError("Invalid credentials");
-    }
-  };
 
   return (
     <>
-      <Header />
-      <div className="container mx-auto px-4 py-8 pt-20">
-        {/* Sign In Section */}
-        {!loggedIn && (
-          <section className="mb-8 max-w-sm mx-auto">
-            <h2 className="text-2xl font-semibold mb-4 text-center">Sign In</h2>
-            <form onSubmit={handleLogin} className="bg-secondary/10 rounded-lg p-4 shadow-md flex flex-col gap-4">
-              <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-                className="p-2 rounded border"
-                required
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="p-2 rounded border"
-                required
-              />
-              {error && <p className="text-red-500 text-sm">{error}</p>}
-              <Button type="submit" variant="secondary">Sign In</Button>
-              <p className="text-xs text-gray-500">
-                Demo: codemaster / 123456<br />
-                Admin: admin / admin123
-              </p>
-            </form>
-          </section>
-        )}
+      {/* NAVBAR */}
+      <nav
+        className={`fixed top-0 left-0 w-full z-50 px-6 py-4 flex items-center justify-between transition-all duration-300 ${
+          scrolled ? "nav-scrolled" : "nav-transparent"
+        }`}
+      >
+        <a href="#home" className="logo-link">
+          <span className="glitch" data-text="CODEMASTER">
+            CODEMASTER
+          </span>
+        </a>
 
-        {loggedIn && (
-          <div className="mb-8 max-w-sm mx-auto text-center">
-            <p className="text-green-600 font-semibold">
-              Welcome, {currentUser}!
+        <ul className="hidden md:flex gap-8 text-sm font-medium nav-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#characters">Characters</a></li>
+          <li><a href="#team">Team</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <div className="nav-actions">
+          <a href="codemaster.zip" download>
+            <Button variant="secondary">Download</Button>
+          </a>
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <header
+        id="home"
+        className="hero relative flex items-center justify-center text-center"
+        style={{
+          backgroundImage: "url('/CodeMaster-Poster.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="hero-overlay" />
+        <div className="hero-content">
+          <h1 className="glitch hero-title" data-text="CODEMASTER">CODEMASTER</h1>
+          <p className="hero-sub">A Cyberpunk World Where Code is Your Weapon.</p>
+          <div className="mt-6">
+            <a href="codemaster.zip" download>
+              <Button className="download-btn">Download Now</Button>
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* ABOUT (split: left text, right YouTube embed) */}
+      <section id="about" className="section about-section">
+        <h2 className="section-title">About the Game</h2>
+        <div className="about-grid">
+          <div className="about-left">
+            <p className="about-text">
+              Codemaster is a <strong>story mode adventure game</strong> where players learn <strong>C# programming</strong>
+              while battling through a chaotic cyber world. You play as <strong>Allie</strong>, a college girl trapped inside
+              the digital realm, who must restore peace by mastering coding concepts. Guided by <strong>Nexus</strong>, an AI
+              mentor, you’ll use logic and programming skills to fight off <strong>Cyber Zombies</strong> and bring balance back
+              to the system.
             </p>
-            {currentUser === "admin" && (
-              <img
-                src="/admin.png" // Make sure this image exists in your public folder
-                alt="Admin"
-                className="mx-auto rounded-full mt-2"
-                style={{ width: "80px", height: "80px", objectFit: "cover" }}
-              />
-            )}
-            {currentUser === "codemaster" && (
-              <img
-                src="/codemaster.png" // Make sure this image exists in your public folder
-                alt="Codemaster"
-                className="mx-auto rounded-full mt-2"
-                style={{ width: "80px", height: "80px", objectFit: "cover" }}
-              />
-            )}
           </div>
-        )}
 
-        {/* Hero Section */}
-        <section className="mb-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <div>
-            <h1 className="text-4xl font-bold mb-4 glitch glitch-text" data-text="CODEMASTER">CODEMASTER</h1>
-            <p className="text-lg mb-8">Dive into the cyberpunk world of Codemaster, a 3D game where reality glitches and code is your weapon.</p>
-            <a href="icon.zip" download>
-              <Button variant="secondary">
-                Download Now
-                </Button>
-                </a>
-
-          </div>
-          <div>
-            <img
-              src="https://scontent.fmnl17-3.fna.fbcdn.net/v/t1.15752-9/477297299_1005315758108188_3221723112317890974_n.png?_nc_cat=106&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeEiFdSJ5whOHsHmkzUCJLo50h4FMRhtEFjSHgUxGG0QWIhFdJzJiXp7ws25TYbepBdWpNx5jhUdjU792ztRuAwq&_nc_ohc=LVyLeC-Hw2AQ7kNvwFMsQwG&_nc_oc=AdnDrvERH3dfHgBSxg-W4QPo_9C2_vmfN1IJQ9ByfIIqyefcVbre3ONxOxxh63KTY_w&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-3.fna&oh=03_Q7cD2AElKNxvqtfbZJ7iVJIyCH6K0WGFxYGiCk0cOCVB7rLH8g&oe=683982A4"
-              alt="3D Game Humanoid Design"
-              className="rounded-lg shadow-md"
+          <div className="about-right">
+            <iframe
+              src="https://www.youtube.com/embed/x-2w7rNP7ek"
+              title="CODEMASTER Trailer"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
             />
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Videos Section */}
-        <section id="videos" className="mb-16">
-          <h2 className="text-3xl font-semibold mb-4 glitch glitch-text" data-text="Videos">Videos</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Example Video Cards */}
-            <div className="shadow-md rounded-lg overflow-hidden">
-              <img src="/enemy.png" alt="Gameplay 1" className="w-full" />
-            </div>
-            <div className="shadow-md rounded-lg overflow-hidden">
-              <img src="/blank.png" alt="Gameplay 2" className="w-full" />
-            </div>
-            <div className="shadow-md rounded-lg overflow-hidden">
-              <img src="/code.png" alt="Gameplay 3" className="w-full" />
-            </div>
+      {/* CHARACTERS: icons left, info right */}
+      <section id="characters" className="section characters-section">
+        <h2 className="section-title">Main Characters</h2>
+        <div className="characters-grid">
+          <div className="character-icons">
+            {characters.map((c) => (
+              <button
+                key={c.name}
+                className={`char-icon ${selectedChar?.name === c.name ? "active" : ""}`}
+                onClick={() => setSelectedChar(c)}
+                title={c.name}
+              >
+                <img src={c.img} alt={c.name} />
+              </button>
+            ))}
           </div>
-        </section>
 
-        {/* About Us Section */}
-        <section id="about" className="mb-16">
-          <h2 className="text-3xl font-semibold mb-4 glitch glitch-text" data-text="About Us">About Us</h2>
-          <p className="text-lg">We are a team of passionate developers dedicated to creating immersive and innovative gaming experiences. Our mission is to push the boundaries of technology and storytelling.</p>
-        </section>
-
-        {/* Developers/Team Section */}
-        <section id="team" className="mb-16">
-          <h2 className="text-3xl font-semibold mb-4 glitch glitch-text" data-text="Developers/Team">Developers/Team</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Top Center Card */}
-            <div className="lg:col-span-3 flex justify-center">
-              <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
-                <img 
-                  src="/Miranda.png" 
-                  alt="Developer 1" 
-                  className="rounded-full mx-auto mb-2" 
-                  style={{ width: "120px", height: "120px", objectFit: "cover" }}
-                />
-                <h3 className="text-xl font-semibold text-center">Kate Crystal Miranda</h3>
-                <p className="text-center">Project Manager</p>
-              </div>
-            </div>
-
-            {/* Bottom Row Cards */}
-            <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
-              <img 
-                src="https://scontent.fmnl17-1.fna.fbcdn.net/v/t1.15752-9/494362110_1013423480879738_3474745705217736698_n.jpg?stp=dst-jpg_s480x480_tt6&_nc_cat=100&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeHN877OYNEUl9kT9UIOeqT5kbczeZe4LNqRtzN5l7gs2uYLJXKCT0QhYM1fy9DiMzCXeCoukXhk3-OQxVk5gGSu&_nc_ohc=pzAsv_PnQU8Q7kNvwEv3Egs&_nc_oc=Adm5aNnEKHO_r7ryUE1r2nwNTMKK-CZqDk2N-MbnpWjxBH5klvJByexeVBh4GLN_kpM&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-1.fna&oh=03_Q7cD2AGpN5jVfvjfpNHe9dy0WtzI4_YnB1N_PUEnXId1EbTBVg&oe=683A8CAD" 
-                alt="Developer 2" 
-                className="rounded-full mx-auto mb-2" 
-                style={{ width: "120px", height: "120px", objectFit: "cover" }}
-              />
-              <h3 className="text-xl font-semibold text-center">April Joy Garcia</h3>
-              <p className="text-center">Game Designer</p>
-            </div>
-            <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
-              <img 
-                src="https://scontent.fmnl17-5.fna.fbcdn.net/v/t1.15752-9/494358169_536722239281862_5047116024796021418_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=102&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeEyy4j6eCSE_lqz3ZFqGelGLUT9xKg2MWctRP3EqDYxZ_epzSHtAz3OZ_nKj8hxr6bvQp1OTh1P2K9rlLtsgzGc&_nc_ohc=IwR_Xuv1cSEQ7kNvwFC429c&_nc_oc=Adm7Dj3uomLrWCsaLrFIE6JD7BOB5nDvpdoaffCoyb8qi-Hq8kEjFmDlJuA-MplGRJU&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-5.fna&oh=03_Q7cD2AFDwiSXz4ynP3jQ7ed2RLXHJk2nVDganpNZSmgKsUqKyQ&oe=683A8F62" 
-                alt="Developer 3" 
-                className="rounded-full mx-auto mb-2" 
-                style={{ width: "120px", height: "120px", objectFit: "cover" }}
-              />
-              <h3 className="text-xl font-semibold text-center">Gem Anthoinette Abad</h3>
-              <p className="text-center">Game Design Document</p>
-            </div>
-            <div className="bg-secondary/10 rounded-lg p-4 shadow-md">
-              <img 
-                src="https://scontent.fmnl25-5.fna.fbcdn.net/v/t39.30808-1/515441790_1065951892289938_777606873120630039_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=109&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeGFdOA4BPlm6lrxIP4gVCqZJrr8lql3iIAmuvyWqXeIgLHOXCiIOQFm10YBSksZijPQ9RKBWoGnXvh9wE738Cuf&_nc_ohc=BpGzSoRLcJoQ7kNvwG7dZ5o&_nc_oc=AdnDD7OqKyIP0KHdKUq_7wWl_UtambljQ-xwTd_hd4_9cLxOpdME2oyvGMchiyTCRNNF6khdoYEGUSEoQkfWO0YR&_nc_zt=24&_nc_ht=scontent.fmnl25-5.fna&_nc_gid=RXU4Yr-yknVXRMfnXav51g&oh=00_AfV7EOa_ZUgQlYPS_sBZcYjcYWKSELIIfTGPtzRCauEnMA&oe=6897EA38" 
-                alt="Developer 4" 
-                className="rounded-full mx-auto mb-2" 
-                style={{ width: "120px", height: "120px", objectFit: "cover" }}
-              />
-              <h3 className="text-xl font-semibold text-center">Wesly Saul</h3>
-              <p className="text-center">Game Programmer</p>
-            </div>
+          <div className="character-info-panel">
+            {selectedChar ? (
+              <>
+                <img className="character-large" src={selectedChar.img} alt={selectedChar.name} />
+                <h3 className="character-name">{selectedChar.name}</h3>
+                <p className="character-role">{selectedChar.role}</p>
+                <p className="character-desc">{selectedChar.description}</p>
+              </>
+            ) : (
+              <p className="muted">Click a character icon to see details here.</p>
+            )}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Contact Section */}
-        <section id="contact" className="mb-16">
-          <h2 className="text-3xl font-semibold mb-4 glitch glitch-text" data-text="Contact">Contact</h2>
-          <p className="text-lg">Reach out to us for collaborations, feedback, or any inquiries.</p>
-          <p>Email: CODEMASTER@gmail.com</p>
-          <p>Phone: +639451502417</p>
-        </section>
-      </div>
+      {/* TEAM / DEVELOPERS (Kate centered, others below) */}
+      <section id="team" className="section team-section">
+        <h2 className="section-title">Developers / Team</h2>
+
+        {/* Top center - Kate Crystal Miranda */}
+        <div className="team-lead-wrap">
+          <div className="team-card team-lead">
+            <img src="/Miranda.png" alt="Kate Crystal Miranda" className="team-avatar" />
+            <h3 className="team-name">Kate Crystal Miranda</h3>
+            <p className="team-role">Project Manager</p>
+          </div>
+        </div>
+
+        {/* Row below - the other three */}
+        <div className="team-grid">
+          <div className="team-card">
+            <img src="/Garcia.jpg" alt="April Joy Garcia" className="team-avatar" />
+            <h3 className="team-name">April Joy Garcia</h3>
+            <p className="team-role">Game Designer</p>
+          </div>
+
+          <div className="team-card">
+            <img src="/Abad.jpg" alt="Gem Anthoinette Abad" className="team-avatar" />
+            <h3 className="team-name">Gem Anthoinette Abad</h3>
+            <p className="team-role">Quality Assurance / Document Writer</p>
+          </div>
+
+          <div className="team-card">
+            <img src="/Saul.jpg" alt="Wesly Saul" className="team-avatar" />
+            <h3 className="team-name">Wesly Saul</h3>
+            <p className="team-role">Game Programmer</p>
+          </div>
+        </div>
+      </section>
+
+      {/* CONTACT */}
+      <section id="contact" className="section contact-section">
+        <h2 className="section-title">Contact</h2>
+        <p className="muted">Email: CODEMASTER@gmail.com</p>
+        <p className="muted">Phone: +63 945 150 2417</p>
+      </section>
+
+      <footer className="footer">
+        <p className="muted">&copy; 2025 CODEMASTER</p>
+      </footer>
     </>
   );
 }
