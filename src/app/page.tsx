@@ -1,12 +1,24 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 import "./globals.css";
+
+interface Character {
+  id: number;
+  name: string;
+  role: string;
+  description: string;
+  img: string;
+}
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
-  const [selectedChar, setSelectedChar] = useState<any>(null);
-
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
@@ -15,6 +27,7 @@ export default function Home() {
 
   const characters = [
     {
+      id: 1,
       name: "Allie",
       role: "Heroine",
       description:
@@ -22,6 +35,7 @@ export default function Home() {
       img: "/Allie.png",
     },
     {
+      id: 2,
       name: "Nexus",
       role: "Guide / Teacher",
       description:
@@ -29,13 +43,43 @@ export default function Home() {
       img: "/Nexus.png",
     },
     {
+      id: 3,
       name: "Cyber Zombie",
       role: "Enemy",
       description:
         "Cyber Zombie - Corrupted beings of the digital world, spreading chaos and standing in the way of peace.",
-      img: "/CyberZombies.png",
+      img: "/Cyber Zombies.png",
     },
   ];
+
+
+  const openModal = (character: Character) => {
+    setSelectedCharacter(character);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedCharacter(null);
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % characters.length);
+  };
+
+  useEffect(() => {
+    const interval = setInterval(nextSlide, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollTo({
+        left: currentSlide * 260,
+        behavior: "smooth",
+      });
+    }
+  }, [currentSlide]);
 
   return (
     <>
@@ -59,10 +103,11 @@ export default function Home() {
         </ul>
 
         <div className="nav-actions">
-          <a href="codemaster.zip" download>
-            <Button variant="secondary">Download</Button>
+          <a href="/login">
+           <Button variant="secondary">Login</Button>
           </a>
         </div>
+
       </nav>
 
       {/* HERO */}
@@ -82,6 +127,7 @@ export default function Home() {
           <div className="mt-6">
             <a href="codemaster.zip" download>
               <Button className="download-btn">Download Now</Button>
+              <p classname = "dlbtn-sub">Available on PC</p>
             </a>
           </div>
         </div>
@@ -113,41 +159,48 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CHARACTERS: icons left, info right */}
+      {/* CHARACTERS */}
       <section id="characters" className="section characters-section">
-        <h2 className="section-title">Main Characters</h2>
-        <div className="characters-grid">
-          <div className="character-icons">
-            {characters.map((c) => (
-              <button
-                key={c.name}
-                className={`char-icon ${selectedChar?.name === c.name ? "active" : ""}`}
-                onClick={() => setSelectedChar(c)}
-                title={c.name}
-              >
-                <img src={c.img} alt={c.name} />
-              </button>
-            ))}
-          </div>
-
-          <div className="character-info-panel">
-            {selectedChar ? (
-              <>
-                <img className="character-large" src={selectedChar.img} alt={selectedChar.name} />
-                <h3 className="character-name">{selectedChar.name}</h3>
-                <p className="character-role">{selectedChar.role}</p>
-                <p className="character-desc">{selectedChar.description}</p>
-              </>
-            ) : (
-              <p className="muted">Click a character icon to see details here.</p>
-            )}
-          </div>
+        <h2 className="section-title">Characters</h2>
+        <div
+          ref={sliderRef}
+          className="character-slider"
+        >
+          {characters.map((char) => (
+            <div
+              key={char.id}
+              className="char-card"
+              onClick={() => openModal(char)}
+            >
+              <img src={char.img} alt={char.name} className="char-thumb" />
+              <h3>{char.name}</h3>
+              <p>{char.role}</p>
+            </div>
+          ))}
         </div>
+
+        {isModalOpen && selectedCharacter && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <button className="modal-close" onClick={closeModal}>
+                <X size={24} />
+              </button>
+              <img
+                src={selectedCharacter.img}
+                alt={selectedCharacter.name}
+                className="modal-img"
+              />
+              <h2>{selectedCharacter.name}</h2>
+              <p className="char-role">{selectedCharacter.role}</p>
+              <p>{selectedCharacter.description}</p>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* TEAM / DEVELOPERS (Kate centered, others below) */}
       <section id="team" className="section team-section">
-        <h2 className="section-title">Developers / Team</h2>
+        <h2 className="section-title">Developers</h2>
 
         {/* Top center - Kate Crystal Miranda */}
         <div className="team-lead-wrap">
