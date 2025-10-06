@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, User, Lock, Eye, EyeOff } from "lucide-react";
 import "./globals.css";
 
 interface Character {
@@ -12,19 +12,40 @@ interface Character {
   img: string;
 }
 
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
 export default function Home() {
+  // === Navbar Scroll ===
   const [scrolled, setScrolled] = useState(false);
+
+  // === Character Modal ===
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
-  
+
+  // === Demo User Login ===
+  const DEMO_USERS = [
+    { username: "codemaster@gmail.com", password: "123456", role: "player" },
+    { username: "admin@gmail.com", password: "admin123", role: "admin" },
+  ];
+
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [formData, setFormData] = useState<LoginFormData>({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // === Scroll Effect ===
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // === Character Data ===
   const characters = [
     {
       id: 1,
@@ -52,26 +73,22 @@ export default function Home() {
     },
   ];
 
-
+  // === Character Modal Logic ===
   const openModal = (character: Character) => {
     setSelectedCharacter(character);
     setIsModalOpen(true);
   };
-
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedCharacter(null);
   };
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % characters.length);
-  };
-
+  // === Auto-Slider ===
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % characters.length);
   useEffect(() => {
     const interval = setInterval(nextSlide, 4000);
     return () => clearInterval(interval);
   }, []);
-
   useEffect(() => {
     if (sliderRef.current) {
       sliderRef.current.scrollTo({
@@ -81,6 +98,47 @@ export default function Home() {
     }
   }, [currentSlide]);
 
+  // === LOGIN LOGIC ===
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const foundUser = DEMO_USERS.find(
+        (u) => u.username === formData.email && u.password === formData.password
+      );
+
+      if (foundUser) {
+        alert(`Welcome, ${foundUser.role.toUpperCase()}!`);
+        setIsLoginOpen(false);
+        // Redirect
+        if (foundUser.role === "admin") {
+          window.location.href = "/admin-dashboard";
+        } else {
+          window.location.href = "/player-dashboard";
+        }
+      } else {
+        alert("Invalid credentials.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const openLogin = () => setIsLoginOpen(true);
+  const closeLogin = () => {
+    setIsLoginOpen(false);
+    setFormData({ email: "", password: "" });
+    setShowPassword(false);
+  };
+
+  // === PAGE RENDER ===
   return (
     <>
       {/* NAVBAR */}
@@ -91,23 +149,26 @@ export default function Home() {
       >
         <a href="#home" className="logo-link">
           <span className="glitch" data-text="CODEMASTER">
-            CODEMASTER
+            <strong>CODEMASTER</strong>
           </span>
         </a>
 
         <ul className="hidden md:flex gap-8 text-sm font-medium nav-links">
           <li><a href="#about">About</a></li>
           <li><a href="#characters">Characters</a></li>
-          <li><a href="#team">Team</a></li>
+          <li><a href="#team">Developers</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
 
         <div className="nav-actions">
-          <a href="/login">
-           <Button variant="secondary">Login</Button>
-          </a>
+          <Button
+            variant="secondary"
+            onClick={openLogin}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            Login
+          </Button>
         </div>
-
       </nav>
 
       {/* HERO */}
@@ -115,35 +176,32 @@ export default function Home() {
         id="home"
         className="hero relative flex items-center justify-center text-center"
         style={{
-          backgroundImage: "url('/CodeMaster-Poster.png')",
+          backgroundImage: "url('/programming.gif')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
         <div className="hero-overlay" />
         <div className="hero-content">
-          <h1 className="glitch hero-title" data-text="CODEMASTER">CODEMASTER</h1>
-          <p className="hero-sub">A Cyberpunk World Where Code is Your Weapon.</p>
+          <h1 className="glitch hero-title" data-text="CODEMASTER">
+            <strong>CODEMASTER</strong>
+          </h1>
+          <p className="hero-sub">“The world’s last defense isn’t a gun — it’s a line of code.”</p>
           <div className="mt-6">
-            <a href="codemaster.zip" download>
-              <Button className="download-btn">Download Now</Button>
-              <p classname = "dlbtn-sub">Available on PC</p>
-            </a>
+            <Button className="download-btn">Play Now</Button>
           </div>
         </div>
       </header>
 
-      {/* ABOUT (split: left text, right YouTube embed) */}
+      {/* ABOUT */}
       <section id="about" className="section about-section">
         <h2 className="section-title">About the Game</h2>
         <div className="about-grid">
           <div className="about-left">
             <p className="about-text">
-              Codemaster is a <strong>story mode adventure game</strong> where players learn <strong>C# programming</strong>
-              while battling through a chaotic cyber world. You play as <strong>Allie</strong>, a college girl trapped inside
-              the digital realm, who must restore peace by mastering coding concepts. Guided by <strong>Nexus</strong>, an AI
-              mentor, you’ll use logic and programming skills to fight off <strong>Cyber Zombies</strong> and bring balance back
-              to the system.
+              CodeMaster follows Allie, a 4th-year student trapped in a digital world overrun by
+              cyberzombies. Guided by the AI mentor Nexus, she must use her C# coding skills to
+              restore peace, craft weapons, and outsmart enemies.
             </p>
           </div>
 
@@ -152,7 +210,6 @@ export default function Home() {
               src="https://www.youtube.com/embed/x-2w7rNP7ek"
               title="CODEMASTER Trailer"
               frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
           </div>
@@ -162,16 +219,9 @@ export default function Home() {
       {/* CHARACTERS */}
       <section id="characters" className="section characters-section">
         <h2 className="section-title">Characters</h2>
-        <div
-          ref={sliderRef}
-          className="character-slider"
-        >
+        <div ref={sliderRef} className="character-slider">
           {characters.map((char) => (
-            <div
-              key={char.id}
-              className="char-card"
-              onClick={() => openModal(char)}
-            >
+            <div key={char.id} className="char-card" onClick={() => openModal(char)}>
               <img src={char.img} alt={char.name} className="char-thumb" />
               <h3>{char.name}</h3>
               <p>{char.role}</p>
@@ -185,11 +235,7 @@ export default function Home() {
               <button className="modal-close" onClick={closeModal}>
                 <X size={24} />
               </button>
-              <img
-                src={selectedCharacter.img}
-                alt={selectedCharacter.name}
-                className="modal-img"
-              />
+              <img src={selectedCharacter.img} alt={selectedCharacter.name} className="modal-img" />
               <h2>{selectedCharacter.name}</h2>
               <p className="char-role">{selectedCharacter.role}</p>
               <p>{selectedCharacter.description}</p>
@@ -198,11 +244,10 @@ export default function Home() {
         )}
       </section>
 
-      {/* TEAM / DEVELOPERS (Kate centered, others below) */}
+      {/* DEVELOPERS */}
       <section id="team" className="section team-section">
         <h2 className="section-title">Developers</h2>
 
-        {/* Top center - Kate Crystal Miranda */}
         <div className="team-lead-wrap">
           <div className="team-card team-lead">
             <img src="/Miranda.png" alt="Kate Crystal Miranda" className="team-avatar" />
@@ -211,20 +256,17 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Row below - the other three */}
         <div className="team-grid">
           <div className="team-card">
             <img src="/Garcia.jpg" alt="April Joy Garcia" className="team-avatar" />
             <h3 className="team-name">April Joy Garcia</h3>
             <p className="team-role">Game Designer</p>
           </div>
-
           <div className="team-card">
             <img src="/Abad.jpg" alt="Gem Anthoinette Abad" className="team-avatar" />
             <h3 className="team-name">Gem Anthoinette Abad</h3>
             <p className="team-role">Quality Assurance / Document Writer</p>
           </div>
-
           <div className="team-card">
             <img src="/Saul.jpg" alt="Wesly Saul" className="team-avatar" />
             <h3 className="team-name">Wesly Saul</h3>
@@ -243,6 +285,88 @@ export default function Home() {
       <footer className="footer">
         <p className="muted">&copy; 2025 CODEMASTER</p>
       </footer>
+
+      {/* LOGIN MODAL (replaces your old one) */}
+      {isLoginOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"
+            onClick={closeLogin}
+          />
+          <div className="relative bg-white bg-opacity-10 backdrop-blur-md border border-white border-opacity-20 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <button
+              onClick={closeLogin}
+              className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
+            >
+              <X size={24} />
+            </button>
+
+            <div className="p-8">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+                <p className="text-white text-opacity-80">Sign in to your account</p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Email */}
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User size={20} className="text-white text-opacity-60" />
+                  </div>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="Enter your email"
+                    required
+                    className="w-full pl-10 pr-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:border-white focus:border-opacity-40 transition-colors"
+                  />
+                </div>
+
+                {/* Password */}
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock size={20} className="text-white text-opacity-60" />
+                  </div>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="Enter your password"
+                    required
+                    className="w-full pl-10 pr-12 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:border-white focus:border-opacity-40 transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-white text-opacity-60 hover:text-opacity-100 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 transition-all duration-200 flex items-center justify-center"
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                      Signing in...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
