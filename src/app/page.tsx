@@ -186,7 +186,7 @@ export default function Home() {
           <h1 className="glitch hero-title" data-text="CODEMASTER">
             <strong>CODEMASTER</strong>
           </h1>
-          <p className="hero-sub">“The world’s last defense isn’t a gun — it’s a line of code.”</p>
+          <p className="hero-sub">“The woorld’s last defense isn’t a gun — it’s a line of code.”</p>
           <div className="mt-6">
             <Button className="download-btn">Play Now</Button>
           </div>
