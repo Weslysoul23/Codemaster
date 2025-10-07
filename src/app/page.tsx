@@ -13,7 +13,7 @@ interface Character {
 }
 
 interface LoginFormData {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -29,12 +29,12 @@ export default function Home() {
 
   // === Demo User Login ===
   const DEMO_USERS = [
-    { username: "codemaster@gmail.com", password: "123456", role: "player" },
-    { username: "admin@gmail.com", password: "admin123", role: "admin" },
+    { username: "player", password: "123456", role: "player" },
+    { username: "admin", password: "admin123", role: "admin" },
   ];
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [formData, setFormData] = useState<LoginFormData>({ email: "", password: "" });
+  const [formData, setFormData] = useState<LoginFormData>({ username: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -83,20 +83,7 @@ export default function Home() {
     setSelectedCharacter(null);
   };
 
-  // === Auto-Slider ===
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % characters.length);
-  useEffect(() => {
-    const interval = setInterval(nextSlide, 4000);
-    return () => clearInterval(interval);
-  }, []);
-  useEffect(() => {
-    if (sliderRef.current) {
-      sliderRef.current.scrollTo({
-        left: currentSlide * 260,
-        behavior: "smooth",
-      });
-    }
-  }, [currentSlide]);
+  
 
   // === LOGIN LOGIC ===
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,7 +93,7 @@ export default function Home() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       const foundUser = DEMO_USERS.find(
-        (u) => u.username === formData.email && u.password === formData.password
+        (u) => u.username === formData.username && u.password === formData.password
       );
 
       if (foundUser) {
@@ -134,7 +121,7 @@ export default function Home() {
   const openLogin = () => setIsLoginOpen(true);
   const closeLogin = () => {
     setIsLoginOpen(false);
-    setFormData({ email: "", password: "" });
+    setFormData({ username: "", password: "" });
     setShowPassword(false);
   };
 
@@ -186,7 +173,7 @@ export default function Home() {
           <h1 className="glitch hero-title" data-text="CODEMASTER">
             <strong>CODEMASTER</strong>
           </h1>
-          <p className="hero-sub">“The woorld’s last defense isn’t a gun — it’s a line of code.”</p>
+          <p className="hero-sub">“The world’s last defense isn’t a gun — it’s a line of code.”</p>
           <div className="mt-6">
             <Button className="download-btn">Play Now</Button>
           </div>
@@ -308,17 +295,17 @@ export default function Home() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Email */}
+                {/* Username */}
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User size={20} className="text-white text-opacity-60" />
                   </div>
                   <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
+                    type="text"
+                    name="username"
+                    value={formData.username}
                     onChange={handleInputChange}
-                    placeholder="Enter your email"
+                    placeholder="Enter your username"
                     required
                     className="w-full pl-10 pr-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:border-white focus:border-opacity-40 transition-colors"
                   />

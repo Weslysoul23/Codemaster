@@ -18,6 +18,8 @@
 /* Base */
 html,body,#__next {
   height: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px
 }
 body{
   margin:0;
@@ -54,7 +56,8 @@ nav.navbar{
 
 /* HERO */
 .hero{
-  height:100vh;
+  min-height: 100svh; /* stable viewport height on mobile */
+  height: 100dvh; 
   display:flex;
   align-items:center;
   justify-content:center;
@@ -118,7 +121,7 @@ nav.navbar{
   gap: 1rem;
   overflow-x: auto;
   padding: 1rem 0;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;;
 }
 
 .char-card {
@@ -190,7 +193,7 @@ nav.navbar{
   text-align:center;
   border: 1px solid rgba(255,255,255,0.03);
 }
-.team-card.team-lead{ transform: translateY(-12px); width: 300; }
+.team-card.team-lead{ transform: translateY(-12px); width: 300px; }
 .team-avatar{ width:120px; height:120px; border-radius:9999px; object-fit:cover; margin:0 auto 0.75rem auto; display:block; }
 .team-name{ font-size:1.125rem; margin:0; color:#e6eef6; }
 .team-role{ color:#9aa8b8; margin-top:0.25rem; }
