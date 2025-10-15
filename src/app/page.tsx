@@ -135,8 +135,8 @@ useEffect(() => {
       {/* HERO */}
       <header
         id="home"
-        className="glitch hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
-        style={{
+        className="hero relative flex items-center justify-center text-center"
+         style={{
           backgroundImage: "url('/programming.gif')",
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -147,9 +147,7 @@ useEffect(() => {
           <h1 className="glitch hero-title" data-text="CODEMASTER">
             <strong>CODEMASTER</strong>
           </h1>
-          <p className="hero-sub text-sm sm:text-base md:text-lg">  
-            “The world’s last defense isn’t a gun — it’s a line of code.”
-          </p>
+          <p className="hero-sub">“The world’s last defense isn’t a gun — it’s a line of code.”</p>
           <div className="mt-6">
             <Button className="download-btn">Play Now</Button>
           </div>
