@@ -206,7 +206,7 @@ useEffect(() => {
           </div>
         </div>
 
-        <div className="team-grid">
+        <div className="team-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
           <div className="team-card w-72 sm:w-80 md:w-96">
             <img src="/Garcia.jpg" alt="April Joy Garcia" className="team-avatar" />
             <h3 className="team-name">April Joy Garcia</h3>
