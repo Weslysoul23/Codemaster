@@ -18,6 +18,8 @@
 /* Base */
 html,body,#__next {
   height: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 body{
   margin:0;
@@ -105,31 +107,6 @@ nav.navbar{
   border-radius: 0.75rem;
   box-shadow: 0 10px 30px rgba(0,0,0,0.6);
 }
-
-@layer components {
-  .card-container {
-    @apply flex relative;
-  }
-
-  .char-card {
-    @apply relative transition-all duration-300;
-    left: 0;
-  }
-
-  .char-card:not(:first-child) {
-    margin-left: 50px;
-  }
-
-  .char-card:hover {
-    transform: translateY(-20px);
-  }
-
-  .char-card:hover ~ .char-card {
-    left: 50px;
-  }
-}
-
-
 
 /*DEVELOPERS*/
 .team-section .team-lead-wrap{ display:flex; justify-content: center; margin-bottom:1rem; }

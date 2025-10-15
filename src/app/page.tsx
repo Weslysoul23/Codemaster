@@ -11,6 +11,7 @@ interface LoginFormData {
 }
 
 export default function Home() {
+
   // === Navbar Scroll ===
   const [scrolled, setScrolled] = useState(false);
 
@@ -99,6 +100,8 @@ useEffect(() => {
     setShowPassword(false);
   };
 
+
+
   // === PAGE RENDER ===
   return (
     <>
@@ -132,10 +135,14 @@ useEffect(() => {
         </div>
       </nav>
 
+      
+
+      
+
       {/* HERO */}
       <header
         id="home"
-        className="hero relative flex items-center justify-center text-center"
+        className="w-full max-w-none hero relative flex items-center justify-center text-center"
          style={{
           backgroundImage: "url('/programming.gif')",
           backgroundSize: "cover",
