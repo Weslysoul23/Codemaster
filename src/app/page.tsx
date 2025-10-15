@@ -2,15 +2,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { X, User, Lock, Eye, EyeOff } from "lucide-react";
+import SliderChar from "@/components/ui/sliderChar";
 import "./globals.css";
-
-interface Character {
-  id: number;
-  name: string;
-  role: string;
-  description: string;
-  img: string;
-}
 
 interface LoginFormData {
   username: string;
@@ -21,11 +14,28 @@ export default function Home() {
   // === Navbar Scroll ===
   const [scrolled, setScrolled] = useState(false);
 
-  // === Character Modal ===
-  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const sliderRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+
+// === Auto Slide Effect ===
+useEffect(() => {
+  const interval = setInterval(() => {
+    if (carouselRef.current) {
+      carouselRef.current.scrollLeft += 300; // scroll distance
+      if (
+        carouselRef.current.scrollLeft + carouselRef.current.clientWidth >=
+        carouselRef.current.scrollWidth
+      ) {
+        // Loop back to start
+        carouselRef.current.scrollLeft = 0;
+      }
+    }
+  }, 3000); // 3s per slide
+
+  return () => clearInterval(interval);
+}, []);
 
   // === Demo User Login ===
   const DEMO_USERS = [
@@ -45,43 +55,7 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // === Character Data ===
-  const characters = [
-    {
-      id: 1,
-      name: "Allie",
-      role: "Heroine",
-      description:
-        "Allie - A college girl who gets pulled into the digital world. She must restore peace in the chaotic realm to return home.",
-      img: "/Allie.png",
-    },
-    {
-      id: 2,
-      name: "Nexus",
-      role: "Guide / Teacher",
-      description:
-        "Nexus - An AI robot guide who mentors Allie, teaching her coding skills and strategies to defeat enemies.",
-      img: "/Nexus.png",
-    },
-    {
-      id: 3,
-      name: "Cyber Zombie",
-      role: "Enemy",
-      description:
-        "Cyber Zombie - Corrupted beings of the digital world, spreading chaos and standing in the way of peace.",
-      img: "/Cyber Zombies.png",
-    },
-  ];
-
-  // === Character Modal Logic ===
-  const openModal = (character: Character) => {
-    setSelectedCharacter(character);
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedCharacter(null);
-  };
+  
 
   
 
@@ -203,32 +177,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CHARACTERS */}
-      <section id="characters" className="section characters-section">
-        <h2 className="section-title">Characters</h2>
-        <div ref={sliderRef} className="character-slider">
-          {characters.map((char) => (
-            <div key={char.id} className="char-card" onClick={() => openModal(char)}>
-              <img src={char.img} alt={char.name} className="char-thumb" />
-              <h3>{char.name}</h3>
-              <p>{char.role}</p>
-            </div>
-          ))}
-        </div>
+      {/* CHARACTER SECTION WITH SLIDER */}
+      <section id="characters" className="py-20 bg-black">
+        <h2 className="text-center text-4xl font-bold text-white mb-10">Characters</h2>
 
-        {isModalOpen && selectedCharacter && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <button className="modal-close" onClick={closeModal}>
-                <X size={24} />
-              </button>
-              <img src={selectedCharacter.img} alt={selectedCharacter.name} className="modal-img" />
-              <h2>{selectedCharacter.name}</h2>
-              <p className="char-role">{selectedCharacter.role}</p>
-              <p>{selectedCharacter.description}</p>
-            </div>
-          </div>
-        )}
+        {/* Character Slider */}
+        <div className="max-w-5xl mx-auto">
+          <SliderChar />
+        </div>
       </section>
 
       {/* DEVELOPERS */}
@@ -356,4 +312,4 @@ export default function Home() {
       )}
     </>
   );
-}
+} 
