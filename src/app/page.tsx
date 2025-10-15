@@ -114,7 +114,7 @@ useEffect(() => {
           </span>
         </a>
 
-        <ul className="hidden md:flex gap-8 text-sm font-medium nav-links">
+        <ul className="hidden md:flex gap-6 lg:gap-8 text-xs sm:text-sm font-medium nav-links"> 
           <li><a href="#about">About</a></li>
           <li><a href="#characters">Characters</a></li>
           <li><a href="#team">Developers</a></li>
@@ -135,7 +135,7 @@ useEffect(() => {
       {/* HERO */}
       <header
         id="home"
-        className="hero relative flex items-center justify-center text-center"
+        className="glitch hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
         style={{
           backgroundImage: "url('/programming.gif')",
           backgroundSize: "cover",
@@ -147,7 +147,9 @@ useEffect(() => {
           <h1 className="glitch hero-title" data-text="CODEMASTER">
             <strong>CODEMASTER</strong>
           </h1>
-          <p className="hero-sub">“The world’s last defense isn’t a gun — it’s a line of code.”</p>
+          <p className="hero-sub text-sm sm:text-base md:text-lg">  
+            “The world’s last defense isn’t a gun — it’s a line of code.”
+          </p>
           <div className="mt-6">
             <Button className="download-btn">Play Now</Button>
           </div>
@@ -159,7 +161,7 @@ useEffect(() => {
         <h2 className="section-title">About the Game</h2>
         <div className="about-grid">
           <div className="about-left">
-            <p className="about-text">
+            <p className="about-text text-sm sm:text-base md:text-lg leading-relaxed">
               CodeMaster follows Allieee, a 4th-year student trapped in a digital world overrun by
               cyberzombies. Guided by the AI mentor Nexus, she must use her C# coding skills to
               restore peace, craft weapons, and outsmart enemies.
@@ -192,7 +194,7 @@ useEffect(() => {
         <h2 className="section-title">Developers</h2>
 
         <div className="team-lead-wrap">
-          <div className="team-card team-lead">
+          <div className="team-card team-lead w-72 sm:w-80 md:w-96">
             <img src="/Miranda.png" alt="Kate Crystal Miranda" className="team-avatar" />
             <h3 className="team-name">Kate Crystal Miranda</h3>
             <p className="team-role">Project Manager</p>
@@ -200,17 +202,17 @@ useEffect(() => {
         </div>
 
         <div className="team-grid">
-          <div className="team-card">
+          <div className="team-card w-72 sm:w-80 md:w-96">
             <img src="/Garcia.jpg" alt="April Joy Garcia" className="team-avatar" />
             <h3 className="team-name">April Joy Garcia</h3>
             <p className="team-role">Game Designer</p>
           </div>
-          <div className="team-card">
+          <div className="team-card w-72 sm:w-80 md:w-96">
             <img src="/Abad.jpg" alt="Gem Anthoinette Abad" className="team-avatar" />
             <h3 className="team-name">Gem Anthoinette Abad</h3>
             <p className="team-role">Quality Assurance / Document Writer</p>
           </div>
-          <div className="team-card">
+          <div className="team-card w-72 sm:w-80 md:w-96">
             <img src="/Saul.jpg" alt="Wesly Saul" className="team-avatar" />
             <h3 className="team-name">Wesly Saul</h3>
             <p className="team-role">Game Programmer</p>
