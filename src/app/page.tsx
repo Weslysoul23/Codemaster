@@ -198,7 +198,7 @@ useEffect(() => {
       <section id="team" className="section team-section">
         <h2 className="section-title">Developers</h2>
 
-        <div className="team-lead-wrap">
+        <div className="team-lead-wrap flex justify-center">
           <div className="team-card team-lead w-72 sm:w-80 md:w-96">
             <img src="/Miranda.png" alt="Kate Crystal Miranda" className="team-avatar" />
             <h3 className="team-name">Kate Crystal Miranda</h3>
