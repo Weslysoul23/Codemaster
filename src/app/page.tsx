@@ -47,7 +47,7 @@ useEffect(() => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  
+
 
   // === PAGE RENDER ===
   return (
@@ -72,8 +72,13 @@ useEffect(() => {
         </ul>
 
         <div className="nav-actions">
-          <button onClick={openLogin}>Login</button>
-          <LoginModal isLoginOpen={isLoginOpen} closeLogin={closeLogin} />
+          <button 
+            onClick={openLogin} 
+            className="bg-gradient-to-r from-blue-400 to-blue-600 text-white py-2 px-4 rounded font-semibold hover:from-blue-500 hover:to-blue-700 transition-all duration-200"
+          >
+            Login
+          </button>
+            <LoginModal isLoginOpen={isLoginOpen} closeLogin={closeLogin} />
         </div>
 
       </nav>
