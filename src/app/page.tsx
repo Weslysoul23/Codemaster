@@ -238,7 +238,7 @@ useEffect(() => {
   </div>
 
   {/* Right side: Copyright */}
-  <p className="muted text-sm text-gray-400 mt-2 md:mt-0">&copy; 2025 CODEMASTER</p>
+  <p className="muted text-sm text-gray-400 mt-2 md:mt-0">&copy; CODEMASTER 2025 </p>
 </footer>
 
     </>
