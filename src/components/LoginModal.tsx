@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword  } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebaseConfig';
 import { X, User, Lock, Eye, EyeOff } from 'lucide-react';
 
@@ -23,10 +23,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // New function to create the default admin user (for development only)
   const createDefaultAdminIfNotExists = async () => {
     const adminEmail = 'codemaster@gmail.com';
-    const defaultPassword = 'group7';  // Hardcoded for testing; DO NOT USE IN PRODUCTION
+    const defaultPassword = 'group7'; // Development only
 
     try {
       await createUserWithEmailAndPassword(auth, adminEmail, defaultPassword);
@@ -34,7 +33,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
     } catch (err: any) {
       if (err.code === 'auth/email-already-in-use') {
         console.log('Default admin user already exists.');
-        // No action needed
       } else {
         console.error('Error creating default admin user:', err);
         setError('Failed to create default admin user. Check console for details.');
@@ -51,13 +49,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
       const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
-      console.log('Login successful for user:', user.email);
-
       if (user.email?.toLowerCase() === 'codemaster@gmail.com'.toLowerCase()) {
-        console.log('Redirecting admin to /admin-dashboard');
         router.push('/admin-dashboard');
       } else {
-        console.log('Redirecting player to /player-dashboard');
         router.push('/player-dashboard');
       }
     } catch (err: any) {
@@ -75,7 +69,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
   };
 
   return (
-    // The rest of your component remains the same as before
     <>
       {isLoginOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -100,6 +93,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
               {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* EMAIL INPUT */}
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User size={20} className="text-white text-opacity-60" />
@@ -115,6 +109,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
                   />
                 </div>
 
+                {/* PASSWORD INPUT */}
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock size={20} className="text-white text-opacity-60" />
@@ -137,6 +132,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
                   </button>
                 </div>
 
+                {/* ✅ FORGOT PASSWORD LINK (different page) */}
+                <div className="text-right">
+                  <a
+                    href="/Forgotpassword-Dashboard"
+                    className="text-sm text-blue-400 hover:underline hover:text-blue-300 transition-colors"
+                  >
+                    Forgot Password?
+                  </a>
+                </div>
+
+                {/* SIGN IN BUTTON */}
                 <button
                   type="submit"
                   disabled={isLoading}
@@ -161,4 +167,3 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
 };
 
 export default LoginModal;
-
