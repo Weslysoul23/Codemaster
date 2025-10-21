@@ -170,17 +170,76 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* CONTACT */}
-      <section id="contact" className="section contact-section">
-        <h2 className="section-title">Contact</h2>
-        <p className="muted">Email: CODEMASTER@gmail.com</p>
-        <p className="muted">Phone: +63 945 150 2417</p>
-      </section>
+{/* CONTACT SECTION */}
+<section
+  id="contact"
+  className="section contact-section py-16 px-6 bg-black flex flex-col md:flex-row items-center justify-center gap-10 text-white"
+>
+  {/* LEFT SIDE IMAGE */}
+  <div className="w-full md:w-1/2 flex justify-center">
+    <img
+      src="/alliebgcontact.png" // <-- replace with your image path
+      alt="Contact Us"
+      className="w-80 sm:w-96 md:w-[420px] rounded-xl shadow-lg object-cover"
+    />
+  </div>
 
-      <footer className="footer">
-        <p className="muted">&copy; 2025 CODEMASTER</p>
-      </footer>
+  {/* RIGHT SIDE FORM */}
+  <div className="w-full md:w-1/2 max-w-md bg-gradient-to-b from-gray-900 via-gray-950 to-gray-900 rounded-xl shadow-xl p-6">
+    <h2 className="text-xl sm:text-2xl font-bold mb-2 text-center bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+      Send Us a Message
+    </h2>
+    <p className="text-center mb-5 text-gray-400 text-xs sm:text-sm leading-relaxed">
+      Have a question about CodeMaster, development, or collaborations? Reach out and we’ll get back to you soon.
+    </p>
 
+    <form className="space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <input
+          type="text"
+          placeholder="Your Name"
+          className="bg-gray-800 rounded-md p-2 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+        />
+        <input
+          type="email"
+          placeholder="Your Email"
+          className="bg-gray-800 rounded-md p-2 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+        />
+      </div>
+
+      <input
+        type="text"
+        placeholder="Subject"
+        className="bg-gray-800 rounded-md p-2 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+      />
+
+      <textarea
+        placeholder="Write your message here..."
+        rows={3}
+        className="bg-gray-800 rounded-md p-2 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+      ></textarea>
+
+      <button
+        type="submit"
+        className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-2 rounded-md font-semibold tracking-wide text-sm hover:opacity-90 transition duration-200"
+      >
+        SEND MESSAGE
+      </button>
+    </form>
+  </div>
+</section>
+
+{/* FOOTER */}
+<footer className="footer w-full bg-black flex flex-col md:flex-row items-center justify-between text-white px-6 py-4">
+  {/* Left side: Email & Phone */}
+  <div className="text-sm text-gray-300 text-center md:text-left space-y-1 md:space-y-0 md:space-x-4">
+    <span>Email: CODEMASTER@gmail.com</span>
+    <span className="block md:inline">Phone: +63 945 150 2417</span>
+  </div>
+
+  {/* Right side: Copyright */}
+  <p className="muted text-sm text-gray-400 mt-2 md:mt-0">&copy; 2025 CODEMASTER</p>
+</footer>
 
     </>
   );
