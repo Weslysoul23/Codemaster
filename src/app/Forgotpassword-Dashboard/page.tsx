@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import "./ForgotPassword.css";
 
 const ForgotPasswordPage = () => {
+  
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
