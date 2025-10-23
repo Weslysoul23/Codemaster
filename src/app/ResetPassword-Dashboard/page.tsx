@@ -8,6 +8,7 @@ import {
 import { auth } from "@/lib/firebaseConfig";
 import "./ResetPassword.css";
 
+
 export default function ResetPasswordDashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
