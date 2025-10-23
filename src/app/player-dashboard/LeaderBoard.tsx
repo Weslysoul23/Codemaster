@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
-import { db } from "@/lib/firebaseConfig";
+import { getDatabase, ref, onValue, off } from "firebase/database";
+import { app } from "@/lib/firebaseConfig";
 import "./LeaderBoard.css";
 
 interface Player {
@@ -15,21 +15,35 @@ const LeaderBoard: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "leaderboard"), (snapshot) => {
-      if (snapshot.empty) {
+    const db = getDatabase(app);
+    const leaderboardRef = ref(db, "leaderboard");
+
+    // Listen for realtime updates
+    const listener = onValue(leaderboardRef, (snapshot) => {
+      if (!snapshot.exists()) {
+        console.log("⚠️ No leaderboard data found.");
         setPlayers([]);
         setLoading(false);
         return;
       }
 
-      const data = snapshot.docs.map((doc) => doc.data() as Player);
-      // Sort by points (optional, remove if not needed)
-      const sorted = data.sort((a, b) => b.points - a.points);
+      const data = snapshot.val();
+      console.log("🔥 Raw data:", data);
+
+      // Convert object into array
+      const playerArray: Player[] = Object.keys(data).map((key) => ({
+        username: data[key].username || "Unknown Player",
+        points: data[key].points || 0,
+      }));
+
+      // Sort by points descending
+      const sorted = playerArray.sort((a, b) => b.points - a.points);
       setPlayers(sorted);
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    // Proper cleanup
+    return () => off(leaderboardRef, "value", listener);
   }, []);
 
   if (loading) return <p>Loading leaderboard...</p>;
@@ -42,6 +56,7 @@ const LeaderBoard: React.FC = () => {
         <thead>
           <tr>
             <th>Username</th>
+            <th>Rank</th>
             <th>Points</th>
           </tr>
         </thead>
@@ -49,6 +64,7 @@ const LeaderBoard: React.FC = () => {
           {players.map((player, index) => (
             <tr key={index}>
               <td>{player.username}</td>
+              <td>{index + 1}</td>
               <td>{player.points}</td>
             </tr>
           ))}
