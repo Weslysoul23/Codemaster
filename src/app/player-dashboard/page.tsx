@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import "./player-dashboard.css";
 import LeaderBoard from "./LeaderBoard"; // make sure path is correct
 
+
 const PlayerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"home" | "leaderboard" | "subscription">("home");
   const [loggedIn, setLoggedIn] = useState(true);
@@ -51,7 +52,7 @@ const PlayerDashboard: React.FC = () => {
               </div>
               <div className="info-box">
                 <h2>Rank</h2>
-                <p>#482</p>
+                <p>482</p>
               </div>
             </div>
           </section>
@@ -61,19 +62,45 @@ const PlayerDashboard: React.FC = () => {
           <section className="tab-content">
             <LeaderBoard />
           </section>
-        )}
+        )}{activeTab === "subscription" && (
+  <section className="tab-content subscription-content">
+    <h1>Upgrade Your Plan</h1>
+    <p className="subscription-tagline">
+      Choose the plan that fits your coding journey.
+    </p>
 
-        {activeTab === "subscription" && (
-          <section className="tab-content">
-            <h1>Subscription</h1>
-            <p>Manage your subscription and premium features here.</p>
-            <ul className="subscription-list">
-              <li>Plan: Premium</li>
-              <li>Next Billing Date: 2025-11-01</li>
-              <li>Status: Active</li>
-            </ul>
-          </section>
-        )}
+    <div className="subscription-plans">
+      {/* Free Plan */}
+      <div className="plan-box">
+        <h2 className="plan-title free">Free</h2>
+        <p className="plan-subtitle">No credit card needed</p>
+        <p className="plan-price">$0</p>
+        <button className="current-plan-btn">Current Plan</button>
+        <h3 className="plan-section-title">Essentials to get started:</h3>
+        <ul className="plan-features">
+          <li><span className="highlight">Limited</span> Access to levels</li>
+          
+        </ul>
+      </div>
+
+      {/* Pro Plan */}
+      <div className="plan-box">
+        <h2 className="plan-title pro">Pro</h2>
+        <p className="plan-subtitle">Best for learning C#</p>
+        <p className="plan-price">$15<span>/month</span></p>
+        <button className="subscribe-btn">Subscribe Now</button>
+        <button className="paypal-btn">Pay with PayPal</button>
+        <h3 className="plan-section-title">Everything in Free, plus:</h3>
+        <ul className="plan-features">
+          <li>Access to all levels</li>
+          <li><span className="highlight">Access</span> to Creative mode</li>
+         
+        </ul>
+      </div>
+    </div>
+  </section>
+)}
+
       </main>
 
       {/* Logout modal */}

@@ -132,7 +132,7 @@
   background-color: #0f0f0f;
   border: 1px solid #1a1a1a;
   border-radius: 12px;
-  padding: 100px 150px; /* Increased size */
+  padding: 120px 200px; /* Increased size */
   text-align: center;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -197,20 +197,145 @@
 
 .leaderboard-table tr:hover {
   background: rgba(255, 255, 255, 0.08);
+
+}
+/* === SUBSCRIPTION PAGE === */
+.subscription-content {
+  text-align: center;
+  color: #ffffff;
 }
 
-/* === SUBSCRIPTION === */
-.subscription-list {
+.subscription-content h1 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.subscription-tagline {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #a0aec0;
+  margin-bottom: 3rem;
+}
+
+/* Layout for plans */
+.subscription-plans {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Plan boxes */
+.plan-box {
+  background-color: #0f0f0f;
+  border: 1px solid #1a1a1a;
+  border-radius: 12px;
+  padding: 2rem 2.5rem;
+  width: 320px;
+  text-align: left;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.plan-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 0, 255, 0.3); /* same hover glow as home */
+}
+
+.plan-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.plan-title.free {
+  color: #9aff6b;
+}
+
+.plan-title.pro {
+  color: #2a4cff;
+}
+
+.plan-subtitle {
+  color: #cdd4de;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.plan-price {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.plan-price span {
+  font-size: 1rem;
+  color: #a0aec0;
+}
+
+.plan-section-title {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #a0aec0;
+}
+
+.plan-features {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin-top: 0.5rem;
 }
 
-.subscription-list li {
-  margin: 0.5rem 0;
-  font-size: 1rem;
+.plan-features li {
   color: #cdd4de;
+  font-size: 0.95rem;
+  margin: 0.4rem 0;
 }
+
+.highlight {
+  color: #ffff66;
+  font-weight: 600;
+}
+
+/* Buttons */
+.current-plan-btn,
+.subscribe-btn,
+.paypal-btn {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.current-plan-btn {
+  background-color: #1a1a1a;
+  color: #999;
+}
+
+.subscribe-btn {
+  background-color: #eaff5d;
+  color: #000;
+}
+
+.subscribe-btn:hover {
+  background-color: #c6e842;
+}
+
+.paypal-btn {
+  background-color: #111;
+  color: #0070ba;
+}
+
+.paypal-btn:hover {
+  background-color: #1a1a1a;
+}
+
+
 
 /* === LOGOUT MESSAGE === */
 .logout-message {

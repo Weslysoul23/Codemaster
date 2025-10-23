@@ -1,57 +1,60 @@
-import React, { useEffect, useState } from "react";
-import { db } from "@/lib/firebaseConfig";
-import { collection, getDocs } from "firebase/firestore";
+"use client";
 
-interface Leader {
+import React, { useEffect, useState } from "react";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebaseConfig";
+import "./LeaderBoard.css";
+
+interface Player {
   username: string;
   points: number;
-  rank?: number;
 }
 
 const LeaderBoard: React.FC = () => {
-  const [leaders, setLeaders] = useState<Leader[]>([]);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLeaders = async () => {
-      try {
-        const leaderboardRef = collection(db, "leaderboard");
-        const snapshot = await getDocs(leaderboardRef);
-        const data = snapshot.docs.map(doc => doc.data() as Leader);
-
-        // Sort by points descending and assign rank
-        const sorted = data.sort((a, b) => b.points - a.points)
-                           .map((item, index) => ({ ...item, rank: index + 1 }));
-
-        setLeaders(sorted);
-      } catch (err) {
-        console.error("Error fetching leaderboard:", err);
+    const unsubscribe = onSnapshot(collection(db, "leaderboard"), (snapshot) => {
+      if (snapshot.empty) {
+        setPlayers([]);
+        setLoading(false);
+        return;
       }
-    };
 
-    fetchLeaders();
+      const data = snapshot.docs.map((doc) => doc.data() as Player);
+      // Sort by points (optional, remove if not needed)
+      const sorted = data.sort((a, b) => b.points - a.points);
+      setPlayers(sorted);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  if (leaders.length === 0) return <p>No leaderboard data found.</p>;
+  if (loading) return <p>Loading leaderboard...</p>;
+  if (players.length === 0) return <p>No leaderboard data found.</p>;
 
   return (
-    <table className="leaderboard-table">
-      <thead>
-        <tr>
-          <th>Username</th>
-          <th>Rank</th>
-          <th>Points</th>
-        </tr>
-      </thead>
-      <tbody>
-        {leaders.map((leader, index) => (
-          <tr key={index}>
-            <td>{leader.username}</td>
-            <td>{leader.rank}</td>
-            <td>{leader.points}</td>
+    <div className="leaderboard-container">
+      <h1>Leaderboard</h1>
+      <table className="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Points</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {players.map((player, index) => (
+            <tr key={index}>
+              <td>{player.username}</td>
+              <td>{player.points}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
