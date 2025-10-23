@@ -101,7 +101,7 @@ useEffect(() => {
           </h1>
           <p className="hero-sub">“The world’s last defense isn’t a gun — it’s a line of code.”</p>
           <div className="mt-6">
-            <Button className="download-btn">Play Now</Button>
+            <Button className="download-btn">Download</Button>
           </div>
         </div>
       </header>
