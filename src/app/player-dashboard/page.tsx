@@ -92,7 +92,7 @@ const PlayerDashboard: React.FC = () => {
         <button className="paypal-btn">Pay with PayPal</button>
         <h3 className="plan-section-title">Everything in Free, plus:</h3>
         <ul className="plan-features">
-          <li>Access to all levels</li>
+          <li><span className="highlight">Full</span> Access to all levels</li>
           <li><span className="highlight">Access</span> to Creative mode</li>
          
         </ul>
