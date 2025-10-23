@@ -55,7 +55,7 @@ const LeaderBoard: React.FC = () => {
       <table className="leaderboard-table">
         <thead>
           <tr>
-            <th>Uusername</th>
+            <th>Username</th>
             <th>Rank</th>
             <th>Points</th>
           </tr>
