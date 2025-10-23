@@ -1,4 +1,6 @@
 "use client";
+export const dynamic = "force-dynamic";
+
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -7,7 +9,6 @@ import {
 } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
 import "./ResetPassword.css";
-
 
 export default function ResetPasswordDashboard() {
   const router = useRouter();
@@ -36,11 +37,11 @@ export default function ResetPasswordDashboard() {
 
     try {
       await confirmPasswordReset(auth, oobCode!, newPassword);
-      setMessage("You may now proceed to the game and log in again.");
+      setMessage("Password successfully reset! Redirecting to login...");
       setTimeout(() => router.push("/Login"), 3000);
     } catch (error) {
       console.error(error);
-      setMessage("Failed to reset password. Please try again.");
+      setMessage(" Failed to reset password. Please try again.");
     }
   };
 
