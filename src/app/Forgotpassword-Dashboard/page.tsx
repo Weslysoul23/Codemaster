@@ -17,7 +17,7 @@ export default function ForgotPassword() {
 
     try {
       await sendPasswordResetEmail(auth, email, {
-        url: "https://codemaster-thesis.vercel.app/ResetPassword-Dashboard",
+        url: "http://localhost:3002/ResetPassword-Dashboard",
         handleCodeInApp: true,
       });
       setMessage("Reset link sent! Please check your email.");
