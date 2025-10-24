@@ -1,8 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./player-dashboard.css";
-import LeaderBoard from "./LeaderBoard"; // make sure path is correct
+import LeaderBoard from "./LeaderBoard";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { app } from "@/lib/firebaseConfig";
 
 const PlayerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
@@ -10,6 +13,60 @@ const PlayerDashboard: React.FC = () => {
   >("home");
   const [loggedIn, setLoggedIn] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [username, setUsername] = useState<string>("Player");
+  const [rank, setRank] = useState<number | string>("N/A");
+  const [points, setPoints] = useState<number | string>("N/A");
+
+  useEffect(() => {
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userRef = ref(db, `users/${user.uid}/username`);
+        onValue(userRef, (snapshot) => {
+          if (snapshot.exists()) {
+            setUsername(snapshot.val());
+          }
+        });
+
+        // Fetch leaderboard data (for rank + points)
+        const leaderboardRef = ref(db, "leaderboard");
+        onValue(leaderboardRef, (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+
+            // Convert object → array
+            const leaderboardArray = Object.keys(data).map((key) => ({
+              uid: key,
+              username: data[key].username,
+              points: data[key].points || 0,
+            }));
+
+            // Sort by points descending
+            leaderboardArray.sort((a, b) => b.points - a.points);
+
+            // Find user’s position
+            const userIndex = leaderboardArray.findIndex(
+              (item) => item.uid === user.uid
+            );
+
+            if (userIndex !== -1) {
+              setRank(userIndex + 1); // rank position
+              setPoints(leaderboardArray[userIndex].points); // user points
+            } else {
+              setRank("Unranked");
+              setPoints("N/A");
+            }
+          }
+        });
+      } else {
+        setLoggedIn(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleLogout = () => {
     setLoggedIn(false);
@@ -64,18 +121,18 @@ const PlayerDashboard: React.FC = () => {
       <main className="dashboard-main">
         {activeTab === "home" && (
           <section className="tab-content home-content">
-            <h1>Welcome Back, Player!</h1>
+            <h1>Welcome Back, {username}!</h1>
             <p className="home-tagline">
               The world’s last defense isn’t a gun — it’s a line of code.
             </p>
             <div className="home-boxes">
               <div className="info-box">
-                <h2>Current Level</h2>
-                <p>12</p>
+                <h2>Rank</h2>
+                <p>{rank}</p>
               </div>
               <div className="info-box">
-                <h2>Rank</h2>
-                <p>482</p>
+                <h2>Points</h2>
+                <p>{points}</p>
               </div>
             </div>
           </section>
