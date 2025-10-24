@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   confirmPasswordReset,
@@ -8,8 +9,7 @@ import {
 import { auth } from "@/lib/firebaseConfig";
 import "./ResetPassword.css";
 
-
-export default function ResetPasswordDashboard() {
+function ResetPasswordDashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const oobCode = searchParams.get("oobCode");
@@ -71,5 +71,14 @@ export default function ResetPasswordDashboard() {
         {message && <p className="message">{message}</p>}
       </div>
     </div>
+  );
+}
+
+// ✅ Wrap with Suspense
+export default function ResetPasswordDashboard() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordDashboardContent />
+    </Suspense>
   );
 }
