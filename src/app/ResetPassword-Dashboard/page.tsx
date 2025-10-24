@@ -1,15 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  confirmPasswordReset,
-  verifyPasswordResetCode,
-} from "firebase/auth";
+import { confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
 import "./ResetPassword.css";
 
-
-export default function ResetPasswordDashboard() {
+// Inner client component that uses useSearchParams. This is wrapped in a Suspense boundary by the page export.
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const oobCode = searchParams.get("oobCode");
@@ -34,8 +31,13 @@ export default function ResetPasswordDashboard() {
       return;
     }
 
+    if (!oobCode) {
+      setMessage("Invalid or missing reset code. Please use the link from your email.");
+      return;
+    }
+
     try {
-      await confirmPasswordReset(auth, oobCode!, newPassword);
+      await confirmPasswordReset(auth, oobCode, newPassword);
       setMessage("You may now proceed to the game and log in again.");
       setTimeout(() => router.push("/Login"), 3000);
     } catch (error) {
@@ -71,5 +73,13 @@ export default function ResetPasswordDashboard() {
         {message && <p className="message">{message}</p>}
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordDashboard() {
+  return (
+    <Suspense fallback={<div className="reset-container"><div className="reset-card"><p>Loading...</p></div></div>}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
