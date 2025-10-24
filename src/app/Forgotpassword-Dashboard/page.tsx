@@ -4,7 +4,6 @@ import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
 import "./ForgotPassword.css";
 
-
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -16,8 +15,8 @@ export default function ForgotPassword() {
     setMessage("");
 
     try {
-      await sendPasswordResetEmail(auth, email, {
-        url: "http://localhost:3002/ResetPassword-Dashboard",
+        await sendPasswordResetEmail(auth, email, {
+        url: "https://codemaster-thesis.vercel.app//ResetPassword-Dashboard", 
         handleCodeInApp: true,
       });
       setMessage("Reset link sent! Please check your email.");
