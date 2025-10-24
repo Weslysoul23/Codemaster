@@ -1,25 +1,92 @@
+/* === LEADERBOARD STYLES === */
 .leaderboard-container {
-  background: hsl(var(--card));
-  border-radius: 16px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  padding: 24px;
   text-align: center;
+  color: #ffffff;
+  padding: 3rem;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0a0a0a 0%, #111111 100%);
 }
 
+.leaderboard-container h1 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.leaderboard-container p {
+  color: #a0aec0;
+  font-style: italic;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  letter-spacing: 0.4px;
+}
+
+/* === TABLE STYLES === */
 .leaderboard-table {
-  width: 100%;
+  width: 80%;
+  margin: 2rem auto;
   border-collapse: collapse;
-  margin-top: 16px;
-}
-
-.leaderboard-table th,
-.leaderboard-table td {
-  padding: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background-color: #0f0f0f;
+  border: 1px solid #1a1a1a;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
 }
 
 .leaderboard-table th {
+  background-color: #151515;
+  color: #2a4cff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 1rem;
+  border-bottom: 1px solid #1a1a1a;
   text-transform: uppercase;
-  font-size: 14px;
-  opacity: 0.8;
+  letter-spacing: 1px;
+}
+
+.leaderboard-table td {
+  padding: 1rem;
+  color: #dcdcdc;
+  border-bottom: 1px solid #1a1a1a;
+  font-size: 1.1rem;
+}
+
+.leaderboard-table tr:hover {
+  background-color: rgba(42, 76, 255, 0.08);
+  transition: background-color 0.3s ease;
+}
+
+/* === RANK HIGHLIGHTS === */
+.leaderboard-table tr:nth-child(1) td {
+  color: gold;
+  font-weight: bold;
+}
+
+.leaderboard-table tr:nth-child(2) td {
+  color: silver;
+  font-weight: bold;
+}
+
+.leaderboard-table tr:nth-child(3) td {
+  color: #cd7f32; /* bronze */
+  font-weight: bold;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .leaderboard-table {
+    width: 95%;
+  }
+
+  .leaderboard-container h1 {
+    font-size: 2rem;
+  }
+
+  .leaderboard-table th,
+  .leaderboard-table td {
+    font-size: 0.95rem;
+    padding: 0.75rem;
+  }
 }
