@@ -2,9 +2,8 @@
 import React, { useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
-import "./ForgotPassword.css"; // ✅ still okay to import CSS
-"use client";
 import "./ForgotPassword.css";
+
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -18,14 +17,13 @@ export default function ForgotPassword() {
 
     try {
       await sendPasswordResetEmail(auth, email, {
-        url: "https://codemaster.vercel.app/ResetPassword-Dashboard",
-
+        url: "http://localhost:3002/ResetPassword-Dashboard",
         handleCodeInApp: true,
       });
       setMessage("Reset link sent! Please check your email.");
     } catch (error: any) {
-      console.error(error);
       setMessage("Error sending reset email. Please try again.");
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -36,7 +34,8 @@ export default function ForgotPassword() {
       <div className="forgot-card">
         <h2>FORGOT YOUR PASSWORD</h2>
         <p>
-          Please enter the email address you’d like your password reset information sent to.
+          Please enter the email address you’d like your password reset
+          information sent to.
         </p>
         <form onSubmit={handleReset}>
           <input
