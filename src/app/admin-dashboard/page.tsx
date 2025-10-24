@@ -19,8 +19,10 @@ interface Purchase {
   date: string;
 }
 
-const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"dashboard" | "players" | "purchases" | "settings">("dashboard");
+export default function AdminDashboard() {
+  const [activeTab, setActiveTab] = useState<
+    "dashboard" | "players" | "feedbacks" | "purchases"
+  >("dashboard");
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const router = useRouter();
 
@@ -35,50 +37,59 @@ const AdminDashboard: React.FC = () => {
     { id: 2, player: "Bea", method: "GCash", amount: 149, date: "2025-09-30" },
   ]);
 
-  const handleBanPlayer = (id: number) => {
-    setPlayers(prev =>
-      prev.map(p =>
-        p.id === id ? { ...p, status: p.status === "banned" ? "active" : "banned" } : p
-      )
-    );
-  };
-
-  const handleDeletePlayer = (id: number) => {
-    setPlayers(prev => prev.filter(p => p.id !== id));
-  };
-
-  const confirmLogout = () => {
-    setShowLogoutConfirm(true);
-  };
-
   const handleLogout = () => {
     setShowLogoutConfirm(false);
-    router.push("/"); // Redirect to main page
-  };
-
-  const cancelLogout = () => {
-    setShowLogoutConfirm(false);
+    router.push("/");
   };
 
   return (
     <div className="admin-dashboard">
-      {/* Sidebar */}
+      {/* ✅ Sidebar */}
       <aside className="sidebar">
         <h2 className="logo">Admin Panel</h2>
         <nav>
-          <button className={activeTab === "dashboard" ? "active" : ""} onClick={() => setActiveTab("dashboard")}>Dashboard</button>
-          <button className={activeTab === "players" ? "active" : ""} onClick={() => setActiveTab("players")}>Players</button>
-          <button className={activeTab === "purchases" ? "active" : ""} onClick={() => setActiveTab("purchases")}>Purchases</button>
-          <button className={activeTab === "settings" ? "active" : ""} onClick={() => setActiveTab("settings")}>Settings</button>
+          <button
+            className={activeTab === "dashboard" ? "active" : ""}
+            onClick={() => setActiveTab("dashboard")}
+          >
+            Home
+          </button>
+
+          <button
+            className={activeTab === "players" ? "active" : ""}
+            onClick={() => setActiveTab("players")}
+          >
+            Manage Players
+          </button>
+
+          <button
+            className={activeTab === "feedbacks" ? "active" : ""}
+            onClick={() => setActiveTab("feedbacks")}
+          >
+            Feedbacks
+          </button>
+
+          <button
+            className={activeTab === "purchases" ? "active" : ""}
+            onClick={() => setActiveTab("purchases")}
+          >
+            Purchases
+          </button>
+
+          <button
+            className="logout-btn"
+            onClick={() => setShowLogoutConfirm(true)}
+          >
+            Logout
+          </button>
         </nav>
       </aside>
 
-      {/* Main Content */}
+      {/* ✅ Main Content */}
       <main className="main-content">
         {activeTab === "dashboard" && (
-          <section className="dashboard-tab">
-            <h1>Welcome, Admin</h1>
-            <p>Monitor players, purchases, and system performance here.</p>
+          <section>
+            <h1>Dashboard Overview</h1>
             <div className="stats-cards">
               <div className="stat-card">
                 <h3>Total Players</h3>
@@ -97,76 +108,29 @@ const AdminDashboard: React.FC = () => {
         )}
 
         {activeTab === "players" && (
-          <section className="players-tab">
+          <section>
             <h1>Manage Players</h1>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {players.map(player => (
-                  <tr key={player.id}>
-                    <td>{player.name}</td>
-                    <td>{player.email}</td>
-                    <td className={player.status}>{player.status}</td>
-                    <td>
-                      <button
-                        className={player.status === "banned" ? "unban" : "ban"}
-                        onClick={() => handleBanPlayer(player.id)}
-                      >
-                        {player.status === "banned" ? "Unban" : "Ban"}
-                      </button>
-                      <button className="delete" onClick={() => handleDeletePlayer(player.id)}>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <p>(your players table stays here)</p>
+          </section>
+        )}
+
+        {/* ✅ NEW FEEDBACKS TAB */}
+        {activeTab === "feedbacks" && (
+          <section>
+            <h1>User Feedbacks</h1>
+            <p>Later we will fetch data from Firestore here ✅</p>
           </section>
         )}
 
         {activeTab === "purchases" && (
-          <section className="purchases-tab">
+          <section>
             <h1>Player Purchases</h1>
-            <table>
-              <thead>
-                <tr>
-                  <th>Player</th>
-                  <th>Payment Method</th>
-                  <th>Amount (₱)</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {purchases.map(p => (
-                  <tr key={p.id}>
-                    <td>{p.player}</td>
-                    <td>{p.method}</td>
-                    <td>{p.amount}</td>
-                    <td>{p.date}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </section>
-        )}
-
-        {activeTab === "settings" && (
-          <section className="settings-tab">
-            <h1>Settings</h1>
-            <button className="logout-btn" onClick={confirmLogout}>Logout</button>
+            <p>(your purchases table stays here)</p>
           </section>
         )}
       </main>
 
-      {/* Logout Confirmation Popup */}
+      {/* ✅ Logout Confirmation Modal */}
       {showLogoutConfirm && (
         <div className="popup-overlay">
           <div className="popup-glass">
@@ -174,14 +138,13 @@ const AdminDashboard: React.FC = () => {
             <p>Are you sure you want to log out?</p>
             <div className="popup-buttons">
               <button className="confirm" onClick={handleLogout}>Yes</button>
-              <button className="cancel" onClick={cancelLogout}>Cancel</button>
+              <button className="cancel" onClick={() => setShowLogoutConfirm(false)}>
+                Cancel
+              </button>
             </div>
           </div>
         </div>
       )}
     </div>
   );
-};
-
-
-export default AdminDashboard;
+}
