@@ -7,6 +7,23 @@
   font-family: "Poppins", sans-serif;
 }
 
+/* ✅ Topbar Mobile */
+.topbar {
+  display: none;
+  width: 100%;
+  height: 55px;
+  background: #111317;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.menu-btn {
+  background: none;
+  border: none;
+  color: #fff;
+}
+
 /* Sidebar */
 .sidebar {
   width: 240px;
@@ -16,10 +33,11 @@
   flex-direction: column;
   gap: 1rem;
   border-right: 1px solid rgba(255,255,255,0.05);
+  transition: transform 0.3s ease-in-out;
 }
 
 .sidebar .logo {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 600;
   color: #4744db;
   margin-bottom: 2rem;
@@ -28,6 +46,8 @@
 .sidebar nav button {
   background: none;
   border: none;
+  width: 100%;
+  display: block;
   color: #cfd8dc;
   text-align: left;
   font-size: 1rem;
@@ -43,118 +63,14 @@
   color: #fff;
 }
 
-/* Main content */
-.main-content {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-}
-
-h1 {
-  font-size: 1.75rem;
-  margin-bottom: 1rem;
-}
-
-.stats-cards {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.stat-card {
-  background: #1b1e24;
-  border: 1px solid rgba(255,255,255,0.05);
-  padding: 1rem;
-  border-radius: 0.75rem;
-  width: 200px;
-  text-align: center;
-}
-
-.stat-card h3 {
-  color: #9aa8b8;
-  font-size: 1rem;
-}
-
-.stat-card p {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #4744db;
-}
-
-/* Tables */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-  background: #1b1e24;
-  border-radius: 0.75rem;
-  overflow: hidden;
-}
-
-th, td {
-  padding: 1rem;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  text-align: left;
-}
-
-th {
-  color: #9aa8b8;
-  background: #14161a;
-}
-
-td {
-  color: #e6eef6;
-}
-
-td.active {
-  color: #00e676;
-}
-
-td.banned {
-  color: #ff5252;
-}
-
-/* Buttons */
-button {
-  cursor: pointer;
-}
-
-.ban, .unban, .delete {
-  padding: 0.4rem 0.8rem;
-  margin-right: 0.5rem;
-  border: none;
-  border-radius: 0.4rem;
-  font-weight: 500;
-  transition: 0.2s;
-}
-
-.ban {
-  background: #ff5252;
-  color: #fff;
-}
-
-.unban {
-  background: #00e676;
-  color: #000;
-}
-
-.delete {
-  background: #444;
-  color: #fff;
-}
-
-.ban:hover { background: #e53935; }
-.unban:hover { background: #69f0ae; }
-.delete:hover { background: #666; }
-
-/* Logout */
+/* ✅ Logout alignment fix */
 .logout-btn {
+  width: 100%;
   background: #ff5252;
   color: #fff;
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1rem;
   border-radius: 0.5rem;
-  margin-top: 1rem;
   font-weight: 600;
   transition: 0.2s;
 }
@@ -163,39 +79,67 @@ button {
   background: #e53935;
 }
 
-/* Popup Glass Confirmation */
+/* ✅ Mobile Sidebar Hidden by default */
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.close-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  align-self: flex-end;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* ✅ Responsive */
+@media (max-width: 768px) {
+  .topbar {
+    display: flex;
+  }
+
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 50;
+  }
+
+  .close-btn {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+}
+
+/* ✅ Popup Glass */
 .popup-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
+  background: rgba(0,0,0,.4);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 50;
 }
 
 .popup-glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 1rem;
+  background: rgba(255,255,255,.1);
   padding: 2rem;
+  border-radius: 1rem;
+  width: 300px;
   text-align: center;
-  width: 320px;
-  color: #e6eef6;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-.popup-glass h2 {
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
-}
-
-.popup-glass p {
-  margin-bottom: 1.5rem;
-  color: #cfd8dc;
 }
 
 .popup-buttons {
@@ -203,35 +147,5 @@ button {
   justify-content: center;
   gap: 1rem;
 }
-
-.popup-buttons button {
-  padding: 0.6rem 1.2rem;
-  border-radius: 0.5rem;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s;
-}
-
-.popup-buttons .confirm {
-  background: #00bcd4;
-  color: #fff;
-}
-
-.popup-buttons .confirm:hover {
-  background: #00acc1;
-}
-
-.popup-buttons .cancel {
-  background: #444;
-  color: #fff;
-}
-
-.popup-buttons .cancel:hover {
-  background: #666;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
-}
+.confirm { background: #00bcd4; }
+.cancel { background: #444; }
