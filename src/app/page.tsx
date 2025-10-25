@@ -3,7 +3,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { X, User, Lock, Eye, EyeOff } from "lucide-react";
 import SliderChar from "@/components/ui/sliderChar";
-import LoginModal from "@/components/LoginModal"; 
+import LoginModal from "@/components/LoginModal";
+import FeedbackForm from "@/components/FeedbackForm";
 import "./globals.css";
 
 
@@ -32,6 +33,8 @@ useEffect(() => {
       }
     }
   }, 3000); // 3s per slide
+
+
 
   return () => clearInterval(interval);
 }, []);
@@ -101,7 +104,7 @@ useEffect(() => {
           </h1>
           <p className="hero-sub">“The world’s last defense isn’t a gun — it’s a line of code.”</p>
           <div className="mt-6">
-            <Button className="download-btn">Downloadd</Button>
+            <Button className="download-btn">Download</Button>
           </div>
         </div>
       </header>
@@ -178,55 +181,18 @@ useEffect(() => {
   {/* LEFT SIDE IMAGE */}
   <div className="w-full md:w-1/2 flex justify-center">
     <img
-      src="/alliebgcontact.png" // <-- replace with your image path
+      src="/alliebgcontact.png" 
       alt="Contact Us"
       className="w-80 sm:w-96 md:w-[420px] rounded-xl shadow-lg object-cover"
     />
   </div>
 
   {/* RIGHT SIDE FORM */}
-  <div className="w-full md:w-1/2 max-w-md bg-gradient-to-b from-gray-900 via-gray-950 to-gray-900 rounded-xl shadow-xl p-6">
-    <h2 className="text-xl sm:text-2xl font-bold mb-2 text-center bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-      Send Us a Message
-    </h2>
-    <p className="text-center mb-5 text-gray-400 text-xs sm:text-sm leading-relaxed">
-      Have a question about CodeMaster, development, or collaborations? Reach out and we’ll get back to you soon.
-    </p>
-
-    <form className="space-y-3">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <input
-          type="text"
-          placeholder="Your Name"
-          className="bg-gray-800 rounded-md p-2 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-        />
-        <input
-          type="email"
-          placeholder="Your Email"
-          className="bg-gray-800 rounded-md p-2 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-        />
-      </div>
-
-      <input
-        type="text"
-        placeholder="Subject"
-        className="bg-gray-800 rounded-md p-2 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-      />
-
-      <textarea
-        placeholder="Write your message here..."
-        rows={3}
-        className="bg-gray-800 rounded-md p-2 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
-      ></textarea>
-
-      <button
-        type="submit"
-        className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-2 rounded-md font-semibold tracking-wide text-sm hover:opacity-90 transition duration-200"
-      >
-        SEND MESSAGE
-      </button>
-    </form>
+  <div className="w-full md:w-1/2 lg:w-[65%] flex justify-center">
+    <FeedbackForm />
   </div>
+
+  
 </section>
 
 {/* FOOTER */}

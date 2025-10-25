@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import "./admin-dashboard.css";
 import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react"; // ✅ Hamburger & Close Icons
+import AdminFeedback from "@/components/AdminFeedback";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<
@@ -72,7 +73,6 @@ export default function AdminDashboard() {
         {activeTab === "dashboard" && (
           <section>
             <h1>Dashboard Overview</h1>
-            <p>Welcome, Admin</p>
           </section>
         )}
 
@@ -85,7 +85,9 @@ export default function AdminDashboard() {
         {activeTab === "feedbacks" && (
           <section>
             <h1>User Feedbacks</h1>
-            <p>Later: show Firestore data here ✅</p>
+            <div className="w-full md:w-1/2 lg:w-[65%] flex justify-center">
+              <AdminFeedback />
+            </div>
           </section>
         )}
 
