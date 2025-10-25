@@ -7,7 +7,7 @@
   font-family: "Poppins", sans-serif;
 }
 
-/* ✅ Topbar Mobile */
+/* ✅ Topbar Mobile Only */
 .topbar {
   display: none;
   width: 100%;
@@ -24,7 +24,7 @@
   color: #fff;
 }
 
-/* Sidebar */
+/* ✅ Sidebar */
 .sidebar {
   width: 240px;
   background: #111317;
@@ -43,11 +43,11 @@
   margin-bottom: 2rem;
 }
 
+/* Sidebar buttons */
 .sidebar nav button {
   background: none;
   border: none;
   width: 100%;
-  display: block;
   color: #cfd8dc;
   text-align: left;
   font-size: 1rem;
@@ -63,7 +63,7 @@
   color: #fff;
 }
 
-/* ✅ Logout alignment fix */
+/* ✅ Logout button */
 .logout-btn {
   width: 100%;
   background: #ff5252;
@@ -72,18 +72,10 @@
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   font-weight: 600;
-  transition: 0.2s;
 }
+.logout-btn:hover { background: #e53935; }
 
-.logout-btn:hover {
-  background: #e53935;
-}
-
-/* ✅ Mobile Sidebar Hidden by default */
-.sidebar.open {
-  transform: translateX(0);
-}
-
+/* ✅ Close button (mobile only) */
 .close-btn {
   display: none;
   background: none;
@@ -92,39 +84,61 @@
   align-self: flex-end;
 }
 
-/* Main Content */
+/* ✅ Main Content */
 .main-content {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
 }
 
-/* ✅ Responsive */
-@media (max-width: 768px) {
-  .topbar {
-    display: flex;
-  }
+.content-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+}
 
+/* ✅ Mobile Fix */
+@media (max-width: 768px) {
+  .topbar { display: flex; }
+
+  /* Sidebar MUST overlay */
   .sidebar {
     position: fixed;
-    transform: translateX(-100%);
     top: 0;
     left: 0;
     height: 100%;
-    z-index: 50;
+    width: 240px;
+    transform: translateX(-100%);
+    z-index: 100;
+  }
+
+  .sidebar.open {
+    width: 80%;
+    transform: translateX(0);
   }
 
   .close-btn {
     display: block;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .main-content {
     padding: 1rem;
   }
+
+  /* ✅ Tap-to-close Dark Background */
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 90;
+  }
 }
 
-/* ✅ Popup Glass */
+/* ✅ Popup */
 .popup-overlay {
   position: fixed;
   inset: 0;
@@ -133,7 +147,6 @@
   justify-content: center;
   align-items: center;
 }
-
 .popup-glass {
   background: rgba(255,255,255,.1);
   padding: 2rem;
@@ -141,7 +154,6 @@
   width: 300px;
   text-align: center;
 }
-
 .popup-buttons {
   display: flex;
   justify-content: center;

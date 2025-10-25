@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./admin-dashboard.css";
 import { useRouter } from "next/navigation";
-import { Menu, X } from "lucide-react"; // ✅ Hamburger & Close Icons
-import AdminFeedback from "@/components/AdminFeedback";
+import { Menu, X } from "lucide-react";
+import AdminFeedback from "./AdminFeedback";
+import AdminHome from "./AdminHome";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<
@@ -20,6 +21,15 @@ export default function AdminDashboard() {
     router.push("/");
   };
 
+  // ✅ Disable scroll when sidebar is open (mobile)
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [sidebarOpen]);
+
   return (
     <div className="admin-dashboard">
 
@@ -33,7 +43,6 @@ export default function AdminDashboard() {
 
       {/* ✅ Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-        {/* Close button mobile */}
         <button className="close-btn" onClick={() => setSidebarOpen(false)}>
           <X size={22} />
         </button>
@@ -68,34 +77,36 @@ export default function AdminDashboard() {
         </nav>
       </aside>
 
+      {/* ✅ Overlay */}
+      {sidebarOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
       {/* ✅ Main Content */}
       <main className="main-content">
         {activeTab === "dashboard" && (
           <section>
-            <h1>Dashboard Overview</h1>
+            <div className="content-wrapper">
+              <AdminHome />
+            </div>
           </section>
         )}
 
-        {activeTab === "players" && (
-          <section>
-            <h1>Manage Players</h1>
-          </section>
-        )}
+        {activeTab === "players" && <h1>Manage Players</h1>}
 
         {activeTab === "feedbacks" && (
           <section>
             <h1>User Feedbacks</h1>
-            <div className="w-full md:w-1/2 lg:w-[65%] flex justify-center">
+            <div className="content-wrapper">
               <AdminFeedback />
             </div>
           </section>
         )}
 
-        {activeTab === "purchases" && (
-          <section>
-            <h1>Player Purchases</h1>
-          </section>
-        )}
+        {activeTab === "purchases" && <h1>Player Purchases</h1>}
       </main>
 
       {/* ✅ Logout Modal */}
