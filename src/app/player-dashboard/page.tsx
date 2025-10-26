@@ -3,9 +3,13 @@
 import React, { useState, useEffect } from "react";
 import "./player-dashboard.css";
 import LeaderBoard from "./LeaderBoard";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { app } from "@/lib/firebaseConfig";
+
+interface LevelProgress {
+  [stageKey: string]: boolean;
+}
 
 const PlayerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
@@ -16,6 +20,8 @@ const PlayerDashboard: React.FC = () => {
   const [username, setUsername] = useState<string>("Player");
   const [rank, setRank] = useState<number | string>("N/A");
   const [points, setPoints] = useState<number | string>("N/A");
+  const [progressData, setProgressData] = useState<LevelProgress>({});
+  const [expandedLevel, setExpandedLevel] = useState<string | null>(null);
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -23,41 +29,45 @@ const PlayerDashboard: React.FC = () => {
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        // --- Username ---
         const userRef = ref(db, `users/${user.uid}/username`);
         onValue(userRef, (snapshot) => {
-          if (snapshot.exists()) {
-            setUsername(snapshot.val());
-          }
+          if (snapshot.exists()) setUsername(snapshot.val());
         });
 
-        // Fetch leaderboard data (for rank + points)
+        // --- Leaderboard (Rank + Points) ---
         const leaderboardRef = ref(db, "leaderboard");
         onValue(leaderboardRef, (snapshot) => {
           if (snapshot.exists()) {
             const data = snapshot.val();
-
-            // Convert object → array
             const leaderboardArray = Object.keys(data).map((key) => ({
               uid: key,
               username: data[key].username,
               points: data[key].points || 0,
             }));
 
-            // Sort by points descending
             leaderboardArray.sort((a, b) => b.points - a.points);
-
-            // Find user’s position
             const userIndex = leaderboardArray.findIndex(
               (item) => item.uid === user.uid
             );
 
             if (userIndex !== -1) {
-              setRank(userIndex + 1); // rank position
-              setPoints(leaderboardArray[userIndex].points); // user points
+              setRank(userIndex + 1);
+              setPoints(leaderboardArray[userIndex].points);
             } else {
               setRank("Unranked");
               setPoints("N/A");
             }
+          }
+        });
+
+        // --- Player Progress ---
+        const progressRef = ref(db, `users/${user.uid}/progress`);
+        onValue(progressRef, (snapshot) => {
+          if (snapshot.exists()) {
+            setProgressData(snapshot.val());
+          } else {
+            setProgressData({});
           }
         });
       } else {
@@ -68,9 +78,50 @@ const PlayerDashboard: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const auth = getAuth(app);
+    await signOut(auth);
     setLoggedIn(false);
     window.location.href = "/";
+  };
+
+  const toggleLevel = (level: string) => {
+    setExpandedLevel(expandedLevel === level ? null : level);
+  };
+
+  // === Level Structure ===
+  const levels = {
+    Level1: [
+      "LVL 1 - Stage 1",
+      "LVL 1 - Stage 2",
+      "LVL 1 - Stage 3",
+      "LVL 1 - Stage 4",
+    ],
+    Level2: [
+      "LVL 2 - Stage 1",
+      "LVL 2 - Stage 2",
+      "LVL 2 - Stage 3",
+      "LVL 2 - Stage 4",
+    ],
+    Level3: [
+      "LVL 3 - Stage 1",
+      "LVL 3 - Stage 2",
+      "LVL 3 - Stage 3",
+      "LVL 3 - Stage 4",
+    ],
+    Level4: [
+      "LVL 4 - Stage 1",
+      "LVL 4 - Stage 2",
+      "LVL 4 - Stage 3",
+      "LVL 4 - Stage 4",
+    ],
+    Level5: [
+      "LVL 5 - Stage 1",
+      "LVL 5 - Stage 2",
+      "LVL 5 - Stage 3",
+      "LVL 5 - Stage 4",
+    ],
+    Level6: ["LVL 6 - Final Boss"],
   };
 
   if (!loggedIn) {
@@ -86,7 +137,7 @@ const PlayerDashboard: React.FC = () => {
 
   return (
     <div className="player-dashboard">
-      {/* SIDEBAR */}
+      {/* === SIDEBAR === */}
       <aside className="sidebar">
         <nav className="sidebar-nav">
           <button
@@ -117,7 +168,7 @@ const PlayerDashboard: React.FC = () => {
         </nav>
       </aside>
 
-      {/* MAIN CONTENT */}
+      {/* === MAIN CONTENT === */}
       <main className="dashboard-main">
         {activeTab === "home" && (
           <section className="tab-content home-content">
@@ -125,14 +176,58 @@ const PlayerDashboard: React.FC = () => {
             <p className="home-tagline">
               The world’s last defense isn’t a gun — it’s a line of code.
             </p>
+
             <div className="home-boxes">
               <div className="info-box">
                 <h2>Rank</h2>
                 <p>{rank}</p>
               </div>
+
               <div className="info-box">
                 <h2>Points</h2>
                 <p>{points}</p>
+              </div>
+
+              <div className="info-box large">
+                <h2>Stage Progression</h2>
+                <div className="levels-container">
+                  {Object.entries(levels).map(([levelKey, stages]) => (
+                    <div key={levelKey} className="level-block">
+                      <button
+                        className="level-toggle-btn"
+                        onClick={() => toggleLevel(levelKey)}
+                      >
+                        {levelKey.replace("Level", "Level ")}{" "}
+                        <span>{expandedLevel === levelKey ? "▲" : "▼"}</span>
+                      </button>
+
+                      {expandedLevel === levelKey && (
+                        <div className="stage-list">
+                          {stages.map((stageName) => {
+                            const isCompleted =
+                              progressData?.[stageName] === true;
+
+                            return (
+                              <div
+                                key={stageName}
+                                className={`stage-item ${
+                                  isCompleted ? "completed" : "incomplete"
+                                }`}
+                              >
+                                {stageName}{" "}
+                                {isCompleted ? (
+                                  <span className="check">✅</span>
+                                ) : (
+                                  <span className="cross">❌</span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </section>
@@ -199,7 +294,7 @@ const PlayerDashboard: React.FC = () => {
         )}
       </main>
 
-      {/* Logout modal */}
+      {/* === LOGOUT MODAL === */}
       {showLogoutConfirm && (
         <div className="logout-confirm-overlay">
           <div className="logout-confirm-box">
