@@ -95,7 +95,48 @@ export default function AdminDashboard() {
           </section>
         )}
 
-        {activeTab === "players" && <h1>Manage Players</h1>}
+        {activeTab === "players" && (
+  <section className="manage-players">
+    <h1>Manage Players</h1>
+
+    <table className="players-table">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {/* Placeholder Data — This will later come from Firebase */}
+        <tr>
+          <td>UID123</td>
+          <td>player1@email.com</td>
+          <td className="status active">Active</td>
+          <td className="actions">
+            <button className="disable-btn">Disable</button>
+            <button className="ban-btn">Ban</button>
+            <button className="delete-btn">Delete</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>UID789</td>
+          <td>hacker@email.com</td>
+          <td className="status banned">Banned</td>
+          <td className="actions">
+            <button className="disable-btn">Enable</button>
+            <button className="ban-btn">Unban</button>
+            <button className="delete-btn">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+)}
+
 
         {activeTab === "feedbacks" && (
           <section>

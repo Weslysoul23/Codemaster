@@ -161,3 +161,101 @@
 }
 .confirm { background: #00bcd4; }
 .cancel { background: #444; }
+
+/* ✅ Manage Players Table */
+.manage-players {
+  max-width: 1000px;
+  margin: auto;
+}
+
+.manage-players h1 {
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #4744db;
+  padding-bottom: 0.5rem;
+}
+
+.players-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #111317;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.players-table th,
+.players-table td {
+  padding: 0.9rem;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.players-table th {
+  background: #1a1d24;
+  font-weight: 600;
+  color: #a8b4bd;
+}
+
+.players-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.players-table tbody tr:hover {
+  background: #1f2230;
+}
+
+/* ✅ Status Tags */
+.status {
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-transform: capitalize;
+}
+.status.active {
+  background: #005fff33;
+  color: #6db7ff;
+}
+.status.disabled {
+  background: #99999933;
+  color: #b7b7b7;
+}
+.status.banned {
+  background: #ff3b3b33;
+  color: #ff8a8a;
+}
+
+/* ✅ Buttons */
+.actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.actions button {
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.disable-btn {
+  background: #455a64;
+}
+.disable-btn:hover {
+  background: #607d8b;
+}
+
+.ban-btn {
+  background: #b71c1c;
+}
+.ban-btn:hover {
+  background: #d32f2f;
+}
+
+.delete-btn {
+  background: #9c27b0;
+}
+.delete-btn:hover {
+  background: #ba2bd9;
+}
