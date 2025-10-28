@@ -63,18 +63,78 @@
   color: #fff;
 }
 
-/* ✅ Logout button */
-.logout-btn {
-  width: 100%;
-  background: #ff5252;
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
+/* === LOGOUT MESSAGE === */
+.logout-message {
+  text-align: center;
+  padding-top: 10rem;
+  color: #cdd4de;
 }
-.logout-btn:hover { background: #e53935; }
 
+.logout-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: hsl(var(--primary));
+  text-decoration: underline;
+}
+
+/* === LOGOUT CONFIRMATION MODAL === */
+.logout-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.logout-confirm-box {
+  background: hsl(var(--card));
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  width: 320px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  color: #fff;
+}
+
+.logout-buttons {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+.confirm-yes,
+.confirm-no {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.confirm-yes {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+.confirm-yes:hover {
+  background: rgb(0, 42, 255);
+}
+
+.confirm-no {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+.confirm-no:hover {
+  background: rgba(228, 11, 11, 0.963);
+}
 /* ✅ Close button (mobile only) */
 .close-btn {
   display: none;
