@@ -5,6 +5,7 @@ import "./admin-dashboard.css";
 import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { db, app } from "@/lib/firebaseConfig";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import {
   collection,
   getDocs,
@@ -19,25 +20,32 @@ import {
   off,
   update,
   remove,
-  get
+  get,
 } from "firebase/database";
 
-
+// ✅ Add this type definition here
 interface Player {
   id: string;
   username: string;
-  email?: string;
-  status?: string;
+  email: string;
+  status: "active" | "banned" | "disabled" | string;
 }
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<
-    "dashboard" | "players" | "feedbacks" | "purchases"
-  >("dashboard");
 
+  const [loggedIn, setLoggedIn] = useState(true); // ✅ added
+  const [activeTab, setActiveTab] = useState<"dashboard" | "players" | "feedbacks" | "purchases">("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const auth = getAuth(app);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleLogout = async () => {
     const auth = getAuth(app);
@@ -45,6 +53,7 @@ export default function AdminDashboard() {
     setLoggedIn(false);
     window.location.href = "/";
   };
+
 
   // Prevent body scroll when sidebar open (mobile)
   useEffect(() => {
