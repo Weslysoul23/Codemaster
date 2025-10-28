@@ -291,7 +291,7 @@ export default function AdminDashboard() {
         {/* Players tab */}
         {activeTab === "players" && (
           <section className="manage-players">
-            <h1>Manage Players</h1>
+            <h2 className="logo">Manage Players</h2>
             {loadingPlayers ? (
               <p>Loading players...</p>
             ) : players.length === 0 ? (
@@ -355,7 +355,6 @@ export default function AdminDashboard() {
         {/* Feedbacks tab */}
         {activeTab === "feedbacks" && (
           <section>
-            <h1>User Feedbacks</h1>
             <div className="min-h-screen p-6 bg-black text-white">
               <h1 className="text-3xl font-bold mb-6">📩 User Feedbacks</h1>
               {feedbacks.length === 0 ? (

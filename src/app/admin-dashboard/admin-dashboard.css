@@ -7,16 +7,6 @@
   font-family: "Poppins", sans-serif;
 }
 
-/* ✅ Topbar Mobile Only */
-.menu-btn {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  z-index: 1000;
-  background: none;
-  border: none;
-  color: #fff;
-}
 
 /* ✅ Sidebar */
 .sidebar {
@@ -312,4 +302,21 @@
 }
 .delete-btn:hover {
   background: #ba2bd9;
+}
+
+/* ✅ Topbar Mobile Only */
+.menu-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  background: none;
+  border: none;
+  color: #fff;
+}
+
+@media (min-width: 768px) {
+  .menu-btn {
+    display: none;
+  }
 }
