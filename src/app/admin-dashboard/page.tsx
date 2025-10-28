@@ -45,7 +45,7 @@ export default function AdminDashboard() {
 
   // Prevent body scroll when sidebar open (mobile)
   useEffect(() => {
-    document.body.style.overflow = sidebarOpen ? "hidden" : "auto";
+    document.body.style.overflow = sidebarOpen ? "auto";
     return () => {
       document.body.style.overflow = "auto";
     };
