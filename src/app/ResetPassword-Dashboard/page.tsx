@@ -37,7 +37,7 @@ function ResetPasswordDashboardContent() {
     try {
       await confirmPasswordReset(auth, oobCode!, newPassword);
       setMessage("You may now proceed to the game and log in again.");
-      setTimeout(() => router.push("/Login"), 3000);
+      setTimeout(() => router.push("/"), 3000);
     } catch (error) {
       console.error(error);
       setMessage("Failed to reset password. Please try again.");

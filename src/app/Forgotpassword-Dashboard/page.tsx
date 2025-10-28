@@ -49,7 +49,7 @@ export default function ForgotPassword() {
           </button>
         </form>
         {message && <p className="message">{message}</p>}
-        <a href="/Login" className="back-link">
+        <a href="/" className="back-link">
           Back to Login
         </a>
       </div>
