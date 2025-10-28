@@ -1,23 +1,49 @@
 /* === MAIN LAYOUT === */
 .player-dashboard {
   display: flex;
-  min-height: 100vh;
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
-  font-family: 'Inter', 'Segoe UI', sans-serif;
+  height: 100vh;
+  background: #0b0c10;
+  color: #e6eef6;
+  font-family: "Poppins", sans-serif;
 }
 
 /* === SIDEBAR === */
 .sidebar {
-  width: 260px;
-  background: hsl(var(--card));
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 2rem 1rem;
+  width: 240px;
+  background: #111317;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  position: sticky;
-  top: 0;
+  gap: 1rem;
+  border-right: 1px solid rgba(255,255,255,0.05);
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar .logo {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #4744db;
+  margin-bottom: 2rem;
+}
+
+/* Sidebar buttons */
+.sidebar nav button {
+  background: none;
+  border: none;
+  width: 100%;
+  color: #cfd8dc;
+  text-align: left;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.sidebar nav button:hover,
+.sidebar nav button.active {
+  background: #4744db;
+  color: #fff;
 }
 
 /* === NAVIGATION === */
@@ -133,7 +159,48 @@
   text-align: center;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+}.home-boxes {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 2rem;
+  width: 100%;
+  margin-top: 3rem;
+  padding: 0 2rem;
+  box-sizing: border-box;
 }
+
+.home-boxes > div {
+  flex: 1 1 300px; /* flexible width */
+  max-width: 350px; /* limit width on large screens */
+  background: #1a1a1a; /* dark style */
+  border-radius: 16px;
+  padding: 1.5rem;
+  color: #fff;
+  text-align: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.home-boxes > div:hover {
+  transform: translateY(-5px);
+  background: #242424;
+}
+
+/* ✅ Responsive: stack boxes vertically on mobile */
+@media (max-width: 768px) {
+  .home-boxes {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .home-boxes > div {
+    width: 90%;
+    max-width: none;
+  }
+}
+
 
 .info-box:hover {
   transform: scale(1.05);
@@ -454,4 +521,20 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.menu-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  background: none;
+  border: none;
+  color: #fff;
+}
+
+@media (min-width: 768px) {
+  .menu-btn {
+    display: none;
+  }
 }

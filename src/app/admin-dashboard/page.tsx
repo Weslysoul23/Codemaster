@@ -22,6 +22,7 @@ import {
   get
 } from "firebase/database";
 
+
 interface Player {
   id: string;
   username: string;
@@ -38,9 +39,11 @@ export default function AdminDashboard() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const router = useRouter();
 
-  const handleLogout = () => {
-    setShowLogoutConfirm(false);
-    router.push("/");
+  const handleLogout = async () => {
+    const auth = getAuth(app);
+    await signOut(auth);
+    setLoggedIn(false);
+    window.location.href = "/";
   };
 
   // Prevent body scroll when sidebar open (mobile)
@@ -178,6 +181,17 @@ export default function AdminDashboard() {
       console.error("❌ Error deleting player:", error);
     }
   };
+
+  if (!loggedIn) {
+    return (
+      <div className="logout-message">
+        <h1>You have been logged out.</h1>
+        <a href="/" className="logout-link">
+          Return to Login
+        </a>
+      </div>
+    );
+  }
 
   
 

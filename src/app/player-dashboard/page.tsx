@@ -6,6 +6,7 @@ import LeaderBoard from "./LeaderBoard";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { app } from "@/lib/firebaseConfig";
+import { Menu, X } from "lucide-react"; 
 
 interface LevelProgress {
   [stageKey: string]: boolean;
@@ -22,6 +23,7 @@ const PlayerDashboard: React.FC = () => {
   const [points, setPoints] = useState<number | string>("N/A");
   const [progressData, setProgressData] = useState<LevelProgress>({});
   const [expandedLevel, setExpandedLevel] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -33,6 +35,19 @@ const PlayerDashboard: React.FC = () => {
         const userRef = ref(db, `users/${user.uid}/username`);
         onValue(userRef, (snapshot) => {
           if (snapshot.exists()) setUsername(snapshot.val());
+        });
+
+        // --- 🔥 Ban / Disable Check (Added Here) ---
+        const statusRef = ref(db, `users/${user.uid}/status`);
+        onValue(statusRef, (snapshot) => {
+          const status = snapshot.val();
+          if (status === "banned" || status === "disabled") {
+            alert(`Your account has been ${status}. Logging out...`);
+            signOut(auth).then(() => {
+              setLoggedIn(false);
+              window.location.href = "/";
+            });
+          }
         });
 
         // --- Leaderboard (Rank + Points) ---
@@ -91,36 +106,11 @@ const PlayerDashboard: React.FC = () => {
 
   // === Level Structure ===
   const levels = {
-    Level1: [
-      "LVL 1 - Stage 1",
-      "LVL 1 - Stage 2",
-      "LVL 1 - Stage 3",
-      "LVL 1 - Stage 4",
-    ],
-    Level2: [
-      "LVL 2 - Stage 1",
-      "LVL 2 - Stage 2",
-      "LVL 2 - Stage 3",
-      "LVL 2 - Stage 4",
-    ],
-    Level3: [
-      "LVL 3 - Stage 1",
-      "LVL 3 - Stage 2",
-      "LVL 3 - Stage 3",
-      "LVL 3 - Stage 4",
-    ],
-    Level4: [
-      "LVL 4 - Stage 1",
-      "LVL 4 - Stage 2",
-      "LVL 4 - Stage 3",
-      "LVL 4 - Stage 4",
-    ],
-    Level5: [
-      "LVL 5 - Stage 1",
-      "LVL 5 - Stage 2",
-      "LVL 5 - Stage 3",
-      "LVL 5 - Stage 4",
-    ],
+    Level1: ["LVL 1 - Stage 1", "LVL 1 - Stage 2", "LVL 1 - Stage 3", "LVL 1 - Stage 4"],
+    Level2: ["LVL 2 - Stage 1", "LVL 2 - Stage 2", "LVL 2 - Stage 3", "LVL 2 - Stage 4"],
+    Level3: ["LVL 3 - Stage 1", "LVL 3 - Stage 2", "LVL 3 - Stage 3", "LVL 3 - Stage 4"],
+    Level4: ["LVL 4 - Stage 1", "LVL 4 - Stage 2", "LVL 4 - Stage 3", "LVL 4 - Stage 4"],
+    Level5: ["LVL 5 - Stage 1", "LVL 5 - Stage 2", "LVL 5 - Stage 3", "LVL 5 - Stage 4"],
     Level6: ["LVL 6 - Final Boss"],
   };
 
@@ -137,31 +127,27 @@ const PlayerDashboard: React.FC = () => {
 
   return (
     <div className="player-dashboard">
+      {/* Topbar (mobile) */}
+      <header className="topbar">
+        <button className="menu-btn" onClick={() => setSidebarOpen(true)}>
+          <Menu size={22} />
+        </button>
+      </header>
+
       {/* === SIDEBAR === */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+        <h2 className="logo">Players Panel</h2>
         <nav className="sidebar-nav">
-          <button
-            className={activeTab === "home" ? "active" : ""}
-            onClick={() => setActiveTab("home")}
-          >
+          <button className={activeTab === "home" ? "active" : ""} onClick={() => setActiveTab("home")}>
             Home
           </button>
-          <button
-            className={activeTab === "leaderboard" ? "active" : ""}
-            onClick={() => setActiveTab("leaderboard")}
-          >
+          <button className={activeTab === "leaderboard" ? "active" : ""} onClick={() => setActiveTab("leaderboard")}>
             Leader Board
           </button>
-          <button
-            className={activeTab === "shop" ? "active" : ""}
-            onClick={() => setActiveTab("shop")}
-          >
+          <button className={activeTab === "shop" ? "active" : ""} onClick={() => setActiveTab("shop")}>
             In-Game Shop
           </button>
-          <button
-            className={activeTab === "subscription" ? "active" : ""}
-            onClick={() => setActiveTab("subscription")}
-          >
+          <button className={activeTab === "subscription" ? "active" : ""} onClick={() => setActiveTab("subscription")}>
             Subscription
           </button>
           <button onClick={() => setShowLogoutConfirm(true)}>Logout</button>
@@ -174,7 +160,7 @@ const PlayerDashboard: React.FC = () => {
           <section className="tab-content home-content">
             <h1>Welcome Back, {username}!</h1>
             <p className="home-tagline">
-              The world’s last defense isn’t a gun — it’s a line of code.
+              <em>The world’s last defense isn’t a gun — it’s a line of code.</em>
             </p>
 
             <div className="home-boxes">
@@ -193,10 +179,7 @@ const PlayerDashboard: React.FC = () => {
                 <div className="levels-container">
                   {Object.entries(levels).map(([levelKey, stages]) => (
                     <div key={levelKey} className="level-block">
-                      <button
-                        className="level-toggle-btn"
-                        onClick={() => toggleLevel(levelKey)}
-                      >
+                      <button className="level-toggle-btn" onClick={() => toggleLevel(levelKey)}>
                         {levelKey.replace("Level", "Level ")}{" "}
                         <span>{expandedLevel === levelKey ? "▲" : "▼"}</span>
                       </button>
@@ -204,22 +187,14 @@ const PlayerDashboard: React.FC = () => {
                       {expandedLevel === levelKey && (
                         <div className="stage-list">
                           {stages.map((stageName) => {
-                            const isCompleted =
-                              progressData?.[stageName] === true;
+                            const isCompleted = progressData?.[stageName] === true;
 
                             return (
                               <div
                                 key={stageName}
-                                className={`stage-item ${
-                                  isCompleted ? "completed" : "incomplete"
-                                }`}
+                                className={`stage-item ${isCompleted ? "completed" : "incomplete"}`}
                               >
-                                {stageName}{" "}
-                                {isCompleted ? (
-                                  <span className="check">✅</span>
-                                ) : (
-                                  <span className="cross">❌</span>
-                                )}
+                                {stageName} {isCompleted ? "✅" : "❌"}
                               </div>
                             );
                           })}
@@ -242,9 +217,7 @@ const PlayerDashboard: React.FC = () => {
         {activeTab === "shop" && (
           <section className="tab-content shop-content">
             <h1>In-Game Shop</h1>
-            <p className="shop-tagline">
-              Coming soon — power-ups, skins, and more!
-            </p>
+            <p className="shop-tagline">Coming soon — power-ups, skins, and more!</p>
           </section>
         )}
 
@@ -294,6 +267,7 @@ const PlayerDashboard: React.FC = () => {
         )}
       </main>
 
+
       {/* === LOGOUT MODAL === */}
       {showLogoutConfirm && (
         <div className="logout-confirm-overlay">
@@ -303,10 +277,7 @@ const PlayerDashboard: React.FC = () => {
               <button className="confirm-yes" onClick={handleLogout}>
                 Yes
               </button>
-              <button
-                className="confirm-no"
-                onClick={() => setShowLogoutConfirm(false)}
-              >
+              <button className="confirm-no" onClick={() => setShowLogoutConfirm(false)}>
                 No
               </button>
             </div>
