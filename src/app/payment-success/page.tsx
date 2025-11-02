@@ -1,4 +1,5 @@
 "use client";
+
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -10,6 +11,7 @@ export default function PaymentSuccess() {
     { id: number; left: number; duration: number; delay: number; bit: string }[]
   >([]);
   const [emailSent, setEmailSent] = useState(false);
+  const [sending, setSending] = useState(false);
   const [userInfo, setUserInfo] = useState<{ name?: string; email?: string }>({});
 
   // 🌧️ Generate binary rain
@@ -24,7 +26,7 @@ export default function PaymentSuccess() {
     setBinaryRain(rain);
   }, []);
 
-  // 🔑 Fetch Firebase user data dynamically
+  // 🔑 Get user info from Firebase or session
   useEffect(() => {
     const auth = getAuth(app);
     const user = auth.currentUser;
@@ -35,50 +37,58 @@ export default function PaymentSuccess() {
         email: user.email || "",
       });
     } else {
-      // If user not found (e.g. reloaded after redirect), fallback
       const storedEmail = sessionStorage.getItem("userEmail");
       const storedName = sessionStorage.getItem("userName");
-      if (storedEmail) setUserInfo({ name: storedName || "User", email: storedEmail });
+      if (storedEmail)
+        setUserInfo({ name: storedName || "User", email: storedEmail });
     }
   }, []);
 
-  // 💌 Send dynamic email receipt once user info is ready
-  useEffect(() => {
-    const sendEmailReceipt = async () => {
-      if (!userInfo.email || emailSent) return;
+  // 💌 Send email receipt
+  const sendEmailReceipt = async (auto = false) => {
+    if (!userInfo.email) return;
 
-      try {
-        const res = await fetch("/api/send-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: userInfo.name,
-            email: userInfo.email,
-            amount: 299, // Could also store/retrieve dynamically
-            description: "CodeMaster Pro Plan",
-            date: new Date().toLocaleString(),
-          }),
-        });
+    setSending(true);
 
-        if (res.ok) {
-          console.log("✅ Email sent successfully!");
-          setEmailSent(true);
-        } else {
-          console.error("❌ Failed to send email");
-        }
-      } catch (err) {
-        console.error("Email send error:", err);
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: userInfo.name,
+          email: userInfo.email,
+          amount: 299,
+          description: "CodeMaster Pro Plan",
+          date: new Date().toLocaleString(),
+        }),
+      });
+
+      if (res.ok) {
+        console.log("✅ Email sent successfully!");
+        setEmailSent(true);
+      } else {
+        console.error("❌ Failed to send email");
       }
-    };
+    } catch (err) {
+      console.error("Email send error:", err);
+    } finally {
+      setSending(false);
+    }
+  };
 
-    sendEmailReceipt();
-  }, [userInfo, emailSent]);
+  // 🔁 Auto send receipt on load (only once)
+  useEffect(() => {
+    if (userInfo.email && !emailSent && !sending) {
+      sendEmailReceipt(true);
+    }
+  }, [userInfo, emailSent, sending]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-black text-[#00ff99] font-mono overflow-hidden relative">
-      {/* Background */}
+      {/* 🌌 Background Glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,153,0.1)_0%,transparent_70%)] animate-pulse"></div>
 
+      {/* 🧾 Payment Info */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -107,23 +117,50 @@ export default function PaymentSuccess() {
           has been activated.
         </p>
 
-        {emailSent ? (
-          <p className="text-sm text-[#00ffaa] mb-4">
-            📩 Receipt sent to {userInfo.email}
-          </p>
-        ) : (
-          <p className="text-sm opacity-60 mb-4">Sending your receipt...</p>
+        {/* 💌 Email status */}
+        <div className="mb-6">
+          {sending ? (
+            <motion.p
+              className="text-sm opacity-80"
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              📧 Sending your receipt...
+            </motion.p>
+          ) : emailSent ? (
+            <p className="text-sm text-[#00ffaa]">✅ Receipt sent to {userInfo.email}</p>
+          ) : (
+            <p className="text-sm opacity-60">Sending your receipt...</p>
+          )}
+        </div>
+
+        {/* 🔁 Resend Button */}
+        {emailSent && (
+          <button
+            onClick={() => sendEmailReceipt(false)}
+            disabled={sending}
+            className={`border border-[#00ff99] px-6 py-3 rounded-xl transition-all duration-300 shadow-[0_0_10px_#00ff99] ${
+              sending
+                ? "bg-[#004422] text-gray-400 cursor-not-allowed"
+                : "hover:bg-[#00ff99] hover:text-black"
+            }`}
+          >
+            {sending ? "Resending..." : "Resend Receipt"}
+          </button>
         )}
 
-        <Link
-          href="/player-dashboard"
-          className="border border-[#00ff99] px-6 py-3 rounded-xl hover:bg-[#00ff99] hover:text-black transition-all duration-300 shadow-[0_0_10px_#00ff99]"
-        >
-          Return to Dashboard
-        </Link>
+        {/* 🔗 Return */}
+        <div className="mt-8">
+          <Link
+            href="/player-dashboard"
+            className="border border-[#00ff99] px-6 py-3 rounded-xl hover:bg-[#00ff99] hover:text-black transition-all duration-300 shadow-[0_0_10px_#00ff99]"
+          >
+            Return to Dashboard
+          </Link>
+        </div>
       </motion.div>
 
-      {/* Floating binary rain */}
+      {/* 🌧️ Floating Binary Rain */}
       <div className="absolute inset-0 overflow-hidden opacity-20">
         {binaryRain.map((drop) => (
           <motion.span

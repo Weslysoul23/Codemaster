@@ -1,13 +1,14 @@
-// src\app\api\send-email\route.ts
-
 import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   try {
     const { name, email, amount, description, date } = await req.json();
 
-    console.log("📨 Email request received:", { name, email, amount, description, date });
+    if (!email) {
+      return new Response(JSON.stringify({ error: "Email is required" }), { status: 400 });
+    }
 
+    // Create Gmail transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -16,22 +17,37 @@ export async function POST(req: Request) {
       },
     });
 
-    const info = await transporter.sendMail({
+    const mailOptions = {
       from: `"CodeMaster" <${process.env.EMAIL_USER}>`,
-      to: email || process.env.NOTIFY_RECEIVER,
-      subject: "Payment Confirmation - CodeMaster Pro Plan",
+      to: email,
+      subject: "Your CodeMaster Payment Receipt",
       html: `
-        <h2>Payment Successful 🎉</h2>
-        <p>Hi ${name},</p>
-        <p>Your <strong>${description}</strong> payment of <strong>$${amount}</strong> was received on ${date}.</p>
-        <p>Thank you for supporting CodeMaster!</p>
+        <div style="font-family:Arial, sans-serif; background:#0a1b55; color:white; padding:20px; border-radius:10px;">
+          <h2>💻 CodeMaster Payment Receipt</h2>
+          <p>Hi <b>${name}</b>,</p>
+          <p>Thank you for subscribing to the <b>${description}</b>.</p>
+          <p><b>Amount:</b> ₱${amount}</p>
+          <p><b>Date:</b> ${date}</p>
+          <hr/>
+          <p style="font-size:12px;">If you did not make this payment, please contact support immediately.</p>
+        </div>
       `,
+    };
+
+    // ✅ Send email in background, don't block
+    transporter.sendMail(mailOptions).then(() => {
+      console.log(`✅ Email sent to ${email}`);
+    }).catch((err) => {
+      console.error("❌ Email send error:", err);
     });
 
-    console.log("✅ Email sent successfully!", info.messageId);
-    return Response.json({ success: true });
-  } catch (error: any) {
+    // Immediately return success
+    return new Response(JSON.stringify({ success: true, message: "Email sending in progress" }), { status: 200 });
+
+  } catch (error) {
     console.error("❌ Email send error:", error);
-    return new Response("Failed to send email.", { status: 500 });
+    return new Response(JSON.stringify({ success: false, error: String(error) }), {
+      status: 500,
+    });
   }
 }
