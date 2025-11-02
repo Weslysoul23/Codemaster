@@ -2,6 +2,9 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
+// Ensure Node.js runtime for nodemailer
+export const runtime = "nodejs";
+
 export async function POST(req: Request) {
   try {
     const event = await req.json();
@@ -17,18 +20,24 @@ export async function POST(req: Request) {
       const amount = payment.amount / 100; // PayMongo amounts are in cents
       const description = "CodeMaster Pro Plan";
 
+      const user = process.env.EMAIL_USER;
+      const pass = process.env.EMAIL_PASS;
+      if (!user || !pass) {
+        console.error("Email env vars missing for webhook (EMAIL_USER/EMAIL_PASS)");
+        return NextResponse.json({ error: "Email service not configured" }, { status: 500 });
+      }
+
       // 📨 Configure nodemailer
       const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: { user, pass },
       });
 
       // ✉️ Send email receipt
       await transporter.sendMail({
-        from: `"CodeMaster" <${process.env.EMAIL_USER}>`,
+        from: `CodeMaster <${user}>`,
         to: email,
         subject: "Payment Confirmation - CodeMaster Pro Plan",
         html: `
