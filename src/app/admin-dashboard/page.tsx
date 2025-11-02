@@ -269,6 +269,12 @@ export default function AdminDashboard() {
             Logout
           </button>
         </nav>
+
+        <div className="sidebar-logo">
+          <span className="glitch" data-text="CODEMASTER">
+            <strong>CODEMASTER</strong>
+          </span>
+        </div>
       </aside>
 
       {/* Overlay for mobile sidebar */}
