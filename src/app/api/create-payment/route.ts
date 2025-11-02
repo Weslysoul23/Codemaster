@@ -1,4 +1,4 @@
-// src\app\api\send-email\route.ts
+// src\app\api\create-payment\route.ts
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
