@@ -9,16 +9,42 @@ export default function PaymentSuccess() {
   >([]);
 
   useEffect(() => {
-    // Generate random positions client-side only
+    // Generate binary rain effect
     const rain = Array.from({ length: 50 }).map((_, i) => ({
       id: i,
-      left: Math.random() * 100, // %
-      duration: Math.random() * 10 + 10, // seconds
-      delay: Math.random() * 5, // seconds
+      left: Math.random() * 100,
+      duration: Math.random() * 10 + 10,
+      delay: Math.random() * 5,
       bit: Math.random() > 0.5 ? "1" : "0",
     }));
     setBinaryRain(rain);
   }, []);
+
+useEffect(() => {
+  const sendEmail = async () => {
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Wesly",
+          email: "wesly@example.com",
+          amount: "100.00",
+          description: "CodeMaster Pro Plan",
+          date: new Date().toLocaleDateString(),
+        }),
+      });
+
+      if (!res.ok) throw new Error("Email send failed");
+      console.log("✅ Payment confirmation email sent!");
+    } catch (err) {
+      console.error("❌ Failed to send email:", err);
+    }
+  };
+
+  sendEmail();
+}, []);
+
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-black text-[#00ff99] font-mono overflow-hidden relative">
@@ -42,7 +68,7 @@ export default function PaymentSuccess() {
           }}
           transition={{ repeat: Infinity, repeatType: "mirror", duration: 2 }}
         >
-        PAYMENT COMPLETE
+          PAYMENT COMPLETE
         </motion.h1>
 
         <p className="text-lg md:text-xl opacity-80 mb-8">
