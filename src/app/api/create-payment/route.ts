@@ -27,9 +27,8 @@ export async function POST(req: Request) {
               },
             ],
             payment_method_types: ["card", "gcash", "paymaya"],
-            success_url: "https://codemaster-thesis.vercel.app/payment-success",
-            cancel_url: "https://codemaster-thesis.vercel.app/player-dashboard",
-
+            success_url: "https://codemaster-thesis.vercel.app//payment-success",
+            cancel_url: "https://codemaster-thesis.vercel.app//player-dashboard",
           },
         },
       }),
