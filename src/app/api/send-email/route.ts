@@ -1,4 +1,3 @@
-// src\app\api\send-email\route.ts
 import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
@@ -9,7 +8,7 @@ export async function POST(req: Request) {
       return new Response(JSON.stringify({ error: "Email is required" }), { status: 400 });
     }
 
-    // Create Gmail transporter
+    // Gmail SMTP transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -35,20 +34,13 @@ export async function POST(req: Request) {
       `,
     };
 
-    // ✅ Send email in background, don't block
-    transporter.sendMail(mailOptions).then(() => {
-      console.log(`✅ Email sent to ${email}`);
-    }).catch((err) => {
-      console.error("❌ Email send error:", err);
-    });
+    // ✅ Wait for the mail to send before responding
+    await transporter.sendMail(mailOptions);
 
-    // Immediately return success
-    return new Response(JSON.stringify({ success: true, message: "Email sending in progress" }), { status: 200 });
+    return new Response(JSON.stringify({ success: true, message: "Email sent successfully" }), { status: 200 });
 
   } catch (error) {
     console.error("❌ Email send error:", error);
-    return new Response(JSON.stringify({ success: false, error: String(error) }), {
-      status: 500,
-    });
+    return new Response(JSON.stringify({ success: false, error: String(error) }), { status: 500 });
   }
 }

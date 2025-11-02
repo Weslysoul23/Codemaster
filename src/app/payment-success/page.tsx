@@ -1,9 +1,8 @@
-// src\app\payment-success\page.tsx
 "use client";
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getAuth } from "firebase/auth";
 import { app } from "@/lib/firebaseConfig";
 
@@ -14,8 +13,9 @@ export default function PaymentSuccess() {
   const [emailSent, setEmailSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [userInfo, setUserInfo] = useState<{ name?: string; email?: string }>({});
+  const emailAttempted = useRef(false); // 🧠 Prevents multiple auto-sends
 
-  // 🌧️ Generate binary rain
+  // 🌧️ Animated binary rain effect
   useEffect(() => {
     const rain = Array.from({ length: 50 }).map((_, i) => ({
       id: i,
@@ -27,7 +27,7 @@ export default function PaymentSuccess() {
     setBinaryRain(rain);
   }, []);
 
-  // 🔑 Get user info from Firebase or session
+  // 🔑 Load user info (Firebase or session)
   useEffect(() => {
     const auth = getAuth(app);
     const user = auth.currentUser;
@@ -48,7 +48,9 @@ export default function PaymentSuccess() {
   // 💌 Send email receipt
   const sendEmailReceipt = async (auto = false) => {
     if (!userInfo.email) return;
+    if (auto && emailAttempted.current) return; // ⚡ Prevent multiple triggers
 
+    emailAttempted.current = true;
     setSending(true);
 
     try {
@@ -64,11 +66,13 @@ export default function PaymentSuccess() {
         }),
       });
 
-      if (res.ok) {
+      const data = await res.json();
+
+      if (res.ok && data.success) {
         console.log("✅ Email sent successfully!");
         setEmailSent(true);
       } else {
-        console.error("❌ Failed to send email");
+        console.error("❌ Failed to send email:", data.error);
       }
     } catch (err) {
       console.error("Email send error:", err);
@@ -77,7 +81,7 @@ export default function PaymentSuccess() {
     }
   };
 
-  // 🔁 Auto send receipt on load (only once)
+  // 🧠 Automatically send the receipt once on load
   useEffect(() => {
     if (userInfo.email && !emailSent && !sending) {
       sendEmailReceipt(true);
@@ -129,9 +133,13 @@ export default function PaymentSuccess() {
               📧 Sending your receipt...
             </motion.p>
           ) : emailSent ? (
-            <p className="text-sm text-[#00ffaa]">✅ Receipt sent to {userInfo.email}</p>
+            <p className="text-sm text-[#00ffaa]">
+              ✅ Receipt sent to {userInfo.email}
+            </p>
           ) : (
-            <p className="text-sm opacity-60">Sending your receipt...</p>
+            <p className="text-sm opacity-60">
+              Preparing your digital receipt...
+            </p>
           )}
         </div>
 
