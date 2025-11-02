@@ -125,15 +125,14 @@ const PlayerDashboard: React.FC = () => {
   const SubscribeButton = () => {
     const [loading, setLoading] = useState(false);
 
-const handleSubscribe = async () => {
-  setLoading(true);
-  try {
-    const res = await fetch("/api/create-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: 299, description: "Monthly Pro Plan" }), // 👈 HERE
-    });
-
+    const handleSubscribe = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/create-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: 299, description: "Monthly Pro Plan" }),
+        });
 
         const data = await res.json();
         if (data.data?.attributes?.checkout_url) {
