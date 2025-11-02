@@ -1,4 +1,3 @@
-// src\app\api\create-payment\route.ts
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -27,8 +26,8 @@ export async function POST(req: Request) {
               },
             ],
             payment_method_types: ["card", "gcash", "paymaya"],
-            success_url: "https://codemaster-thesis.vercel.app//payment-success",
-            cancel_url: "https://codemaster-thesis.vercel.app//player-dashboard",
+            success_url: "http://localhost:3002/payment-success",
+            cancel_url: "http://localhost:3002/player-dashboard",
           },
         },
       }),

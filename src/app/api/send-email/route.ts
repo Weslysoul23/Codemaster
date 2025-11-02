@@ -1,4 +1,3 @@
-// src\app\api\send-email\route.ts
 import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
