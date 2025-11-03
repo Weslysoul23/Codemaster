@@ -1,7 +1,7 @@
-import type { NextConfig } from 'next';
+import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  /* existing config options */
+  /* config options here */
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -17,9 +17,6 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
-  },
-  experimental: {
-    optimizeCss: true, // ✅ Enable CSS optimization to reduce preload warnings
   },
 };
 

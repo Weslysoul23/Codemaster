@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
@@ -6,51 +5,42 @@ export async function POST(req: Request) {
     const { name, email, amount, description, date } = await req.json();
 
     if (!email) {
-      return NextResponse.json({ success: false, error: "Missing email" }, { status: 400 });
+      return new Response(JSON.stringify({ error: "Email is required" }), { status: 400 });
     }
 
-    // Gmail SMTP setup
+    // Gmail SMTP transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.EMAIL_USER, // e.g. codemasterg7@gmail.com
-        pass: process.env.EMAIL_PASS, // Gmail app password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
-    // Generate a random transaction ID
-    const transactionId = Math.floor(100000 + Math.random() * 900000);
-
     const mailOptions = {
       from: `"CodeMaster" <${process.env.EMAIL_USER}>`,
-      to: email, // 👈 Sent to the one who paid
-      bcc: process.env.NOTIFY_RECEIVER, // 👈 You (the owner) get a copy
-      subject: `Your receipt from CodeMaster — #${transactionId}`,
+      to: email,
+      subject: "Your CodeMaster Payment Receipt",
       html: `
-        <div style="font-family:Arial,sans-serif;padding:20px;background-color:#f8f9fa;border-radius:10px;">
-          <h2 style="color:#00b894;">CodeMaster</h2>
-          <p>Hi <strong>${name}</strong>,</p>
-          <p>Thank you for your payment to <strong>CodeMaster</strong>!</p>
-          <p>Here are your transaction details:</p>
-          <ul>
-            <li><strong>Receipt ID:</strong> #${transactionId}</li>
-            <li><strong>Description:</strong> ${description}</li>
-            <li><strong>Amount:</strong> ₱${amount}</li>
-            <li><strong>Date:</strong> ${date}</li>
-          </ul>
-          <p>We appreciate your support. You can now enjoy your CodeMaster Pro Plan!</p>
-          <hr style="margin:20px 0;border:none;border-top:1px solid #ccc;" />
-          <p style="font-size:12px;color:#555;">This is an automated receipt. Please don’t reply to this email.</p>
+        <div style="font-family:Arial, sans-serif; background:#0a1b55; color:white; padding:20px; border-radius:10px;">
+          <h2>💻 CodeMaster Payment Receipt</h2>
+          <p>Hi <b>${name}</b>,</p>
+          <p>Thank you for subscribing to the <b>${description}</b>.</p>
+          <p><b>Amount:</b> ₱${amount}</p>
+          <p><b>Date:</b> ${date}</p>
+          <hr/>
+          <p style="font-size:12px;">If you did not make this payment, please contact support immediately.</p>
         </div>
       `,
     };
 
+    // ✅ Wait for the mail to send before responding
     await transporter.sendMail(mailOptions);
 
-    console.log(`📨 Receipt sent to ${email}`);
-    return NextResponse.json({ success: true });
-  } catch (err: any) {
-    console.error("Email sending failed:", err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return new Response(JSON.stringify({ success: true, message: "Email sent successfully" }), { status: 200 });
+
+  } catch (error) {
+    console.error("❌ Email send error:", error);
+    return new Response(JSON.stringify({ success: false, error: String(error) }), { status: 500 });
   }
 }

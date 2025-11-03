@@ -14,7 +14,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         data: {
           attributes: {
-            amount: amount * 100, // PayMongo uses centavos
+            amount: amount * 100, // PayMongo uses cents
             currency: "PHP",
             description,
             line_items: [
