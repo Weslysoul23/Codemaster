@@ -34,13 +34,14 @@ export async function POST(req: Request) {
       `,
     };
 
-    // ✅ Wait for the mail to send before responding
-    await transporter.sendMail(mailOptions);
+    // ✅ Send email
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", info.response);
 
     return new Response(JSON.stringify({ success: true, message: "Email sent successfully" }), { status: 200 });
 
-  } catch (error) {
-    console.error("❌ Email send error:", error);
+  } catch (error: any) {
+    console.error("❌ Email send error:", error?.response || error.message || error);
     return new Response(JSON.stringify({ success: false, error: String(error) }), { status: 500 });
   }
 }
