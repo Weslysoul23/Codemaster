@@ -19,27 +19,29 @@ export async function POST(req: Request) {
 
     // Compose the email
     const mailOptions = {
-      from: `"CodeMaster" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: `🧾 Your receipt from CodeMaster — #${transactionId}`,
-      html: `
-        <div style="font-family:Arial,sans-serif;padding:20px;background-color:#f8f9fa;border-radius:10px;">
-          <h2 style="color:#00b894;">CodeMaster</h2>
-          <p>Hi <strong>${name}</strong>,</p>
-          <p>Thank you for your payment to <strong>CodeMaster</strong>!</p>
-          <p>Here are your transaction details:</p>
-          <ul>
-            <li><strong>Receipt ID:</strong> #${transactionId}</li>
-            <li><strong>Description:</strong> ${description}</li>
-            <li><strong>Amount:</strong> ₱${amount}</li>
-            <li><strong>Date:</strong> ${date}</li>
-          </ul>
-          <p>We appreciate your support. You can now enjoy your CodeMaster Pro Plan!</p>
-          <hr style="margin:20px 0;border:none;border-top:1px solid #ccc;" />
-          <p style="font-size:12px;color:#555;">This is an automated receipt. Please don’t reply to this email.</p>
-        </div>
-      `,
-    };
+  from: `"CodeMaster" <${process.env.EMAIL_USER}>`,
+  to: email,
+  bcc: process.env.NOTIFY_RECEIVER, // 👈 This sends a copy to you
+  subject: `Your receipt from CodeMaster — #${transactionId}`,
+  html: `
+    <div style="font-family:Arial,sans-serif;padding:20px;background-color:#f8f9fa;border-radius:10px;">
+      <h2 style="color:#00b894;">CodeMaster</h2>
+      <p>Hi <strong>${name}</strong>,</p>
+      <p>Thank you for your payment to <strong>CodeMaster</strong>!</p>
+      <p>Here are your transaction details:</p>
+      <ul>
+        <li><strong>Receipt ID:</strong> #${transactionId}</li>
+        <li><strong>Description:</strong> ${description}</li>
+        <li><strong>Amount:</strong> ₱${amount}</li>
+        <li><strong>Date:</strong> ${date}</li>
+      </ul>
+      <p>We appreciate your support. You can now enjoy your CodeMaster Pro Plan!</p>
+      <hr style="margin:20px 0;border:none;border-top:1px solid #ccc;" />
+      <p style="font-size:12px;color:#555;">This is an automated receipt. Please don’t reply to this email.</p>
+    </div>
+  `,
+};
+
 
     await transporter.sendMail(mailOptions);
 
