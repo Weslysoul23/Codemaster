@@ -3,9 +3,9 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "@/lib/firebaseConfig";
-import "./payment-success.css"; // Import the CSS
+import "./payment-success.css";
 
 interface BinaryDrop {
   id: number;
@@ -17,9 +17,9 @@ interface BinaryDrop {
 
 export default function PaymentSuccess() {
   const [binaryRain, setBinaryRain] = useState<BinaryDrop[]>([]);
-  const [emailSent, setEmailSent] = useState(false);
-  const [sending, setSending] = useState(false);
   const [userInfo, setUserInfo] = useState<{ name?: string; email?: string }>({});
+  const [sending, setSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
   const emailAttempted = useRef(false);
 
   // 🌧️ Binary Rain Effect
@@ -34,18 +34,19 @@ export default function PaymentSuccess() {
     setBinaryRain(rain);
   }, []);
 
-  // 🔑 Load User Info
+  // 🔑 Load User Info reliably
   useEffect(() => {
     const auth = getAuth(app);
-    const user = auth.currentUser;
-
-    if (user) {
-      setUserInfo({ name: user.displayName || "CodeMaster User", email: user.email || "" });
-    } else {
-      const storedEmail = sessionStorage.getItem("userEmail");
-      const storedName = sessionStorage.getItem("userName");
-      if (storedEmail) setUserInfo({ name: storedName || "User", email: storedEmail });
-    }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserInfo({ name: user.displayName || "CodeMaster User", email: user.email || "" });
+      } else {
+        const storedEmail = sessionStorage.getItem("userEmail");
+        const storedName = sessionStorage.getItem("userName");
+        if (storedEmail) setUserInfo({ name: storedName || "User", email: storedEmail });
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   // 💌 Send Email
@@ -70,9 +71,7 @@ export default function PaymentSuccess() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       const data = await res.json();
-
       if (!res.ok) console.error("API Error:", data.error || res.statusText);
       if (data.success) setEmailSent(true);
     } catch (err) {
@@ -82,7 +81,7 @@ export default function PaymentSuccess() {
     }
   };
 
-  // 🧠 Auto-send receipt on load
+  // 🧠 Auto-send receipt on load when email is available
   useEffect(() => {
     if (userInfo.email && !emailSent && !sending) sendEmailReceipt(true);
   }, [userInfo, emailSent, sending]);
