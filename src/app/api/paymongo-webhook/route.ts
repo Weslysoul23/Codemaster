@@ -6,13 +6,14 @@ export async function POST(req: Request) {
   try {
     const event = await req.json();
 
-    // 1️⃣ Make sure this is a successful payment
-    if (event.type !== "payment.paid") {
+    // ✅ Handle both Checkout and Payment Link events
+    if (event.type !== "payment.paid" && event.type !== "link.payment.paid") {
       return NextResponse.json({ message: "Not a paid event" });
     }
 
     const payment = event.data.attributes;
-    const payerEmail = payment.billing?.email || payment.payment_method_details?.email;
+    const payerEmail =
+      payment.billing?.email || payment.payment_method_details?.email;
     const payerName = payment.billing?.name || "Valued Customer";
     const amount = payment.amount / 100; // convert cents to PHP
     const description = payment.description || "CodeMaster Plan";
@@ -20,7 +21,10 @@ export async function POST(req: Request) {
 
     if (!payerEmail) {
       console.error("No payer email in payment:", payment);
-      return NextResponse.json({ error: "No payer email found" }, { status: 400 });
+      return NextResponse.json(
+        { error: "No payer email found" },
+        { status: 400 }
+      );
     }
 
     // 2️⃣ Send receipt
@@ -55,6 +59,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, message: "Receipt sent" });
   } catch (err) {
     console.error("Webhook error:", err);
-    return NextResponse.json({ success: false, error: String(err) }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: String(err) },
+      { status: 500 }
+    );
   }
 }
