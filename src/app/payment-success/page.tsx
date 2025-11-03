@@ -46,40 +46,50 @@ export default function PaymentSuccess() {
   }, []);
 
   // 💌 Send email receipt
-  const sendEmailReceipt = async (auto = false) => {
-    if (!userInfo.email) return;
-    if (auto && emailAttempted.current) return; // ⚡ Prevent multiple triggers
+const sendEmailReceipt = async (auto = false) => {
+  if (!userInfo?.email) return;
 
-    emailAttempted.current = true;
-    setSending(true);
+  // ⚡ Prevent multiple auto triggers
+  if (auto && emailAttempted.current) return;
 
-    try {
-      const res = await fetch("/api/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: userInfo.name,
-          email: userInfo.email,
-          amount: 299,
-          description: "CodeMaster Pro Plan",
-          date: new Date().toLocaleString(),
-        }),
-      });
+  emailAttempted.current = true;
+  setSending(true);
 
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        console.log("✅ Email sent successfully!");
-        setEmailSent(true);
-      } else {
-        console.error("❌ Failed to send email:", data.error);
-      }
-    } catch (err) {
-      console.error("Email send error:", err);
-    } finally {
-      setSending(false);
-    }
+  const payload = {
+    name: userInfo.name || "Valued Customer",
+    email: userInfo.email,
+    amount: 299,
+    description: "CodeMaster Pro Plan",
+    date: new Date().toLocaleString(),
   };
+
+  try {
+    const res = await fetch("/api/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error("API responded with an error:", data.error || res.statusText);
+      return;
+    }
+
+    if (data.success) {
+      console.log(`Email sent successfully to ${payload.email}!`);
+      setEmailSent(true);
+    } else {
+      console.error("Failed to send email:", data.error || "Unknown error");
+    }
+  } catch (err) {
+    console.error("Email send exception:", err);
+  } finally {
+    setSending(false);
+  }
+};
+
 
   // 🧠 Automatically send the receipt once on load
   useEffect(() => {
