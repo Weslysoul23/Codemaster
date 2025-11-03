@@ -104,7 +104,12 @@ useEffect(() => {
           </h1>
           <p className="hero-sub">“The world’s last defense isn’t a gun — it’s a line of code.”</p>
           <div className="mt-6">
-            <Button className="download-btn">Download</Button>
+            <a
+              href="https://zemwbhmykpjcaw3z.public.blob.vercel-storage.com/8days%20only.zip"
+              download
+            >
+              <Button className="download-btn">Download</Button>
+            </a>
           </div>
         </div>
       </header>
