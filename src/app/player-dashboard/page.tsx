@@ -169,6 +169,10 @@ const PlayerDashboard: React.FC = () => {
       </header>
 
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+        <button className="close-btn" onClick={() => setSidebarOpen(false)}>
+          <X size={22} />
+        </button>
+
         <h2 className="logo">Players Panel</h2>
         <nav className="sidebar-nav">
           <button className={activeTab === "home" ? "active" : ""} onClick={() => setActiveTab("home")}>
@@ -191,6 +195,14 @@ const PlayerDashboard: React.FC = () => {
         </div>
         
       </aside>
+
+      {/* Overlay for mobile sidebar */}
+      {sidebarOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
 
       <main className="dashboard-main">
         {activeTab === "home" && (
