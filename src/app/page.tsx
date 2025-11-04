@@ -105,7 +105,7 @@ useEffect(() => {
           <p className="hero-sub">“The world’s last defense isn’t a gun — it’s a line of code.”</p>
           <div className="mt-6">
             <a
-              href="https://zemwbhmykpjcaw3z.public.blob.vercel-storage.com/8days%20only.zip"
+              href="https://zemwbhmykpjcaw3z.public.blob.vercel-storage.com/Codemaster.zip"
               download
             >
               <Button className="download-btn">Download</Button>
