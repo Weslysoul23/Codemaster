@@ -71,7 +71,8 @@ useEffect(() => {
           <li><a href="#about">About</a></li>
           <li><a href="#characters">Characters</a></li>
           <li><a href="#team">Developers</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#contact">Feedback</a></li>
         </ul>
 
         <div className="nav-actions">
@@ -148,70 +149,224 @@ useEffect(() => {
       </section>
 
       {/* DEVELOPERS */}
-      <section id="team" className="section team-section">
-        <h2 className="section-title">Developers</h2>
+<section id="team" className="bg-black text-white py-16 px-6">
+  <h2 className="text-3xl font-bold text-center mb-12 text-blue-400">
+    Developers
+  </h2>
 
-        <div className="team-lead-wrap flex justify-center">
-          <div className="team-card team-lead w-72 sm:w-80 md:w-96">
-            <img src="/Miranda.png" alt="Kate Crystal Miranda" className="team-avatar" />
-            <h3 className="team-name">Kate Crystal Miranda</h3>
-            <p className="team-role">Project Manager</p>
-          </div>
-        </div>
+  {/* Team Lead */}
+  <div className="team-lead-wrap flex justify-center mb-12">
+    <div className="team-card team-lead w-72 sm:w-80 md:w-96 bg-gray-900 border border-blue-500/40 rounded-xl p-6 text-center hover:border-blue-400 transition">
+      <img
+        src="/Miranda.png"
+        alt="Kate Crystal Miranda"
+        className="team-avatar w-40 h-40 mx-auto rounded-full object-cover border-2 border-blue-400 mb-4"
+      />
+      <h3 className="team-name text-xl font-semibold text-blue-400">
+        Kate Crystal Miranda
+      </h3>
+      <p className="team-role text-gray-300">Project Manager</p>
+    </div>
+  </div>
 
-        <div className="team-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
-          <div className="team-card w-72 sm:w-80 md:w-96">
-            <img src="/Garcia.jpg" alt="April Joy Garcia" className="team-avatar" />
-            <h3 className="team-name">April Joy Garcia</h3>
-            <p className="team-role">Game Designer</p>
+  {/* Team Members */}
+  <div className="team-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
+    <div className="team-card w-72 sm:w-80 md:w-96 bg-gray-900 border border-blue-500/40 rounded-xl p-6 text-center hover:border-blue-400 transition">
+      <img
+        src="/Garcia.jpg"
+        alt="April Joy Garcia"
+        className="team-avatar w-40 h-40 mx-auto rounded-full object-cover border-2 border-blue-400 mb-4"
+      />
+      <h3 className="team-name text-xl font-semibold text-blue-400">
+        April Joy Garcia
+      </h3>
+      <p className="team-role text-gray-300">Game Designer</p>
+    </div>
+
+    <div className="team-card w-72 sm:w-80 md:w-96 bg-gray-900 border border-blue-500/40 rounded-xl p-6 text-center hover:border-blue-400 transition">
+      <img
+        src="/Abad.jpg"
+        alt="Gem Anthoinette Abad"
+        className="team-avatar w-40 h-40 mx-auto rounded-full object-cover border-2 border-blue-400 mb-4"
+      />
+      <h3 className="team-name text-xl font-semibold text-blue-400">
+        Gem Anthoinette Abad
+      </h3>
+      <p className="team-role text-gray-300">
+        Quality Assurance / Document Writer
+      </p>
+    </div>
+
+    <div className="team-card w-72 sm:w-80 md:w-96 bg-gray-900 border border-blue-500/40 rounded-xl p-6 text-center hover:border-blue-400 transition">
+      <img
+        src="/Saul.jpg"
+        alt="Wesly Saul"
+        className="team-avatar w-40 h-40 mx-auto rounded-full object-cover border-2 border-blue-400 mb-4"
+      />
+      <h3 className="team-name text-xl font-semibold text-blue-400">
+        Wesly Saul
+      </h3>
+      <p className="team-role text-gray-300">Game Programmer</p>
+    </div>
+  </div>
+</section>
+
+   {/* FAQ SECTION */}
+<section
+  id="faq"
+  className="section faq-section py-16 px-6 bg-black text-white flex justify-center"
+>
+  {/* WRAPPER FOR FAQ + IMAGE */}
+  <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-6xl gap-6">
+    
+    {/* LEFT SIDE FAQ */}
+    <div className="w-full md:w-1/2">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-blue-400">
+        Frequently Asked Questions
+      </h2>
+      <p className="text-gray-400 mb-6 text-sm sm:text-base leading-relaxed">
+        Learn more about CodeMaster — from downloading the game to understanding its story and gameplay.
+      </p>
+
+      <div className="space-y-3">
+        {/* FAQ 1 */}
+        <details className="group bg-gray-900/60 p-4 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+          <summary className="flex justify-between items-center cursor-pointer font-semibold text-blue-400 text-sm sm:text-base">
+            How Can I Download CodeMaster?
+            <span className="transition-transform group-open:rotate-180 text-gray-400">−</span>
+          </summary>
+          <div className="mt-2 text-gray-300 text-sm leading-relaxed">
+            You can download CodeMaster directly from our official website or from the download link on the homepage.
+            Make sure to install all necessary dependencies for the best performance.
           </div>
-          <div className="team-card w-72 sm:w-80 md:w-96">
-            <img src="/Abad.jpg" alt="Gem Anthoinette Abad" className="team-avatar" />
-            <h3 className="team-name">Gem Anthoinette Abad</h3>
-            <p className="team-role">Quality Assurance / Document Writer</p>
+        </details>
+
+        {/* FAQ 2 */}
+        <details className="group bg-gray-900/60 p-4 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+          <summary className="flex justify-between items-center cursor-pointer font-semibold text-blue-400 text-sm sm:text-base">
+            What Is CodeMaster About?
+            <span className="transition-transform group-open:rotate-180 text-gray-400">−</span>
+          </summary>
+          <div className="mt-2 text-gray-300 text-sm leading-relaxed">
+            CodeMaster follows Allieee, a student trapped in a digital world overrun by cyber zombies. 
+            Guided by an AI named Nexus, she must use her coding skills to restore balance.
           </div>
-          <div className="team-card w-72 sm:w-80 md:w-96">
-            <img src="/Saul.jpg" alt="Wesly Saul" className="team-avatar" />
-            <h3 className="team-name">Wesly Saul</h3>
-            <p className="team-role">Game Programmer</p>
+        </details>
+
+        {/* FAQ 3 */}
+        <details className="group bg-gray-900/60 p-4 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+          <summary className="flex justify-between items-center cursor-pointer font-semibold text-blue-400 text-sm sm:text-base">
+            Can I Play Offline?
+            <span className="transition-transform group-open:rotate-180 text-gray-400">−</span>
+          </summary>
+          <div className="mt-2 text-gray-300 text-sm leading-relaxed">
+            Yes! You can play CodeMaster offline after installation. However, online features such as leaderboards
+            and account login will require an internet connection.
           </div>
-        </div>
-      </section>
+        </details>
+
+        {/* FAQ 4 */}
+        <details className="group bg-gray-900/60 p-4 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+          <summary className="flex justify-between items-center cursor-pointer font-semibold text-blue-400 text-sm sm:text-base">
+            Who Developed CodeMaster?
+            <span className="transition-transform group-open:rotate-180 text-gray-400">−</span>
+          </summary>
+          <div className="mt-2 text-gray-300 text-sm leading-relaxed">
+            CodeMaster was developed by <strong>PrimAstron</strong>, a student team from Cavite:
+            Kate Crystal Miranda (Project Manager), April Joy Garcia (Game Designer),
+            Gem Anthoinette Abad (QA/Writer), and Wesly Saul (Programmer).
+          </div>
+        </details>
+      </div>
+    </div>
+
+    {/* RIGHT SIDE IMAGE */}
+    <div className="w-full md:w-1/3 flex justify-center">
+      <img 
+        src="/logorb.png" 
+        alt="CodeMaster Orb" 
+        style={{ width: '325px', maxWidth: '150%', height: 'auto' }}
+        className="rounded-xl shadow-lg object-cover" 
+      />
+    </div>
+
+  </div>
+</section>
 
 {/* CONTACT SECTION */}
 <section
   id="contact"
-  className="section contact-section py-16 px-6 bg-black flex flex-col md:flex-row items-center justify-center gap-10 text-white"
+  className="section contact-section py-16 px-6 bg-black flex justify-center"
 >
-  {/* LEFT SIDE IMAGE */}
-  <div className="w-full md:w-1/2 flex justify-center">
-    <img
-      src="/alliebgcontact.png" 
-      alt="Contact Us"
-      className="w-80 sm:w-96 md:w-[420px] rounded-xl shadow-lg object-cover"
-    />
-  </div>
+  {/* WRAPPER FOR IMAGE + FORM */}
+  <div className="flex flex-col md:flex-row items-start justify-center w-full max-w-6xl gap-4">
+    
+    {/* LEFT SIDE IMAGE */}
+    <div className="md:w-1/2 w-full flex justify-end">
+      <img
+        src="/alliebgcontact.png"
+        alt="Contact Us"
+        style={{ width: '300px', maxWidth: '150%', height: 'auto' }}
+        className="rounded-xl shadow-lg object-cover"
+      />
+    </div>
 
-  {/* RIGHT SIDE FORM */}
-  <div className="w-full md:w-1/2 lg:w-[65%] flex justify-center">
-    <FeedbackForm />
-  </div>
+    {/* RIGHT SIDE FORM */}
+    <div className="w-full md:w-1/2 lg:w-[70%] flex justify-center">
+      <FeedbackForm />
+    </div>
 
-  
+  </div>
 </section>
 
-{/* FOOTER */}
-<footer className="footer w-full bg-black flex flex-col md:flex-row items-center justify-between text-white px-6 py-4">
-  {/* Left side: Email & Phone */}
-  <div className="text-sm text-gray-300 text-center md:text-left space-y-1 md:space-y-0 md:space-x-4">
-    <span>Email: CODEMASTER@gmail.com</span>
-    <span className="block md:inline">Phone: +63 945 150 2417</span>
+
+
+
+{/* FOOTER SECTION */}
+<footer className="bg-[#0a0f1c] text-gray-300 py-10 px-6">
+  <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
+    {/* LEFT COLUMN */}
+    <div>
+      <h3 className="text-white text-2xl font-bold mb-2">CodeMaster</h3>
+      <div className="h-1 w-12 bg-blue-500 mb-4"></div>
+      <p className="text-sm leading-relaxed">
+        CodeMaster — an educational adventure game where you fight cyber zombies using programming logic 
+        and problem-solving skills to restore the digital world.
+      </p>
+    </div>
+
+    {/* MIDDLE COLUMN */}
+    <div>
+      <h3 className="text-white text-2xl font-bold mb-2">Quick Links</h3>
+      <div className="h-1 w-12 bg-blue-500 mb-4"></div>
+      <ul className="space-y-2 text-sm">
+        <li><a href="#home" className="hover:text-white transition">Home</a></li>
+        <li><a href="#about" className="hover:text-white transition">About</a></li>
+        <li><a href="#characters" className="hover:text-white transition">Characters</a></li>
+        <li><a href="#team" className="hover:text-white transition">Developers</a></li>
+        <li><a href="#faq" className="hover:text-white transition">FAQ</a></li>
+        <li><a href="#contact" className="hover:text-white transition">Feedback</a></li>
+      </ul>
+    </div>
+
+    {/* RIGHT COLUMN */}
+    <div>
+      <h3 className="text-white text-2xl font-bold mb-2">Have Questions?</h3>
+      <div className="h-1 w-12 bg-blue-500 mb-4"></div>
+      <ul className="space-y-2 text-sm">
+        <li>Building 2 Aguinaldo Highway,<br />Dasmariñas City, Cavite, Philippines</li>
+        <li>codemaster@primastron.org</li>
+      </ul>
+    </div>
   </div>
 
-  {/* Right side: Copyright */}
-  <p className="muted text-sm text-gray-400 mt-2 md:mt-0">&copy; CODEMASTER 2025 </p>
+  <div className="text-center text-xs text-gray-400 mt-10">
+    © 2025 All rights reserved | CodeMaster by PrimAstron
+  </div>
 </footer>
+
 
     </>
   );
 } 
+  
