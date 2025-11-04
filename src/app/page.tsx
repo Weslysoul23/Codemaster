@@ -106,7 +106,7 @@ useEffect(() => {
           <p className="hero-sub">“The world’s last defense isn’t a gun — it’s a line of code.”</p>
           <div className="mt-6">
             <a
-              href="https://zemwbhmykpjcaw3z.public.blob.vercel-storage.com/8days%20only.zip"
+              href="https://zemwbhmykpjcaw3z.public.blob.vercel-storage.com/Codemaster.zip"
               download
             >
               <Button className="download-btn">Download</Button>
@@ -121,7 +121,7 @@ useEffect(() => {
         <div className="about-grid">
           <div className="about-left">
             <p className="about-text text-sm sm:text-base md:text-lg leading-relaxed">
-              CodeMaster follows Allieee, a 4th-year student trapped in a digital world overrun by
+              CodeMaster follows Allie, a 4th-year student trapped in a digital world overrun by
               cyberzombies. Guided by the AI mentor Nexus, she must use her C# coding skills to
               restore peace, craft weapons, and outsmart enemies.
             </p>
