@@ -177,14 +177,19 @@ const PlayerDashboard: React.FC = () => {
           <button className={activeTab === "leaderboard" ? "active" : ""} onClick={() => setActiveTab("leaderboard")}>
             Leader Board
           </button>
-          <button className={activeTab === "shop" ? "active" : ""} onClick={() => setActiveTab("shop")}>
-            In-Game Shop
-          </button>
+         
           <button className={activeTab === "subscription" ? "active" : ""} onClick={() => setActiveTab("subscription")}>
             Subscription
           </button>
           <button onClick={() => setShowLogoutConfirm(true)}>Logout</button>
         </nav>
+
+        <div className="sidebar-logo">
+          <span className="glitch" data-text="CODEMASTER">
+            <strong>CODEMASTER</strong>
+          </span>
+        </div>
+        
       </aside>
 
       <main className="dashboard-main">
@@ -245,12 +250,7 @@ const PlayerDashboard: React.FC = () => {
           </section>
         )}
 
-        {activeTab === "shop" && (
-          <section className="tab-content shop-content">
-            <h1>In-Game Shop</h1>
-            <p className="shop-tagline">Coming soon — power-ups, skins, and more!</p>
-          </section>
-        )}
+
 
         {activeTab === "subscription" && (
           <section className="tab-content subscription-content">
