@@ -248,7 +248,7 @@ useEffect(() => {
             <span className="transition-transform group-open:rotate-180 text-gray-400">−</span>
           </summary>
           <div className="mt-2 text-gray-300 text-sm leading-relaxed">
-            CodeMaster follows Allieee, a student trapped in a digital world overrun by cyber zombies. 
+            CodeMaster follows Alliee, a student trapped in a digital world overrun by cyber zombies. 
             Guided by an AI named Nexus, she must use her coding skills to restore balance.
           </div>
         </details>
