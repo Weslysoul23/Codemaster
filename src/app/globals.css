@@ -205,6 +205,31 @@ nav.navbar{
     clip: rect(68px, 9999px, 51px, 0);
   }
 }
+.faq-section {
+  background: radial-gradient(circle at top left, #0b0b12 0%, #000000 100%);
+}
+
+.faq-section details {
+  transition: all 0.25s ease-in-out;
+}
+
+.faq-section details:hover {
+  box-shadow: 0 0 12px rgba(0, 123, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.faq-section summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-section summary {
+  outline: none;
+}
+
+.faq-section details[open] summary {
+  color: #66cfff;
+}
+
 
 
 

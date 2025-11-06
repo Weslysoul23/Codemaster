@@ -30,17 +30,17 @@ export default function FeedbackForm() {
   }
 
   return (
-    <div className="w-full md:w-[45%] lg:w-[40%] xl:w-[55%] bg-gradient-to-b from-gray-900 via-gray-950 to-gray-900 rounded-xl shadow-xl p-6">
-      <h2 className="text-xl sm:text-2xl font-bold mb-2 text-center bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+    <div className="w-full md:w-[45%] lg:w-[40%] xl:w-[55%] bg-gradient-to-b from-[#0B1221] via-[#0A1020] to-[#0E1628] border border-[#1B2A49] rounded-xl shadow-lg shadow-blue-900/20 p-6">
+      <h2 className="text-xl sm:text-2xl font-bold mb-3 text-center bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(0,204,255,0.4)]">
         Send Us Your Feedbacks
       </h2>
-      <p className="text-center mb-5 text-gray-400 text-xs sm:text-sm leading-relaxed">
+      <p className="text-center mb-6 text-gray-400 text-xs sm:text-sm leading-relaxed">
         Have a question about CodeMaster, development, or collaborations? Reach out and we’ll get back to
         you soon.
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <input
             type="text"
             name="name"
@@ -48,7 +48,7 @@ export default function FeedbackForm() {
             onChange={handleChange}
             placeholder="Your Name"
             required
-            className="bg-gray-800 rounded-md p-2 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="bg-[#121A2E] border border-[#1C2B4D] rounded-md p-2.5 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/60 text-sm"
           />
           <input
             type="email"
@@ -57,7 +57,7 @@ export default function FeedbackForm() {
             onChange={handleChange}
             placeholder="Your Email"
             required
-            className="bg-gray-800 rounded-md p-2 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="bg-[#121A2E] border border-[#1C2B4D] rounded-md p-2.5 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/60 text-sm"
           />
         </div>
 
@@ -68,7 +68,7 @@ export default function FeedbackForm() {
           onChange={handleChange}
           placeholder="Subject"
           required
-          className="bg-gray-800 rounded-md p-2 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          className="bg-[#121A2E] border border-[#1C2B4D] rounded-md p-2.5 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/60 text-sm"
         />
 
         <textarea
@@ -78,12 +78,12 @@ export default function FeedbackForm() {
           placeholder="Write your message here..."
           required
           rows={3}
-          className="bg-gray-800 rounded-md p-2 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+          className="bg-[#121A2E] border border-[#1C2B4D] rounded-md p-2.5 w-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/60 resize-none text-sm"
         />
 
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-2 rounded-md font-semibold tracking-wide text-sm hover:opacity-90 transition duration-200"
+          className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-2.5 rounded-md font-semibold tracking-wide text-sm hover:opacity-90 hover:shadow-[0_0_10px_rgba(0,255,255,0.4)] transition duration-200"
         >
           SEND FEEDBACK
         </button>
@@ -93,3 +93,4 @@ export default function FeedbackForm() {
     </div>
   );
 }
+

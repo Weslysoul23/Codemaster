@@ -6,7 +6,7 @@ import LeaderBoard from "./LeaderBoard";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { app } from "@/lib/firebaseConfig";
-import { Menu} from "lucide-react"; 
+import { Menu, X } from "lucide-react";
 
 interface LevelProgress {
   [stageKey: string]: boolean;
@@ -31,13 +31,11 @@ const PlayerDashboard: React.FC = () => {
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // --- Username ---
         const userRef = ref(db, `users/${user.uid}/username`);
         onValue(userRef, (snapshot) => {
           if (snapshot.exists()) setUsername(snapshot.val());
         });
 
-        // --- 🔥 Ban / Disable Check (Added Here) ---
         const statusRef = ref(db, `users/${user.uid}/status`);
         onValue(statusRef, (snapshot) => {
           const status = snapshot.val();
@@ -50,7 +48,6 @@ const PlayerDashboard: React.FC = () => {
           }
         });
 
-        // --- Leaderboard (Rank + Points) ---
         const leaderboardRef = ref(db, "leaderboard");
         onValue(leaderboardRef, (snapshot) => {
           if (snapshot.exists()) {
@@ -76,7 +73,6 @@ const PlayerDashboard: React.FC = () => {
           }
         });
 
-        // --- Player Progress ---
         const progressRef = ref(db, `users/${user.uid}/progress`);
         onValue(progressRef, (snapshot) => {
           if (snapshot.exists()) {
@@ -125,17 +121,58 @@ const PlayerDashboard: React.FC = () => {
     );
   }
 
+  // === Subscribe Button Component ===
+  const SubscribeButton = () => {
+    const [loading, setLoading] = useState(false);
+
+    const handleSubscribe = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/create-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: 299, description: "Monthly Pro Plan" }),
+        });
+
+        const data = await res.json();
+        if (data.data?.attributes?.checkout_url) {
+          window.location.href = data.data.attributes.checkout_url;
+        } else {
+          alert("Payment link failed to generate");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Something went wrong");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return (
+      <button
+        onClick={handleSubscribe}
+        disabled={loading}
+        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+      >
+        {loading ? "Redirecting..." : "Subscribe Now"}
+      </button>
+    );
+  };
+
+  // === Main UI ===
   return (
     <div className="player-dashboard">
-      {/* Topbar (mobile) */}
       <header className="topbar">
         <button className="menu-btn" onClick={() => setSidebarOpen(true)}>
           <Menu size={22} />
         </button>
       </header>
 
-      {/* === SIDEBAR === */}
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+        <button className="close-btn" onClick={() => setSidebarOpen(false)}>
+          <X size={22} />
+        </button>
+
         <h2 className="logo">Players Panel</h2>
         <nav className="sidebar-nav">
           <button className={activeTab === "home" ? "active" : ""} onClick={() => setActiveTab("home")}>
@@ -144,9 +181,7 @@ const PlayerDashboard: React.FC = () => {
           <button className={activeTab === "leaderboard" ? "active" : ""} onClick={() => setActiveTab("leaderboard")}>
             Leader Board
           </button>
-          <button className={activeTab === "shop" ? "active" : ""} onClick={() => setActiveTab("shop")}>
-            In-Game Shop
-          </button>
+         
           <button className={activeTab === "subscription" ? "active" : ""} onClick={() => setActiveTab("subscription")}>
             Subscription
           </button>
@@ -161,7 +196,14 @@ const PlayerDashboard: React.FC = () => {
         
       </aside>
 
-      {/* === MAIN CONTENT === */}
+      {/* Overlay for mobile sidebar */}
+      {sidebarOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
       <main className="dashboard-main">
         {activeTab === "home" && (
           <section className="tab-content home-content">
@@ -195,7 +237,6 @@ const PlayerDashboard: React.FC = () => {
                         <div className="stage-list">
                           {stages.map((stageName) => {
                             const isCompleted = progressData?.[stageName] === true;
-
                             return (
                               <div
                                 key={stageName}
@@ -221,19 +262,12 @@ const PlayerDashboard: React.FC = () => {
           </section>
         )}
 
-        {activeTab === "shop" && (
-          <section className="tab-content shop-content">
-            <h1>In-Game Shop</h1>
-            <p className="shop-tagline">Coming soon — power-ups, skins, and more!</p>
-          </section>
-        )}
+
 
         {activeTab === "subscription" && (
           <section className="tab-content subscription-content">
             <h1>Upgrade Your Plan</h1>
-            <p className="subscription-tagline">
-              Choose the plan that fits your coding journey.
-            </p>
+            <p className="subscription-tagline">Choose the plan that fits your coding journey.</p>
 
             <div className="subscription-plans">
               {/* Free Plan */}
@@ -244,9 +278,7 @@ const PlayerDashboard: React.FC = () => {
                 <button className="current-plan-btn">Current Plan</button>
                 <h3 className="plan-section-title">Essentials to get started:</h3>
                 <ul className="plan-features">
-                  <li>
-                    <span className="highlight">Limited</span> Access to levels
-                  </li>
+                  <li><span className="highlight">Limited</span> Access to levels</li>
                 </ul>
               </div>
 
@@ -254,19 +286,12 @@ const PlayerDashboard: React.FC = () => {
               <div className="plan-box">
                 <h2 className="plan-title pro">Pro</h2>
                 <p className="plan-subtitle">Best for learning C#</p>
-                <p className="plan-price">
-                  $15<span>/month</span>
-                </p>
-                <button className="subscribe-btn">Subscribe Now</button>
-                <button className="paypal-btn">Pay with PayPal</button>
+                <p className="plan-price">$5<span>/month</span></p>
+                <SubscribeButton />
                 <h3 className="plan-section-title">Everything in Free, plus:</h3>
                 <ul className="plan-features">
-                  <li>
-                    <span className="highlight">Full</span> Access to all levels
-                  </li>
-                  <li>
-                    <span className="highlight">Access</span> to Creative mode
-                  </li>
+                  <li><span className="highlight">Full</span> Access to all levels</li>
+                  <li><span className="highlight">Access</span> to Creative mode</li>
                 </ul>
               </div>
             </div>
@@ -274,19 +299,13 @@ const PlayerDashboard: React.FC = () => {
         )}
       </main>
 
-
-      {/* === LOGOUT MODAL === */}
       {showLogoutConfirm && (
         <div className="logout-confirm-overlay">
           <div className="logout-confirm-box">
             <h2>Are you sure you want to log out?</h2>
             <div className="logout-buttons">
-              <button className="confirm-yes" onClick={handleLogout}>
-                Yes
-              </button>
-              <button className="confirm-no" onClick={() => setShowLogoutConfirm(false)}>
-                No
-              </button>
+              <button className="confirm-yes" onClick={handleLogout}>Yes</button>
+              <button className="confirm-no" onClick={() => setShowLogoutConfirm(false)}>No</button>
             </div>
           </div>
         </div>

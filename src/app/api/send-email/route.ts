@@ -1,37 +1,35 @@
 import nodemailer from "nodemailer";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    console.log("EMAIL_USER:", process.env.EMAIL_USER);
-    console.log("EMAIL_PASS exists:", !!process.env.EMAIL_PASS);
-    console.log("NOTIFY_RECEIVER:", process.env.NOTIFY_RECEIVER);
-
     const { name, email, amount, description, date } = await req.json();
+
+    if (!email) {
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    }
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
     });
 
     await transporter.sendMail({
       from: `"CodeMaster" <${process.env.EMAIL_USER}>`,
-      to: email || process.env.NOTIFY_RECEIVER,
-      subject: "Payment Confirmation - CodeMaster Pro Plan",
-      html: `
-        <h2>Payment Successful 🎉</h2>
-        <p>Hi ${name},</p>
-        <p>Your <strong>${description}</strong> payment of <strong>$${amount}</strong> was received on ${date}.</p>
-        <p>Thank you for supporting CodeMaster!</p>
-      `,
+      to: email,
+      subject: "Your CodeMaster Payment Receipt",
+      html: `<div style="font-family:Arial; background:#0a1b55; color:white; padding:20px; border-radius:10px;">
+               <h2>CodeMaster Payment Receipt</h2>
+               <p>Hi <b>${name}</b>,</p>
+               <p>Thank you for subscribing to the <b>${description}</b>.</p>
+               <p><b>Amount:</b> ₱${amount}</p>
+               <p><b>Date:</b> ${date}</p>
+             </div>`
     });
 
-    console.log("✅ Email sent successfully!");
-    return Response.json({ success: true });
+    return NextResponse.json({ success: true, message: "Email sent successfully" });
+
   } catch (error: any) {
-    console.error("❌ Email send error:", error);
-    return new Response("Failed to send email.", { status: 500 });
+    return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
 }

@@ -1,0 +1,33 @@
+.payment-success-container {
+  background-color: black;
+  color: #00ff99;
+  font-family: monospace;
+}
+
+.background-glow {
+  background: radial-gradient(circle at center, rgba(0, 255, 153, 0.1) 0%, transparent 70%);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.payment-title {
+  margin-bottom: 1.5rem;
+}
+
+.resend-btn {
+  border-color: #00ff99;
+  box-shadow: 0 0 10px #00ff99;
+}
+
+.return-btn {
+  border-color: #00ff99;
+  box-shadow: 0 0 10px #00ff99;
+}
+
+.binary-rain span {
+  font-size: 0.75rem;
+}
