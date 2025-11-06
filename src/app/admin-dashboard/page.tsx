@@ -259,7 +259,9 @@ export default function AdminDashboard() {
               setSidebarOpen(false);
             }}
           >
-            Purchases
+           {/* purchase */}
+           
+            
           </button>
 
           <button
