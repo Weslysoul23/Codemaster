@@ -156,7 +156,7 @@ useEffect(() => {
 
   {/* Team Lead */}
   <div className="team-lead-wrap flex justify-center mb-12">
-    <div className="team-card team-lead w-72 sm:w-80 md:w-96 bg-gray-900 border border-blue-500/40 rounded-xl p-6 text-center hover:border-blue-400 transition">
+    <div className="team-card team-lead w-72 sm:w-80 md:w-96 bg-gray-900 border border-blue-500/40 rounded-xl p-6 text-center transition">
       <img
         src="/Miranda.png"
         alt="Kate Crystal Miranda"
@@ -171,7 +171,7 @@ useEffect(() => {
 
   {/* Team Members */}
   <div className="team-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
-    <div className="team-card w-72 sm:w-80 md:w-96 bg-gray-900 border border-blue-500/40 rounded-xl p-6 text-center hover:border-blue-400 transition">
+    <div className="team-card w-72 sm:w-80 md:w-96 bg-gray-900 border border-blue-500/40 rounded-xl p-6 text-center transition">
       <img
         src="/Garcia.jpg"
         alt="April Joy Garcia"
@@ -183,7 +183,7 @@ useEffect(() => {
       <p className="team-role text-gray-300">Game Designer</p>
     </div>
 
-    <div className="team-card w-72 sm:w-80 md:w-96 bg-gray-900 border border-blue-500/40 rounded-xl p-6 text-center hover:border-blue-400 transition">
+    <div className="team-card w-72 sm:w-80 md:w-96 bg-gray-900 border border-blue-500/40 rounded-xl p-6 text-center transition">
       <img
         src="/Abad.jpg"
         alt="Gem Anthoinette Abad"
@@ -197,7 +197,7 @@ useEffect(() => {
       </p>
     </div>
 
-    <div className="team-card w-72 sm:w-80 md:w-96 bg-gray-900 border border-blue-500/40 rounded-xl p-6 text-center hover:border-blue-400 transition">
+    <div className="team-card w-72 sm:w-80 md:w-96 bg-gray-900 border border-blue-500/40 rounded-xl p-6 text-center transition">
       <img
         src="/Saul.jpg"
         alt="Wesly Saul"

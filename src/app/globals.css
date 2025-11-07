@@ -1,7 +1,4 @@
 /* Tailwind directives (if using Tailwind) - keep if your build supports them */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 
 :root{

@@ -121,6 +121,14 @@ const PlayerDashboard: React.FC = () => {
     );
   }
 
+  // Prevent body scroll when sidebar open (mobile)
+    useEffect(() => {
+      document.body.style.overflow = sidebarOpen ? "hidden" : "auto";
+      return () => {
+        document.body.style.overflow = "auto";
+      };
+    }, [sidebarOpen]);
+
   // === Subscribe Button Component ===
   const SubscribeButton = () => {
     const [loading, setLoading] = useState(false);
@@ -162,16 +170,18 @@ const PlayerDashboard: React.FC = () => {
   // === Main UI ===
   return (
     <div className="player-dashboard">
-      <header className="topbar">
-        <button className="menu-btn" onClick={() => setSidebarOpen(true)}>
-          <Menu size={22} />
-        </button>
-      </header>
-
-      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-        <button className="close-btn" onClick={() => setSidebarOpen(false)}>
-          <X size={22} />
-        </button>
+      {/* Topbar (mobile) */}
+            <header className="topbar">
+              <button className="menu-btn" onClick={() => setSidebarOpen(true)}>
+                <Menu size={22} />
+              </button>
+            </header>
+      
+            {/* Sidebar */}
+            <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+              <button className="close-btn" onClick={() => setSidebarOpen(false)}>
+                <X size={22} />
+              </button>
 
         <h2 className="logo">Players Panel</h2>
         <nav className="sidebar-nav">

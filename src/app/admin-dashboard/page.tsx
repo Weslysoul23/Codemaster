@@ -28,7 +28,7 @@ interface Player {
   id: string;
   username: string;
   email: string;
-  status: "active" | "banned" | "disabled" | string;
+  status: "active" | "disabled" | string;
 }
 
 export default function AdminDashboard() {
@@ -155,18 +155,6 @@ export default function AdminDashboard() {
 
 
   // --- Player Actions ---
-  const handleBan = async (id: string, currentStatus?: string) => {
-    try {
-      const dbRT = getDatabase(app);
-      const playerRef = ref(dbRT, `users/${id}`);
-      const newStatus = currentStatus === "banned" ? "active" : "banned";
-      await update(playerRef, { status: newStatus });
-      console.log(`✅ Player ${id} status updated to ${newStatus}`);
-    } catch (error) {
-      console.error("❌ Error updating player:", error);
-    }
-  };
-
   const handleDisable = async (id: string, currentStatus?: string) => {
     try {
       const dbRT = getDatabase(app);
@@ -179,17 +167,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleDeletePlayer = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this player?")) return;
-    try {
-      const dbRT = getDatabase(app);
-      const playerRef = ref(dbRT, `users/${id}`);
-      await remove(playerRef);
-      console.log(`🗑️ Player ${id} deleted successfully`);
-    } catch (error) {
-      console.error("❌ Error deleting player:", error);
-    }
-  };
+  
 
   if (!loggedIn) {
     return (
@@ -259,9 +237,7 @@ export default function AdminDashboard() {
               setSidebarOpen(false);
             }}
           >
-           {/* purchase */}
-           
-            
+           Purchases
           </button>
 
           <button
@@ -355,24 +331,10 @@ export default function AdminDashboard() {
                       </td>
                       <td className="actions">
                         <button
-                          className="ban-btn"
-                          onClick={() => handleBan(player.id, player.status)}
-                        >
-                          {player.status === "banned" ? "Unban" : "Ban"}
-                        </button>
-
-                        <button
                           className="disable-btn"
                           onClick={() => handleDisable(player.id, player.status)}
                         >
                           {player.status === "disabled" ? "Enable" : "Disable"}
-                        </button>
-
-                        <button
-                          className="delete-btn"
-                          onClick={() => handleDeletePlayer(player.id)}
-                        >
-                          Delete
                         </button>
                       </td>
                     </tr>
