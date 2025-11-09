@@ -1,19 +1,8 @@
 import { NextResponse } from "next/server";
 
-interface PaymentRequestBody {
-  amount: number;
-  description: string;
-  email: string;
-  userId: string;
-}
-
 export async function POST(req: Request) {
   try {
-    const { amount, description, email, userId }: PaymentRequestBody = await req.json();
-
-    if (!email || !userId || !amount || !description) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
+    const { amount, description } = await req.json();
 
     const response = await fetch("https://api.paymongo.com/v1/checkout_sessions", {
       method: "POST",
@@ -25,28 +14,35 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         data: {
           attributes: {
-            amount: amount * 100,
+            amount: amount * 100, // PayMongo uses cents
             currency: "PHP",
             description,
-            customer: { email },
-            line_items: [{ name: description, quantity: 1, amount: amount * 100, currency: "PHP" }],
+            line_items: [
+              {
+                name: description,
+                quantity: 1,
+                amount: amount * 100,
+                currency: "PHP",
+              },
+            ],
             payment_method_types: ["card", "gcash", "paymaya"],
-            success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success`,
-            cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/player-dashboard`,
-            metadata: { userId },
+            success_url: "https://codemaster-thesis.vercel.app/payment-success",
+            cancel_url: "https://codemaster-thesis.vercel.app/player-dashboard",
           },
         },
       }),
     });
 
     const data = await response.json();
-    if (!data.data?.attributes?.checkout_url)
+
+    if (!data.data?.attributes?.checkout_url) {
+      console.error("❌ PayMongo API Error:", data);
       return NextResponse.json({ error: "Failed to create payment link", details: data }, { status: 400 });
+    }
 
     return NextResponse.json(data);
-
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Server error", details: String(err) }, { status: 500 });
+    console.error("Server Error:", err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

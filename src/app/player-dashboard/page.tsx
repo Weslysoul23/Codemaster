@@ -192,8 +192,9 @@ const PlayerDashboard: React.FC = () => {
             Leader Board
           </button>
          
-      
-        
+          <button className={activeTab === "subscription" ? "active" : ""} onClick={() => setActiveTab("subscription")}>
+            Subscription
+          </button>
           <button onClick={() => setShowLogoutConfirm(true)}>Logout</button>
         </nav>
 
