@@ -1,15 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
-import { getDatabase, ref, get } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  get,
+  update,
+  onValue,
+} from "firebase/database";
 import { auth } from "@/lib/firebaseConfig";
-import { X, User, Lock, Eye, EyeOff } from "lucide-react";
+import { X, User, Lock, Eye, EyeOff, Download } from "lucide-react";
 
 interface LoginModalProps {
   isLoginOpen: boolean;
@@ -28,72 +34,62 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const createDefaultAdminIfNotExists = async () => {
-    const adminEmail = "codemaster@gmail.com";
-    const defaultPassword = "group7"; // Development only
 
-    try {
-      await createUserWithEmailAndPassword(auth, adminEmail, defaultPassword);
-      console.log("Default admin user created successfully.");
-    } catch (err: any) {
-      if (err.code === "auth/email-already-in-use") {
-        console.log("Default admin user already exists.");
-      } else {
-        console.error("Error creating default admin user:", err);
-        setError(
-          "Failed to create default admin user. Check console for details."
+  // 🔹 Handle login logic
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError(null);
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      formData.email,
+      formData.password
+    );
+
+    const user = userCredential.user;
+
+    const dbRT = getDatabase();
+    const userRef = ref(dbRT, `users/${user.uid}`);
+    const snapshot = await get(userRef);
+
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      console.log("Fetched user data:", data); // ✅ Debug
+
+      if (data.status === "disabled") {
+        await signOut(auth);
+        alert(
+          `Your account has been disabled.\n\nReason: ${
+            data.disableReason || "No reason provided."
+          }`
         );
+        return;
       }
     }
-  };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // 🔹 Sign in first
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        formData.email,
-        formData.password
-      );
-      const user = userCredential.user;
-
-      // 🔹 Check Realtime Database status
-      const dbRT = getDatabase();
-      const userRef = ref(dbRT, `users/${user.uid}`);
-      const snapshot = await get(userRef);
-
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        if (data.status === "banned" || data.status === "disabled") {
-          await signOut(auth);
-          alert(`Your account has been ${data.status}.`);
-          return; // stop navigation
-        }
-      }
-
-      // 🔹 Redirect logic
-      if (user.email?.toLowerCase() === "codemaster@gmail.com".toLowerCase()) {
-        router.push("/admin-dashboard");
-      } else {
-        router.push("/player-dashboard");
-      }
-    } catch (err: any) {
-      console.error("Login error:", err);
-      if (err.code === "auth/user-not-found") {
-        setError("No user found. Try creating the account first.");
-      } else if (err.code === "auth/wrong-password") {
-        setError("Incorrect password.");
-      } else {
-        setError(err.message || "An error occurred during login.");
-      }
-    } finally {
-      setIsLoading(false);
+    // 🔹 Redirect based on role
+    if (user.email?.toLowerCase() === "codemaster@gmail.com") {
+      router.push("/admin-dashboard");
+    } else {
+      router.push("/player-dashboard");
     }
-  };
+
+  } catch (err: any) {
+    console.error("Login error:", err);
+    if (err.code === "auth/user-not-found") {
+      setError("No user found. Try creating the account in the game app.");
+    } else if (err.code === "auth/wrong-password") {
+      setError("Incorrect password.");
+    } else {
+      setError(err.message || "An error occurred during login.");
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <>
@@ -121,12 +117,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
                 </p>
               </div>
 
-              {error && (
-                <p className="text-red-500 text-center mb-4">{error}</p>
-              )}
+              {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* EMAIL INPUT */}
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User size={20} className="text-white text-opacity-60" />
@@ -142,7 +135,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
                   />
                 </div>
 
-                {/* PASSWORD INPUT */}
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock size={20} className="text-white text-opacity-60" />
@@ -165,7 +157,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
                   </button>
                 </div>
 
-                {/* FORGOT PASSWORD */}
                 <div className="text-right">
                   <a
                     href="/Forgotpassword-Dashboard"
@@ -175,7 +166,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
                   </a>
                 </div>
 
-                {/* SIGN IN BUTTON */}
                 <button
                   type="submit"
                   disabled={isLoading}
@@ -190,11 +180,20 @@ const LoginModal: React.FC<LoginModalProps> = ({ isLoginOpen, closeLogin }) => {
                     "Sign In"
                   )}
                 </button>
+
+                {/* 🧩 Create Account / Download Game */}
+                <div className="text-center mt-4">
+                  <p className="text-white text-opacity-70 text-sm">
+                    Don’t have an account? Download the Game to sign up.
+                  </p>
+                </div>
               </form>
             </div>
           </div>
         </div>
       )}
+
+      
     </>
   );
 };

@@ -120,6 +120,41 @@ export default function AdminDashboard() {
     }
   };
 
+  // --- Real-time Reports (Realtime Database) ---
+const [reports, setReports] = useState<any[]>([]);
+useEffect(() => {
+  const dbRT = getDatabase(app);
+  const reportsRef = ref(dbRT, "match_reports");
+
+  const unsubscribe = onValue(reportsRef, (snapshot) => {
+    if (!snapshot.exists()) {
+      setReports([]);
+      return;
+    }
+    const data = snapshot.val();
+    const reportArray = Object.keys(data).map((key) => ({
+      id: key,
+      ...data[key],
+    }));
+    setReports(reportArray);
+  });
+
+  return () => off(reportsRef, "value", unsubscribe);
+}, []);
+
+const handleDeleteReport = async (id: string) => {
+  try {
+    const dbRT = getDatabase(app);
+    const reportRef = ref(dbRT, `match_reports/${id}`);
+    await remove(reportRef);
+    console.log(`🗑️ Report ${id} deleted successfully.`);
+  } catch (error) {
+    console.error("❌ Failed to delete report:", error);
+  }
+};
+
+
+
   // --- Realtime Players (Realtime Database) ---
   const [players, setPlayers] = useState<Player[]>([]);
   const [loadingPlayers, setLoadingPlayers] = useState(true);
@@ -155,17 +190,53 @@ export default function AdminDashboard() {
 
 
   // --- Player Actions ---
-  const handleDisable = async (id: string, currentStatus?: string) => {
-    try {
-      const dbRT = getDatabase(app);
-      const playerRef = ref(dbRT, `users/${id}`);
-      const newStatus = currentStatus === "disabled" ? "active" : "disabled";
-      await update(playerRef, { status: newStatus });
-      console.log(`✅ Player ${id} status updated to ${newStatus}`);
-    } catch (error) {
-      console.error("❌ Error disabling player:", error);
+const handleDisable = async (id: string, currentStatus?: string) => {
+  try {
+    const dbRT = getDatabase(app);
+    const playerRef = ref(dbRT, `users/${id}`);
+    const newStatus = currentStatus === "disabled" ? "active" : "disabled";
+
+    // Ask reason only if disabling
+    let reason = "";
+    if (newStatus === "disabled") {
+      reason = prompt("Enter reason for disabling this player:");
+      if (!reason) {
+        alert("Action cancelled. You must provide a reason.");
+        return;
+      }
     }
-  };
+
+    const now = new Date();
+    const disableUntil = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes later
+
+    const updateData =
+      newStatus === "disabled"
+        ? {
+            status: "disabled",
+            disableReason: reason,
+            disabledAt: now.toISOString(),
+            disableUntil: disableUntil.toISOString(),
+          }
+        : {
+            status: "active",
+            disableReason: null,
+            disabledAt: null,
+            disableUntil: null,
+          };
+
+    await update(playerRef, updateData);
+
+    console.log(
+      `✅ Player ${id} ${newStatus === "disabled" ? "disabled" : "enabled"}`
+    );
+
+    if (newStatus === "disabled") {
+      console.log(`🕒 Disabled for 5 minutes | Reason: ${reason}`);
+    }
+  } catch (error) {
+    console.error("❌ Error disabling player:", error);
+  }
+};
 
   
 
@@ -179,6 +250,7 @@ export default function AdminDashboard() {
       </div>
     );
   }
+
 
   
 
@@ -227,7 +299,7 @@ export default function AdminDashboard() {
               setSidebarOpen(false);
             }}
           >
-            Feedbacks
+            Feedbacks & Reports
           </button>
 
           <button
@@ -328,6 +400,11 @@ export default function AdminDashboard() {
                         }`}
                       >
                         {player.status}
+                        {player.status === "disabled" && player.disableReason && (
+                          <div className="text-xs text-gray-400 mt-1">
+                            Reason: {player.disableReason}
+                          </div>
+                        )}
                       </td>
                       <td className="actions">
                         <button
@@ -339,6 +416,7 @@ export default function AdminDashboard() {
                       </td>
                     </tr>
                   ))}
+
                 </tbody>
               </table>
             )}
@@ -347,34 +425,73 @@ export default function AdminDashboard() {
 
         {/* Feedbacks tab */}
         {activeTab === "feedbacks" && (
-          <section>
-            <div className="min-h-screen p-6 bg-black text-white">
-              <h1 className="text-3xl font-bold mb-6">📩 User Feedbacks</h1>
-              {feedbacks.length === 0 ? (
-                <p>No feedback yet...</p>
-              ) : (
-                feedbacks.map((fb) => (
-                  <div
-                    key={fb.id}
-                    className="bg-gray-800 p-4 rounded-lg shadow-md border border-gray-700"
-                  >
-                    <h2 className="text-lg font-bold">{fb.subject}</h2>
-                    <p className="text-sm text-gray-300">{fb.message}</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      From: {fb.name} — {fb.email}
-                    </p>
-                    <button
-                      className="mt-3 px-3 py-1 bg-red-600 rounded-md text-xs hover:bg-red-700"
-                      onClick={() => handleDeleteFeedback(fb.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                ))
-              )}
+  <section className="min-h-screen p-6 bg-black text-white">
+    <h1 className="text-3xl font-bold mb-6">📩 Feedbacks & Reports</h1>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* --- Feedbacks --- */}
+      <div>
+        <h2 className="text-xl font-bold mb-4 text-blue-400">User Feedbacks</h2>
+        {feedbacks.length === 0 ? (
+          <p>No feedback yet...</p>
+        ) : (
+          feedbacks.map((fb) => (
+            <div
+              key={fb.id}
+              className="bg-gray-800 p-4 mb-4 rounded-lg shadow-md border border-gray-700"
+            >
+              <h3 className="text-lg font-semibold">{fb.subject}</h3>
+              <p className="text-sm text-gray-300">{fb.message}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                From: {fb.name} — {fb.email}
+              </p>
+              <button
+                className="mt-3 px-3 py-1 bg-red-600 rounded-md text-xs hover:bg-red-700"
+                onClick={() => handleDeleteFeedback(fb.id)}
+              >
+                Delete
+              </button>
             </div>
-          </section>
+          ))
         )}
+      </div>
+
+      {/* --- Reports (Realtime Database) --- */}
+      <div>
+        <h2 className="text-xl font-bold mb-4 text-yellow-400">Player Reports</h2>
+        {reports.length === 0 ? (
+          <p>No reports yet...</p>
+        ) : (
+          reports.map((rp) => (
+            <div
+              key={rp.id}
+              className="bg-gray-800 p-4 mb-4 rounded-lg shadow-md border border-gray-700"
+            >
+              <p className="text-sm text-gray-300 mb-1">
+                <strong>Winner:</strong> {rp.winner || "N/A"}
+              </p>
+              <p className="text-sm text-gray-300 mb-1">
+                <strong>Loser:</strong> {rp.loser || "N/A"}
+              </p>
+              <p className="text-sm text-gray-300 mb-1">
+                <strong>Message:</strong> {rp.message || ""}
+              </p>
+              <p className="text-xs text-gray-500">
+                {rp.timestamp ? new Date(rp.timestamp).toLocaleString() : ""}
+              </p>
+              <button
+                className="mt-3 px-3 py-1 bg-red-600 rounded-md text-xs hover:bg-red-700"
+                onClick={() => handleDeleteReport(rp.id)}
+              >
+                Delete
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  </section>
+)}
 
         {/* Purchases tab */}
         {activeTab === "purchases" && <h1>Player Purchases</h1>}
