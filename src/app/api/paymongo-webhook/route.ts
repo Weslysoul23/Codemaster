@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import admin from "firebase-admin";
 
-// Initialize Firebase Admin
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -18,55 +17,45 @@ export async function POST(req: Request) {
   try {
     const event = await req.json();
 
-    if (event.type !== "payment.paid" && event.type !== "link.payment.paid") {
+    if (event.type !== "payment.paid" && event.type !== "link.payment.paid")
       return NextResponse.json({ message: "Not a paid event" });
-    }
 
     const payment = event.data.attributes;
-    const payerEmail =
-      payment.billing?.email || payment.payment_method_details?.email;
+    const payerEmail = payment.billing?.email || payment.payment_method_details?.email;
     const payerName = payment.billing?.name || "Valued Customer";
     const amount = payment.amount / 100;
     const description = payment.description || "CodeMaster Plan";
     const date = new Date(payment.created_at * 1000).toLocaleString();
+    const userId = payment.metadata?.userId; // Pass Unity userId in metadata when creating session
 
-    if (!payerEmail) {
-      console.error("No payer email in payment:", payment);
-      return NextResponse.json({ error: "No payer email found" }, { status: 400 });
-    }
+    if (!payerEmail || !userId)
+      return NextResponse.json({ error: "Missing payer email or userId" }, { status: 400 });
 
-    // Send receipt email
+    // Update Firebase
+    await admin.database().ref(`purchases/${userId}/LVL 6 - Stage final boss`).set({ paid: true });
+
+    // Send email
     const transporter = nodemailer.createTransport({
       service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
     });
 
-    const mailOptions = {
+    await transporter.sendMail({
       from: `"CodeMaster" <${process.env.EMAIL_USER}>`,
       to: payerEmail,
       subject: "Your CodeMaster Payment Receipt",
-      html: `
-        <div style="font-family:Arial, sans-serif; background:#0a1b55; color:white; padding:20px; border-radius:10px;">
-          <h2>💻 CodeMaster Payment Receipt</h2>
-          <p>Hi <b>${payerName}</b>,</p>
-          <p>Thank you for subscribing to <b>${description}</b>.</p>
-          <p><b>Amount:</b> ₱${amount}</p>
-          <p><b>Date:</b> ${date}</p>
-          <hr/>
-          <p style="font-size:12px;">If you did not make this payment, please contact support immediately.</p>
-        </div>
-      `,
-    };
+      html: `<div style="font-family:Arial, sans-serif; background:#0a1b55; color:white; padding:20px; border-radius:10px;">
+               <h2>CodeMaster Payment Receipt</h2>
+               <p>Hi <b>${payerName}</b>,</p>
+               <p>Thank you for subscribing to <b>${description}</b>.</p>
+               <p><b>Amount:</b> ₱${amount}</p>
+               <p><b>Date:</b> ${date}</p>
+             </div>`,
+    });
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", info.response);
-
-    return NextResponse.json({ success: true, message: "Receipt sent" });
+    return NextResponse.json({ success: true, message: "Payment confirmed and email sent" });
   } catch (err) {
-    console.error("Webhook error:", err);
+    console.error(err);
     return NextResponse.json({ success: false, error: String(err) }, { status: 500 });
   }
 }
