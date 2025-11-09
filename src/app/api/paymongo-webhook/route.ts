@@ -1,12 +1,23 @@
-// /api/paymongo-webhook.ts
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import admin from "firebase-admin";
+
+// Initialize Firebase Admin
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    }),
+    databaseURL: process.env.DATABASE_URL,
+  });
+}
 
 export async function POST(req: Request) {
   try {
     const event = await req.json();
 
-    // ✅ Handle both Checkout and Payment Link events
     if (event.type !== "payment.paid" && event.type !== "link.payment.paid") {
       return NextResponse.json({ message: "Not a paid event" });
     }
@@ -15,19 +26,16 @@ export async function POST(req: Request) {
     const payerEmail =
       payment.billing?.email || payment.payment_method_details?.email;
     const payerName = payment.billing?.name || "Valued Customer";
-    const amount = payment.amount / 100; // convert cents to PHP
+    const amount = payment.amount / 100;
     const description = payment.description || "CodeMaster Plan";
     const date = new Date(payment.created_at * 1000).toLocaleString();
 
     if (!payerEmail) {
       console.error("No payer email in payment:", payment);
-      return NextResponse.json(
-        { error: "No payer email found" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No payer email found" }, { status: 400 });
     }
 
-    // 2️⃣ Send receipt
+    // Send receipt email
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -44,7 +52,7 @@ export async function POST(req: Request) {
         <div style="font-family:Arial, sans-serif; background:#0a1b55; color:white; padding:20px; border-radius:10px;">
           <h2>💻 CodeMaster Payment Receipt</h2>
           <p>Hi <b>${payerName}</b>,</p>
-          <p>Thank you for subscribing to the <b>${description}</b>.</p>
+          <p>Thank you for subscribing to <b>${description}</b>.</p>
           <p><b>Amount:</b> ₱${amount}</p>
           <p><b>Date:</b> ${date}</p>
           <hr/>
@@ -59,9 +67,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, message: "Receipt sent" });
   } catch (err) {
     console.error("Webhook error:", err);
-    return NextResponse.json(
-      { success: false, error: String(err) },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: String(err) }, { status: 500 });
   }
 }
