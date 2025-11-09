@@ -1,12 +1,26 @@
-// /api/paymongo-webhook.ts
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { initializeApp, cert, getApps } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+
+// ✅ Initialize Firebase Admin (only once)
+if (!getApps().length) {
+  initializeApp({
+    credential: cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    }),
+  });
+}
+
+const db = getFirestore();
 
 export async function POST(req: Request) {
   try {
     const event = await req.json();
 
-    // ✅ Handle both Checkout and Payment Link events
+    // Only handle paid events
     if (event.type !== "payment.paid" && event.type !== "link.payment.paid") {
       return NextResponse.json({ message: "Not a paid event" });
     }
@@ -15,19 +29,34 @@ export async function POST(req: Request) {
     const payerEmail =
       payment.billing?.email || payment.payment_method_details?.email;
     const payerName = payment.billing?.name || "Valued Customer";
-    const amount = payment.amount / 100; // convert cents to PHP
-    const description = payment.description || "CodeMaster Plan";
+    const amount = payment.amount / 100;
+    const description = payment.description || "CodeMaster Pro Plan";
     const date = new Date(payment.created_at * 1000).toLocaleString();
 
     if (!payerEmail) {
-      console.error("No payer email in payment:", payment);
       return NextResponse.json(
         { error: "No payer email found" },
         { status: 400 }
       );
     }
 
-    // 2️⃣ Send receipt
+    // ✅ 1️⃣ Save purchase to Firestore
+    const userRef = db.collection("users").doc(payerEmail);
+    await userRef.set(
+      {
+        hasPurchasedPro: true,
+        purchaseInfo: {
+          amount,
+          description,
+          date,
+        },
+      },
+      { merge: true }
+    );
+
+    console.log(`✅ Saved purchase for ${payerEmail}`);
+
+    // ✅ 2️⃣ Send receipt email
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -53,10 +82,13 @@ export async function POST(req: Request) {
       `,
     };
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", info.response);
+    await transporter.sendMail(mailOptions);
+    console.log("📧 Receipt sent to", payerEmail);
 
-    return NextResponse.json({ success: true, message: "Receipt sent" });
+    return NextResponse.json({
+      success: true,
+      message: "Purchase saved and email sent",
+    });
   } catch (err) {
     console.error("Webhook error:", err);
     return NextResponse.json(
