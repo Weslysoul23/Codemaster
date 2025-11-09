@@ -3,8 +3,9 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, signInWithCustomToken, onAuthStateChanged } from "firebase/auth";
 import { app } from "@/lib/firebaseConfig";
+import { useSearchParams, useRouter } from "next/navigation";
 import "./payment-success.css";
 
 interface BinaryDrop {
@@ -16,11 +17,15 @@ interface BinaryDrop {
 }
 
 export default function PaymentSuccess() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [binaryRain, setBinaryRain] = useState<BinaryDrop[]>([]);
   const [userInfo, setUserInfo] = useState<{ name?: string; email?: string }>({});
   const [sending, setSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const emailAttempted = useRef(false);
+
+  const auth = getAuth(app);
 
   // 🌧️ Binary Rain Effect
   useEffect(() => {
@@ -34,22 +39,35 @@ export default function PaymentSuccess() {
     setBinaryRain(rain);
   }, []);
 
-  // 🔑 Load User Info reliably
+  // 🔑 Auto-login via custom token and redirect
   useEffect(() => {
-    const auth = getAuth(app);
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserInfo({ name: user.displayName || "CodeMaster User", email: user.email || "" });
-      } else {
-        const storedEmail = sessionStorage.getItem("userEmail");
-        const storedName = sessionStorage.getItem("userName");
-        if (storedEmail) setUserInfo({ name: storedName || "User", email: storedEmail });
-      }
+// Reads ?token=CUSTOM_TOKEN_HERE
+const token = searchParams.get("token");
+if (token) {
+  signInWithCustomToken(auth, token)
+    .then((cred) => {
+      const user = cred.user;
+      sessionStorage.setItem("userEmail", user.email || "");
+      sessionStorage.setItem("userName", user.displayName || "CodeMaster User");
+      setTimeout(() => router.push("/player-dashboard"), 1500);
     });
-    return () => unsubscribe();
-  }, []);
 
-  // 💌 Send Email
+    } else {
+      // Fallback: check existing auth state
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUserInfo({ name: user.displayName || "CodeMaster User", email: user.email || "" });
+        } else {
+          const storedEmail = sessionStorage.getItem("userEmail");
+          const storedName = sessionStorage.getItem("userName");
+          if (storedEmail) setUserInfo({ name: storedName || "User", email: storedEmail });
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, [searchParams, router, auth]);
+
+  // 💌 Send Email Receipt
   const sendEmailReceipt = async (auto = false) => {
     if (!userInfo?.email) return;
     if (auto && emailAttempted.current) return;
@@ -81,17 +99,14 @@ export default function PaymentSuccess() {
     }
   };
 
-  // 🧠 Auto-send receipt on load when email is available
   useEffect(() => {
     if (userInfo.email && !emailSent && !sending) sendEmailReceipt(true);
   }, [userInfo, emailSent, sending]);
 
   return (
     <div className="payment-success-container min-h-screen flex flex-col items-center justify-center font-mono overflow-hidden relative text-[#00ff99] bg-black">
-      {/* Background Glow */}
       <div className="background-glow absolute inset-0"></div>
 
-      {/* Payment Info */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -110,7 +125,6 @@ export default function PaymentSuccess() {
           Your <span className="text-[#00ffaa] font-semibold">CodeMaster Pro Plan</span> has been activated.
         </p>
 
-        {/* Email Status */}
         <div className="mb-6">
           {sending ? (
             <motion.p className="text-sm opacity-80" animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity }}>
@@ -123,7 +137,6 @@ export default function PaymentSuccess() {
           )}
         </div>
 
-        {/* Resend Button */}
         {emailSent && (
           <button
             onClick={() => sendEmailReceipt(false)}
@@ -133,16 +146,8 @@ export default function PaymentSuccess() {
             {sending ? "Resending..." : "Resend Receipt"}
           </button>
         )}
-
-        {/* Return Link */}
-        <div className="mt-8">
-          <Link href="/player-dashboard" className="return-btn border px-6 py-3 rounded-xl hover:bg-[#00ff99] hover:text-black transition-all duration-300 shadow-glow">
-            Return to Dashboard
-          </Link>
-        </div>
       </motion.div>
 
-      {/* Binary Rain */}
       <div className="binary-rain absolute inset-0 overflow-hidden opacity-20">
         {binaryRain.map((drop) => (
           <motion.span
