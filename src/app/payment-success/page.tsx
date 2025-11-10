@@ -37,7 +37,7 @@ export default function PaymentSuccess() {
     setBinaryRain(rain);
   }, []);
 
-  // 🔑 Load User Info with UID
+  // 🔑 Load User Info
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -73,7 +73,7 @@ export default function PaymentSuccess() {
       email: userInfo.email,
       amount: 299,
       description: "CodeMaster Pro Plan",
-      date: new Date().toLocaleString("en-PH", { hour12: true }),
+      date: new Date().toLocaleString(),
     };
 
     try {
@@ -91,36 +91,37 @@ export default function PaymentSuccess() {
     }
   };
 
-  // 💾 Save Subscription to Firebase
+  // 💾 Save to Firebase RTDB (under UID)
   const saveToFirebase = async () => {
-    if (!userInfo?.email || firebaseAttempted.current) return;
+    if (!userInfo?.uid || firebaseAttempted.current) return;
     firebaseAttempted.current = true;
-
-    const safeEmail = userInfo.email.replace(/[.@]/g, "_");
-    const subscriptionData = {
-      uid: userInfo.uid || "unknown_uid",
-      account: userInfo.email,
-      name: userInfo.name || "Valued Customer",
-      amount: 299,
-      date: new Date().toLocaleString("en-PH", { hour12: true }),
-      hasPurchasedPro: true,
-      plan: "CodeMaster Pro Plan",
-      transactionId: "frontend_txn_" + Date.now(),
-    };
 
     try {
       const db = getDatabase(app);
-      await set(ref(db, `subscription/${safeEmail}`), subscriptionData);
-      console.log("✅ Subscription saved to Firebase:", subscriptionData);
+      const userRef = ref(db, `subscriptions/${userInfo.uid}`);
+
+      const subscriptionData = {
+        account: userInfo.email || "unknown",
+        name: userInfo.name || "CodeMaster User",
+        hasPurchasedPro: true,
+        amount: 299,
+        plan: "CodeMaster Pro Plan",
+        date: new Date().toLocaleString(),
+        transactionId: "frontend_txn_" + Date.now(),
+      };
+
+      await set(userRef, subscriptionData);
+
+      console.log("✅ Subscription saved to Firebase under UID:", userInfo.uid);
       setFirebaseSaved(true);
     } catch (err) {
       console.error("Firebase save exception:", err);
     }
   };
 
-  // 🧠 Auto-trigger on load
+  // 🧠 Auto-trigger when user info loads
   useEffect(() => {
-    if (userInfo.email) {
+    if (userInfo.email && userInfo.uid) {
       sendEmailReceipt(true);
       saveToFirebase();
     }
@@ -138,13 +139,7 @@ export default function PaymentSuccess() {
       >
         <motion.h1
           className="payment-title text-4xl md:text-5xl font-bold tracking-widest mb-6"
-          animate={{
-            textShadow: [
-              "0 0 5px #00ff99",
-              "0 0 20px #00ff99",
-              "0 0 10px #00ff99",
-            ],
-          }}
+          animate={{ textShadow: ["0 0 5px #00ff99", "0 0 20px #00ff99", "0 0 10px #00ff99"] }}
           transition={{ repeat: Infinity, repeatType: "mirror", duration: 2 }}
         >
           PAYMENT COMPLETE
@@ -156,31 +151,18 @@ export default function PaymentSuccess() {
 
         <div className="mb-6">
           {sending ? (
-            <motion.p
-              className="text-sm opacity-80"
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
+            <motion.p className="text-sm opacity-80" animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity }}>
               📧 Sending your receipt...
             </motion.p>
           ) : emailSent ? (
-            <p className="text-sm text-[#00ffaa]">
-              ✅ Receipt sent to {userInfo.email}
-            </p>
+            <p className="text-sm text-[#00ffaa]">✅ Receipt sent to {userInfo.email}</p>
           ) : (
-            <p className="text-sm opacity-60">
-              Preparing your digital receipt...
-            </p>
+            <p className="text-sm opacity-60">Preparing your digital receipt...</p>
           )}
-
           {firebaseSaved ? (
-            <p className="text-sm text-[#00ffaa]">
-              💾 Subscription saved in Firebase
-            </p>
+            <p className="text-sm text-[#00ffaa]">💾 Subscription saved in Firebase</p>
           ) : (
-            <p className="text-sm opacity-60">
-              Saving subscription to Firebase...
-            </p>
+            <p className="text-sm opacity-60">Saving subscription to Firebase...</p>
           )}
         </div>
 
@@ -195,10 +177,7 @@ export default function PaymentSuccess() {
         )}
 
         <div className="mt-8">
-          <Link
-            href="/player-dashboard"
-            className="return-btn border px-6 py-3 rounded-xl hover:bg-[#00ff99] hover:text-black transition-all duration-300 shadow-glow"
-          >
+          <Link href="/player-dashboard" className="return-btn border px-6 py-3 rounded-xl hover:bg-[#00ff99] hover:text-black transition-all duration-300 shadow-glow">
             Return to Dashboard
           </Link>
         </div>
@@ -211,12 +190,7 @@ export default function PaymentSuccess() {
             className="absolute text-[#00ff99] text-xs"
             initial={{ y: -100 }}
             animate={{ y: "100vh" }}
-            transition={{
-              repeat: Infinity,
-              duration: drop.duration,
-              delay: drop.delay,
-              ease: "linear",
-            }}
+            transition={{ repeat: Infinity, duration: drop.duration, delay: drop.delay, ease: "linear" }}
             style={{ left: `${drop.left}%` }}
           >
             {drop.bit}
