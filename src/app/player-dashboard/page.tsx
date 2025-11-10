@@ -184,19 +184,45 @@ const PlayerDashboard: React.FC = () => {
               </button>
 
         <h2 className="logo">Players Panel</h2>
-        <nav className="sidebar-nav">
-          <button className={activeTab === "home" ? "active" : ""} onClick={() => setActiveTab("home")}>
-            Home
-          </button>
-          <button className={activeTab === "leaderboard" ? "active" : ""} onClick={() => setActiveTab("leaderboard")}>
-            Leader Board
-          </button>
-         
-          <button className={activeTab === "subscription" ? "active" : ""} onClick={() => setActiveTab("subscription")}>
-            Subscription
-          </button>
-          <button onClick={() => setShowLogoutConfirm(true)}>Logout</button>
-        </nav>
+      <nav className="sidebar-nav">
+        <button
+          className={activeTab === "home" ? "active" : ""}
+          onClick={() => {
+            setActiveTab("home");
+            setSidebarOpen(false);
+          }}
+        >
+          Home
+        </button>
+
+        <button
+          className={activeTab === "leaderboard" ? "active" : ""}
+          onClick={() => {
+            setActiveTab("leaderboard");
+            setSidebarOpen(false);
+          }}
+        >
+          Leaderboard
+        </button>
+
+        <button
+          className={activeTab === "subscription" ? "active" : ""}
+          onClick={() => {
+            setActiveTab("subscription");
+            setSidebarOpen(false);
+          }}
+        >
+          Subscription
+        </button>
+
+        <button
+          className="logout-btn"
+          onClick={() => setShowLogoutConfirm(true)}
+        >
+          Logout
+        </button>
+      </nav>
+
 
         <div className="sidebar-logo">
           <span className="glitch" data-text="CODEMASTER">
@@ -217,9 +243,9 @@ const PlayerDashboard: React.FC = () => {
       <main className="dashboard-main">
         {activeTab === "home" && (
           <section className="tab-content home-content">
-            <h1>Welcome Back, {username}!</h1>
-            <p className="home-tagline">
-              <em>The world’s last defense isn’t a gun — it’s a line of code.</em>
+            <h1 className="text-3xl font-bold mb-4">Welcome Back, {username}!</h1>
+            <p className="text-gray-300 mb-8">
+              Here’s an overview of players rank, points, and stage progression.
             </p>
 
             <div className="home-boxes">
@@ -284,7 +310,7 @@ const PlayerDashboard: React.FC = () => {
               <div className="plan-box">
                 <h2 className="plan-title free">Free</h2>
                 <p className="plan-subtitle">No credit card needed</p>
-                <p className="plan-price">$0</p>
+                <p className="plan-price">₱0</p>
                 <button className="current-plan-btn">Current Plan</button>
                 <h3 className="plan-section-title">Essentials to get started:</h3>
                 <ul className="plan-features">
@@ -296,7 +322,7 @@ const PlayerDashboard: React.FC = () => {
               <div className="plan-box">
                 <h2 className="plan-title pro">Pro</h2>
                 <p className="plan-subtitle">Best for learning C#</p>
-                <p className="plan-price">$5<span>/month</span></p>
+                <p className="plan-price">₱5</p>
                 <SubscribeButton />
                 <h3 className="plan-section-title">Everything in Free, plus:</h3>
                 <ul className="plan-features">
