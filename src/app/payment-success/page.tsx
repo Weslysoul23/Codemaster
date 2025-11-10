@@ -15,26 +15,16 @@ interface BinaryDrop {
   bit: string;
 }
 
-interface UserInfo {
-  name?: string;
-  email?: string;
-}
-
-interface PaymentProps {
-  amount?: number;
-  description?: string;
-}
-
-export default function PaymentSuccess({ amount = 299, description = "CodeMaster Pro Plan" }: PaymentProps) {
+export default function PaymentSuccess() {
   const [binaryRain, setBinaryRain] = useState<BinaryDrop[]>([]);
-  const [userInfo, setUserInfo] = useState<UserInfo>({});
+  const [userInfo, setUserInfo] = useState<{ name?: string; email?: string }>({});
   const [sending, setSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const emailAttempted = useRef(false);
 
   // 🌧️ Binary Rain Effect
   useEffect(() => {
-    const rain: BinaryDrop[] = Array.from({ length: 50 }).map((_, i) => ({
+    const rain = Array.from({ length: 50 }).map((_, i) => ({
       id: i,
       left: Math.random() * 100,
       duration: Math.random() * 10 + 10,
@@ -44,7 +34,7 @@ export default function PaymentSuccess({ amount = 299, description = "CodeMaster
     setBinaryRain(rain);
   }, []);
 
-  // 🔑 Load User Info
+  // 🔑 Load User Info reliably
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -61,7 +51,7 @@ export default function PaymentSuccess({ amount = 299, description = "CodeMaster
 
   // 💌 Send Email
   const sendEmailReceipt = async (auto = false) => {
-    if (!userInfo.email) return;
+    if (!userInfo?.email) return;
     if (auto && emailAttempted.current) return;
 
     emailAttempted.current = true;
@@ -70,8 +60,8 @@ export default function PaymentSuccess({ amount = 299, description = "CodeMaster
     const payload = {
       name: userInfo.name || "Valued Customer",
       email: userInfo.email,
-      amount,
-      description,
+      amount: 299,
+      description: "CodeMaster Pro Plan",
       date: new Date().toLocaleString(),
     };
 
@@ -81,7 +71,6 @@ export default function PaymentSuccess({ amount = 299, description = "CodeMaster
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       const data = await res.json();
       if (!res.ok) console.error("API Error:", data.error || res.statusText);
       if (data.success) setEmailSent(true);
@@ -92,7 +81,7 @@ export default function PaymentSuccess({ amount = 299, description = "CodeMaster
     }
   };
 
-  // 🧠 Auto-send receipt on load
+  // 🧠 Auto-send receipt on load when email is available
   useEffect(() => {
     if (userInfo.email && !emailSent && !sending) sendEmailReceipt(true);
   }, [userInfo, emailSent, sending]);
@@ -118,17 +107,13 @@ export default function PaymentSuccess({ amount = 299, description = "CodeMaster
         </motion.h1>
 
         <p className="text-lg md:text-xl opacity-80 mb-8">
-          Your <span className="text-[#00ffaa] font-semibold">{description}</span> has been activated.
+          Your <span className="text-[#00ffaa] font-semibold">CodeMaster Pro Plan</span> has been activated.
         </p>
 
         {/* Email Status */}
         <div className="mb-6">
           {sending ? (
-            <motion.p
-              className="text-sm opacity-80"
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
+            <motion.p className="text-sm opacity-80" animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity }}>
               📧 Sending your receipt...
             </motion.p>
           ) : emailSent ? (
@@ -151,10 +136,7 @@ export default function PaymentSuccess({ amount = 299, description = "CodeMaster
 
         {/* Return Link */}
         <div className="mt-8">
-          <Link
-            href="/player-dashboard"
-            className="return-btn border px-6 py-3 rounded-xl hover:bg-[#00ff99] hover:text-black transition-all duration-300 shadow-glow"
-          >
+          <Link href="/player-dashboard" className="return-btn border px-6 py-3 rounded-xl hover:bg-[#00ff99] hover:text-black transition-all duration-300 shadow-glow">
             Return to Dashboard
           </Link>
         </div>
