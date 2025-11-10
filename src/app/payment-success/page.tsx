@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
 import { app } from "@/lib/firebaseConfig";
 import "./payment-success.css";
 
@@ -36,22 +37,30 @@ export default function PaymentSuccess() {
     setBinaryRain(rain);
   }, []);
 
-  // 🔑 Load User Info reliably
+  // 🔑 Load User Info
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUserInfo({ name: user.displayName || "CodeMaster User", email: user.email || "" });
+        setUserInfo({
+          name: user.displayName || "CodeMaster User",
+          email: user.email || "",
+        });
       } else {
         const storedEmail = sessionStorage.getItem("userEmail");
         const storedName = sessionStorage.getItem("userName");
-        if (storedEmail) setUserInfo({ name: storedName || "User", email: storedEmail });
+        if (storedEmail) {
+          setUserInfo({
+            name: storedName || "User",
+            email: storedEmail,
+          });
+        }
       }
     });
     return () => unsubscribe();
   }, []);
 
-  // 💌 Send Email
+  // 💌 Send Email Receipt
   const sendEmailReceipt = async (auto = false) => {
     if (!userInfo?.email) return;
     if (auto && emailAttempted.current) return;
@@ -63,7 +72,7 @@ export default function PaymentSuccess() {
       email: userInfo.email,
       amount: 299,
       description: "CodeMaster Pro Plan",
-      date: new Date().toLocaleString(),
+      date: new Date().toLocaleString("en-PH", { hour12: true }),
     };
 
     try {
@@ -81,35 +90,26 @@ export default function PaymentSuccess() {
     }
   };
 
-  // 💾 Save to Firebase RTDB
+  // 💾 Save Subscription to Firebase
   const saveToFirebase = async () => {
     if (!userInfo?.email || firebaseAttempted.current) return;
     firebaseAttempted.current = true;
 
-    const payload = {
-      type: "payment.paid",
-      data: {
-        attributes: {
-          id: "frontend_txn_" + Date.now(),
-          amount: 29900,
-          description: "CodeMaster Pro Plan",
-          billing: {
-            email: userInfo.email,
-            name: userInfo.name || "Valued Customer",
-          },
-          created_at: Math.floor(Date.now() / 1000),
-        },
-      },
+    const safeEmail = userInfo.email.replace(/[.@]/g, "_");
+    const subscriptionData = {
+      account: userInfo.email,
+      amount: 299,
+      date: new Date().toLocaleString("en-PH", { hour12: true }),
+      hasPurchasedPro: true,
+      plan: "CodeMaster Pro Plan",
+      transactionId: "frontend_txn_" + Date.now(),
     };
 
     try {
-      const res = await fetch("/api/paymongo-webhook", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (data.success) setFirebaseSaved(true);
+      const db = getDatabase(app);
+      await set(ref(db, `subscription/${safeEmail}`), subscriptionData);
+      console.log("✅ Subscription saved to Firebase:", subscriptionData);
+      setFirebaseSaved(true);
     } catch (err) {
       console.error("Firebase save exception:", err);
     }
@@ -135,7 +135,13 @@ export default function PaymentSuccess() {
       >
         <motion.h1
           className="payment-title text-4xl md:text-5xl font-bold tracking-widest mb-6"
-          animate={{ textShadow: ["0 0 5px #00ff99", "0 0 20px #00ff99", "0 0 10px #00ff99"] }}
+          animate={{
+            textShadow: [
+              "0 0 5px #00ff99",
+              "0 0 20px #00ff99",
+              "0 0 10px #00ff99",
+            ],
+          }}
           transition={{ repeat: Infinity, repeatType: "mirror", duration: 2 }}
         >
           PAYMENT COMPLETE
@@ -147,18 +153,31 @@ export default function PaymentSuccess() {
 
         <div className="mb-6">
           {sending ? (
-            <motion.p className="text-sm opacity-80" animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity }}>
+            <motion.p
+              className="text-sm opacity-80"
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
               📧 Sending your receipt...
             </motion.p>
           ) : emailSent ? (
-            <p className="text-sm text-[#00ffaa]">✅ Receipt sent to {userInfo.email}</p>
+            <p className="text-sm text-[#00ffaa]">
+              ✅ Receipt sent to {userInfo.email}
+            </p>
           ) : (
-            <p className="text-sm opacity-60">Preparing your digital receipt...</p>
+            <p className="text-sm opacity-60">
+              Preparing your digital receipt...
+            </p>
           )}
+
           {firebaseSaved ? (
-            <p className="text-sm text-[#00ffaa]">💾 Subscription saved in Firebase</p>
+            <p className="text-sm text-[#00ffaa]">
+              💾 Subscription saved in Firebase
+            </p>
           ) : (
-            <p className="text-sm opacity-60">Saving subscription to Firebase...</p>
+            <p className="text-sm opacity-60">
+              Saving subscription to Firebase...
+            </p>
           )}
         </div>
 
@@ -173,7 +192,10 @@ export default function PaymentSuccess() {
         )}
 
         <div className="mt-8">
-          <Link href="/player-dashboard" className="return-btn border px-6 py-3 rounded-xl hover:bg-[#00ff99] hover:text-black transition-all duration-300 shadow-glow">
+          <Link
+            href="/player-dashboard"
+            className="return-btn border px-6 py-3 rounded-xl hover:bg-[#00ff99] hover:text-black transition-all duration-300 shadow-glow"
+          >
             Return to Dashboard
           </Link>
         </div>
@@ -186,7 +208,12 @@ export default function PaymentSuccess() {
             className="absolute text-[#00ff99] text-xs"
             initial={{ y: -100 }}
             animate={{ y: "100vh" }}
-            transition={{ repeat: Infinity, duration: drop.duration, delay: drop.delay, ease: "linear" }}
+            transition={{
+              repeat: Infinity,
+              duration: drop.duration,
+              delay: drop.delay,
+              ease: "linear",
+            }}
             style={{ left: `${drop.left}%` }}
           >
             {drop.bit}
