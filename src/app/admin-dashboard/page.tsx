@@ -23,7 +23,6 @@ import {
   get,
 } from "firebase/database";
 
-// ✅ Add this type definition here
 interface Player {
   id: string;
   username: string;
@@ -33,12 +32,13 @@ interface Player {
 
 export default function AdminDashboard() {
 
-  const [loggedIn, setLoggedIn] = useState(true); // ✅ added
+  const [loggedIn, setLoggedIn] = useState(true); 
   const [activeTab, setActiveTab] = useState<"dashboard" | "players" | "feedbacks" | "purchases">("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const router = useRouter();
 
+  
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -66,41 +66,59 @@ export default function AdminDashboard() {
   
   // Stats for dashboard counts
   const [stats, setStats] = useState({
-    users: 0,
-    feedbacks: 0,
-  });
+  users: 0,
+  feedbacks: 0,
+  reports: 0,
+  subscriptions: 0,
+});
 
   // Fetch dashboard counts
   useEffect(() => {
-    const fetchCounts = async () => {
-      try {
-        // --- Firestore feedbacks ---
-        const feedbackSnap = await getDocs(collection(db, "feedbacks"));
-        const feedbackCount = feedbackSnap.size;
+  const fetchCounts = async () => {
+    try {
+      const dbRT = getDatabase(app);
 
-        // --- Realtime Database players ---
-        const dbRT = getDatabase(app);
-        const playersRef = ref(dbRT, "users");
-        const snapshot = await get(playersRef);
+      // --- Players (Realtime Database) ---
+      const playersSnap = await get(ref(dbRT, "users"));
+      const playersCount = playersSnap.exists()
+        ? Object.keys(playersSnap.val()).length
+        : 0;
 
-        let playerCount = 0;
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          playerCount = Object.keys(data).length;
-        }
+      // --- Feedbacks (Firestore) ---
+      const feedbackSnap = await getDocs(collection(db, "feedbacks"));
+      const feedbackCount = feedbackSnap.size;
 
-        // ✅ Update state
-        setStats({
-          users: playerCount,
-          feedbacks: feedbackCount,
+      // --- Player Reports (Realtime Database) ---
+      const reportsRef = ref(dbRT, "match_reports");
+      const reportsSnap = await get(reportsRef);
+      const reportsCount = reportsSnap.exists()
+        ? Object.keys(reportsSnap.val()).length
+        : 0;
+
+      // --- Subscriptions (Realtime Database) ---
+      const subsRef = ref(dbRT, "subscription");
+      const subsSnap = await get(subsRef);
+      let subsCount = 0;
+      if (subsSnap.exists()) {
+        const data = subsSnap.val();
+        Object.keys(data).forEach((email) => {
+          if (data[email].hasPurchasedPro) subsCount++;
         });
-      } catch (error) {
-        console.error("Error fetching stats:", error);
       }
-    };
 
-    fetchCounts();
-  }, []);
+      setStats({
+        users: playersCount,
+        feedbacks: feedbackCount,
+        reports: reportsCount,
+        subscriptions: subsCount,
+      });
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+    }
+  };
+
+  fetchCounts();
+}, []);
 
   // Real-time feedback updates
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
@@ -196,10 +214,10 @@ const handleDisable = async (id: string, currentStatus?: string) => {
     const playerRef = ref(dbRT, `users/${id}`);
     const newStatus = currentStatus === "disabled" ? "active" : "disabled";
 
-    // Ask reason only if disabling
+    // Ask for a reason only if disabling
     let reason = "";
     if (newStatus === "disabled") {
-      reason = prompt("Enter reason for disabling this player:");
+      reason = prompt("Enter reason for disabling this player:") || "";
       if (!reason) {
         alert("Action cancelled. You must provide a reason.");
         return;
@@ -207,7 +225,6 @@ const handleDisable = async (id: string, currentStatus?: string) => {
     }
 
     const now = new Date();
-    const disableUntil = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes later
 
     const updateData =
       newStatus === "disabled"
@@ -215,13 +232,11 @@ const handleDisable = async (id: string, currentStatus?: string) => {
             status: "disabled",
             disableReason: reason,
             disabledAt: now.toISOString(),
-            disableUntil: disableUntil.toISOString(),
           }
         : {
             status: "active",
             disableReason: null,
             disabledAt: null,
-            disableUntil: null,
           };
 
     await update(playerRef, updateData);
@@ -231,14 +246,55 @@ const handleDisable = async (id: string, currentStatus?: string) => {
     );
 
     if (newStatus === "disabled") {
-      console.log(`🕒 Disabled for 5 minutes | Reason: ${reason}`);
+      console.log(`Reason: ${reason}`);
     }
   } catch (error) {
     console.error("❌ Error disabling player:", error);
   }
 };
 
-  
+
+// --- Real-time Subscriptions (Realtime Database) ---
+const [subscriptions, setSubscriptions] = useState<any[]>([]);
+const [loadingSubscriptions, setLoadingSubscriptions] = useState(true);
+
+useEffect(() => {
+  const dbRT = getDatabase(app);
+  const rootRef = ref(dbRT, "subscription"); 
+
+  const listener = onValue(rootRef, (snapshot) => {
+    if (!snapshot.exists()) {
+      console.log("⚠️ No data found at /subscription");
+      setSubscriptions([]);
+      setLoadingSubscriptions(false);
+      return;
+    }
+
+    const data = snapshot.val();
+    const allSubscriptions: any[] = [];
+
+    Object.keys(data).forEach((userEmail) => {
+      const subData = data[userEmail];
+      allSubscriptions.push({
+        id: subData.transactionId || userEmail,
+        userEmail,
+        plan: subData.plan || "N/A",
+        amount: subData.amount || 0,
+        date: subData.date || "N/A",
+        hasPurchasedPro: subData.hasPurchasedPro || false,
+      });
+    });
+
+    console.log("✅ Loaded subscriptions:", allSubscriptions);
+    setSubscriptions(allSubscriptions);
+    setLoadingSubscriptions(false);
+  });
+
+  return () => off(rootRef, "value", listener);
+}, []);
+
+
+
 
   if (!loggedIn) {
     return (
@@ -339,33 +395,52 @@ const handleDisable = async (id: string, currentStatus?: string) => {
       <main className="main-content">
         {/* Dashboard tab */}
         {activeTab === "dashboard" && (
-          <section>
-            <div className="p-6 text-white">
-              <h1 className="text-2xl font-bold mb-4">Welcome, Admin!</h1>
-              <p className="overview block">
-                Overview of current players and feedback activity. <br />
-              </p>
+  <section className="p-6 text-white min-h-screen">
+    <h1 className="text-3xl font-bold mb-4">Welcome, Admin!</h1>
+    <p className="text-gray-300 mb-8">
+      Here’s an overview of player activity, feedbacks, reports, and subscriptions.
+    </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-center flex flex-col justify-center items-center min-h-[150px]">
-                  <h3 className="text-lg font-semibold text-gray-300">Players</h3>
-                  <p className="text-4xl font-bold text-blue-500">
-                    {stats.users}
-                  </p>
-                </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Players */}
+      <button
+        onClick={() => setActiveTab("players")}
+        className="bg-gray-900 hover:bg-gray-800 transition-all duration-300 p-6 rounded-2xl shadow-lg text-center flex flex-col justify-center items-center min-h-[140px] w-full"
+      >
+        <h3 className="text-lg font-semibold text-gray-300 mb-2">👤 Players</h3>
+        <p className="text-4xl font-bold text-blue-500">{stats.users}</p>
+      </button>
 
-                <div className="bg-gray-900 p-8 rounded-2xl shadow-lg text-center flex flex-col justify-center items-center min-h-[150px]">
-                  <h3 className="text-lg font-semibold text-gray-300">
-                    Feedbacks
-                  </h3>
-                  <p className="text-4xl font-bold text-blue-500">
-                    {stats.feedbacks}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
+      {/* Feedbacks */}
+      <button
+        onClick={() => setActiveTab("feedbacks")}
+        className="bg-gray-900 hover:bg-gray-800 transition-all duration-300 p-6 rounded-2xl shadow-lg text-center flex flex-col justify-center items-center min-h-[140px] w-full"
+      >
+        <h3 className="text-lg font-semibold text-gray-300 mb-2">💬 Feedbacks</h3>
+        <p className="text-4xl font-bold text-green-400">{stats.feedbacks}</p>
+      </button>
+
+      {/* Player Reports */}
+      <button
+        onClick={() => setActiveTab("feedbacks")}
+        className="bg-gray-900 hover:bg-gray-800 transition-all duration-300 p-6 rounded-2xl shadow-lg text-center flex flex-col justify-center items-center min-h-[140px] w-full"
+      >
+        <h3 className="text-lg font-semibold text-gray-300 mb-2">⚠️ Player Reports</h3>
+        <p className="text-4xl font-bold text-yellow-400">{stats.reports}</p>
+      </button>
+
+      {/* Purchases / Subscriptions */}
+      <button
+        onClick={() => setActiveTab("purchases")}
+        className="bg-gray-900 hover:bg-gray-800 transition-all duration-300 p-6 rounded-2xl shadow-lg text-center flex flex-col justify-center items-center min-h-[140px] w-full"
+      >
+        <h3 className="text-lg font-semibold text-gray-300 mb-2">💳 Purchases</h3>
+        <p className="text-4xl font-bold text-purple-400">{stats.subscriptions}</p>
+      </button>
+    </div>
+  </section>
+)}
+
 
         {/* Players tab */}
         {activeTab === "players" && (
@@ -493,8 +568,58 @@ const handleDisable = async (id: string, currentStatus?: string) => {
   </section>
 )}
 
-        {/* Purchases tab */}
-        {activeTab === "purchases" && <h1>Player Purchases</h1>}
+      {/*Purchases*/}
+      {activeTab === "purchases" && (
+  <section className="min-h-screen p-6 bg-black text-white">
+    <h1 className="text-3xl font-bold mb-6">💳 Player Subscriptions</h1>
+
+    {loadingSubscriptions ? (
+      <p>Loading subscriptions...</p>
+    ) : subscriptions.length === 0 ? (
+      <p>No subscriptions found.</p>
+    ) : (
+      <div className="overflow-x-auto">
+        <table className="min-w-full border border-gray-700 rounded-lg">
+          <thead className="bg-gray-800">
+            <tr>
+              <th className="px-4 py-2 border-b border-gray-700">User Email</th>
+              <th className="px-4 py-2 border-b border-gray-700">Plan</th>
+              <th className="px-4 py-2 border-b border-gray-700">Amount</th>
+              <th className="px-4 py-2 border-b border-gray-700">Date</th>
+              <th className="px-4 py-2 border-b border-gray-700">Status</th>
+              <th className="px-4 py-2 border-b border-gray-700">Transaction ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            {subscriptions.map((sub) => (
+              <tr key={sub.id} className="hover:bg-gray-900">
+                <td className="px-4 py-2 border-b border-gray-700">{sub.userEmail}</td>
+                <td className="px-4 py-2 border-b border-gray-700">{sub.plan}</td>
+                <td className="px-4 py-2 border-b border-gray-700">₱{sub.amount}</td>
+                <td className="px-4 py-2 border-b border-gray-700">{sub.date}</td>
+                <td className="px-4 py-2 border-b border-gray-700">
+                  {sub.hasPurchasedPro ? (
+                    <span className="text-green-400">Active</span>
+                  ) : (
+                    <span className="text-red-400">Inactive</span>
+                  )}
+                </td>
+                <td className="px-4 py-2 border-b border-gray-700">
+                  {sub.id || "N/A"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </section>
+)}
+
+
+
+
+
       </main>
 
       {/* Logout confirmation modal */}
