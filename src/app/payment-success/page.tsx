@@ -18,7 +18,7 @@ interface BinaryDrop {
 
 export default function PaymentSuccess() {
   const [binaryRain, setBinaryRain] = useState<BinaryDrop[]>([]);
-  const [userInfo, setUserInfo] = useState<{ name?: string; email?: string }>({});
+  const [userInfo, setUserInfo] = useState<{ uid?: string; name?: string; email?: string }>({});
   const [sending, setSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [firebaseSaved, setFirebaseSaved] = useState(false);
@@ -37,12 +37,13 @@ export default function PaymentSuccess() {
     setBinaryRain(rain);
   }, []);
 
-  // 🔑 Load User Info
+  // 🔑 Load User Info with UID
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserInfo({
+          uid: user.uid,
           name: user.displayName || "CodeMaster User",
           email: user.email || "",
         });
@@ -97,7 +98,9 @@ export default function PaymentSuccess() {
 
     const safeEmail = userInfo.email.replace(/[.@]/g, "_");
     const subscriptionData = {
+      uid: userInfo.uid || "unknown_uid",
       account: userInfo.email,
+      name: userInfo.name || "Valued Customer",
       amount: 299,
       date: new Date().toLocaleString("en-PH", { hour12: true }),
       hasPurchasedPro: true,
