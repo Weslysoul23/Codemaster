@@ -2,13 +2,14 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { initializeApp, cert, getApps } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { getDatabase } from "firebase-admin/database";
 
 // ✅ Initialize Firebase Admin only once
 if (!getApps().length) {
   if (!process.env.FIREBASE_PROJECT_ID ||
       !process.env.FIREBASE_CLIENT_EMAIL ||
-      !process.env.FIREBASE_PRIVATE_KEY) {
+      !process.env.FIREBASE_PRIVATE_KEY ||
+      !process.env.FIREBASE_DB_URL) {
     console.error("Firebase environment variables are missing!");
     throw new Error("Missing Firebase credentials");
   }
@@ -19,12 +20,13 @@ if (!getApps().length) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
     }),
+    databaseURL: process.env.FIREBASE_DB_URL, // Realtime DB URL
   });
 
   console.log("✅ Firebase initialized");
 }
 
-const db = getFirestore();
+const db = getDatabase();
 
 // POST webhook handler
 export async function POST(req: Request) {
@@ -51,20 +53,15 @@ export async function POST(req: Request) {
       );
     }
 
-    // 1️⃣ Save purchase to Firestore
-    const userRef = db.collection("users").doc(payerEmail);
-    await userRef.set(
-      {
-        hasPurchasedPro: true,
-        purchaseInfo: {
-          amount,
-          description,
-          date,
-        },
-      },
-      { merge: true }
-    );
-    console.log(`✅ Saved purchase for ${payerEmail}`);
+    // 1️⃣ Save purchase to Realtime Database
+    const subscriptionRef = db.ref(`subscription/${payerEmail.replace('.', '_')}`);
+    await subscriptionRef.set({
+      hasPurchasedPro: true,
+      plan: description,
+      amount,
+      date,
+    });
+    console.log(`✅ Saved subscription for ${payerEmail} in RTDB`);
 
     // 2️⃣ Send receipt email
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
@@ -101,7 +98,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Purchase saved and email sent",
+      message: "Purchase saved to RTDB and email sent",
     });
   } catch (err) {
     console.error("Webhook error:", err);
