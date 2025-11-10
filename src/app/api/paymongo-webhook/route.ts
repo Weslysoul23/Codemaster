@@ -22,7 +22,7 @@ if (!getApps().length) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
     }),
-    databaseURL: process.env.FIREBASE_DB_URL, // Realtime DB URL
+    databaseURL: process.env.FIREBASE_DB_URL,
   });
 
   console.log("✅ Firebase initialized");
@@ -51,12 +51,13 @@ export async function POST(req: Request) {
     const amount = payment.amount / 100;
     const description = payment.description || "CodeMaster Pro Plan";
     const date = new Date(payment.created_at * 1000).toLocaleString();
+    const transactionId = payment.id || "N/A";
 
     if (!payerEmail) {
       return NextResponse.json({ error: "No payer email found" }, { status: 400 });
     }
 
-    // ✅ Replace all dots in email to make valid Firebase keys
+    // ✅ Safe Firebase key
     const safeEmail = payerEmail.replace(/\./g, "_");
     const subscriptionRef = db.ref(`subscription/${safeEmail}`);
 
@@ -66,48 +67,51 @@ export async function POST(req: Request) {
       plan: description,
       amount,
       date,
+      transactionId,
     });
     console.log(`✅ Saved subscription for ${payerEmail} in RTDB`);
 
-    // Send receipt email (non-blocking, errors will be logged but webhook continues)
+    // Send receipt email
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
+      try {
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        });
 
-      const mailOptions = {
-        from: `"CodeMaster" <${process.env.EMAIL_USER}>`,
-        to: payerEmail,
-        subject: "Your CodeMaster Payment Receipt",
-        html: `
-          <div style="font-family:Arial, sans-serif; background:#0a1b55; color:white; padding:20px; border-radius:10px;">
-            <h2>💻 CodeMaster Payment Receipt</h2>
-            <p>Hi <b>${payerName}</b>,</p>
-            <p>Thank you for subscribing to the <b>${description}</b>.</p>
-            <p><b>Amount:</b> ₱${amount}</p>
-            <p><b>Date:</b> ${date}</p>
-            <hr/>
-            <p style="font-size:12px;">If you did not make this payment, please contact support immediately.</p>
-          </div>
-        `,
-      };
+        const mailOptions = {
+          from: `"CodeMaster" <${process.env.EMAIL_USER}>`,
+          to: payerEmail,
+          subject: `Receipt for ${description}`,
+          html: `
+            <div style="font-family:Arial, sans-serif; background:#0a1b55; color:white; padding:20px; border-radius:10px;">
+              <h2>💻 CodeMaster Payment Receipt</h2>
+              <p>Hi <b>${payerName}</b>,</p>
+              <p>Thank you for subscribing to <b>${description}</b>.</p>
+              <p><b>Amount Paid:</b> ₱${amount}</p>
+              <p><b>Date:</b> ${date}</p>
+              <p><b>Transaction ID:</b> ${transactionId}</p>
+              <hr/>
+              <p style="font-size:12px;">If you did not make this payment, please contact support immediately.</p>
+            </div>
+          `,
+        };
 
-      transporter.sendMail(mailOptions).then(() => {
+        await transporter.sendMail(mailOptions);
         console.log(`📧 Receipt sent to ${payerEmail}`);
-      }).catch((emailErr) => {
-        console.error("❌ Email send failed:", emailErr);
-      });
+      } catch (emailErr) {
+        console.error("❌ Failed to send receipt email:", emailErr);
+      }
     } else {
       console.warn("⚠️ Email credentials missing, skipping email");
     }
 
     return NextResponse.json({
       success: true,
-      message: "Purchase saved to RTDB and email triggered",
+      message: "Purchase saved to RTDB and receipt email triggered",
     });
   } catch (err) {
     console.error("Webhook error:", err);

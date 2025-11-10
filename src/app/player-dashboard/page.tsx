@@ -13,9 +13,7 @@ interface LevelProgress {
 }
 
 const PlayerDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<
-    "home" | "leaderboard" | "shop" | "subscription"
-  >("home");
+  const [activeTab, setActiveTab] = useState<"home" | "leaderboard" | "shop" | "subscription">("home");
   const [loggedIn, setLoggedIn] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [username, setUsername] = useState<string>("Player");
@@ -25,17 +23,22 @@ const PlayerDashboard: React.FC = () => {
   const [expandedLevel, setExpandedLevel] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // 🔑 Track Pro subscription
+  const [hasPro, setHasPro] = useState(false);
+
   useEffect(() => {
     const auth = getAuth(app);
     const db = getDatabase(app);
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        // Username
         const userRef = ref(db, `users/${user.uid}/username`);
         onValue(userRef, (snapshot) => {
           if (snapshot.exists()) setUsername(snapshot.val());
         });
 
+        // Status (banned/disabled)
         const statusRef = ref(db, `users/${user.uid}/status`);
         onValue(statusRef, (snapshot) => {
           const status = snapshot.val();
@@ -48,6 +51,7 @@ const PlayerDashboard: React.FC = () => {
           }
         });
 
+        // Leaderboard
         const leaderboardRef = ref(db, "leaderboard");
         onValue(leaderboardRef, (snapshot) => {
           if (snapshot.exists()) {
@@ -57,12 +61,8 @@ const PlayerDashboard: React.FC = () => {
               username: data[key].username,
               points: data[key].points || 0,
             }));
-
             leaderboardArray.sort((a, b) => b.points - a.points);
-            const userIndex = leaderboardArray.findIndex(
-              (item) => item.uid === user.uid
-            );
-
+            const userIndex = leaderboardArray.findIndex(item => item.uid === user.uid);
             if (userIndex !== -1) {
               setRank(userIndex + 1);
               setPoints(leaderboardArray[userIndex].points);
@@ -73,6 +73,7 @@ const PlayerDashboard: React.FC = () => {
           }
         });
 
+        // Level Progress
         const progressRef = ref(db, `users/${user.uid}/progress`);
         onValue(progressRef, (snapshot) => {
           if (snapshot.exists()) {
@@ -81,6 +82,19 @@ const PlayerDashboard: React.FC = () => {
             setProgressData({});
           }
         });
+
+        // ✅ Subscription / Pro status
+        const safeEmail = (user.email || "").replace(/\./g, "_");
+        const subRef = ref(db, `subscription/${safeEmail}`);
+        onValue(subRef, (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            setHasPro(data.hasPurchasedPro === true);
+          } else {
+            setHasPro(false);
+          }
+        });
+
       } else {
         setLoggedIn(false);
       }
@@ -114,20 +128,18 @@ const PlayerDashboard: React.FC = () => {
     return (
       <div className="logout-message">
         <h1>You have been logged out.</h1>
-        <a href="/" className="logout-link">
-          Return to Login
-        </a>
+        <a href="/" className="logout-link">Return to Login</a>
       </div>
     );
   }
 
   // Prevent body scroll when sidebar open (mobile)
-    useEffect(() => {
-      document.body.style.overflow = sidebarOpen ? "hidden" : "auto";
-      return () => {
-        document.body.style.overflow = "auto";
-      };
-    }, [sidebarOpen]);
+  useEffect(() => {
+    document.body.style.overflow = sidebarOpen ? "hidden" : "auto";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [sidebarOpen]);
 
   // === Subscribe Button Component ===
   const SubscribeButton = () => {
@@ -159,10 +171,14 @@ const PlayerDashboard: React.FC = () => {
     return (
       <button
         onClick={handleSubscribe}
-        disabled={loading}
-        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+        disabled={loading || hasPro} // ✅ Disable if user already has Pro
+        className={`px-4 py-2 rounded-lg transition ${
+          hasPro
+            ? "bg-gray-500 text-gray-300 cursor-not-allowed"
+            : "bg-green-600 text-white hover:bg-green-700"
+        }`}
       >
-        {loading ? "Redirecting..." : "Subscribe Now"}
+        {hasPro ? "Already Subscribed" : loading ? "Redirecting..." : "Subscribe Now"}
       </button>
     );
   };
@@ -171,30 +187,23 @@ const PlayerDashboard: React.FC = () => {
   return (
     <div className="player-dashboard">
       {/* Topbar (mobile) */}
-            <header className="topbar">
-              <button className="menu-btn" onClick={() => setSidebarOpen(true)}>
-                <Menu size={22} />
-              </button>
-            </header>
-      
-            {/* Sidebar */}
-            <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-              <button className="close-btn" onClick={() => setSidebarOpen(false)}>
-                <X size={22} />
-              </button>
+      <header className="topbar">
+        <button className="menu-btn" onClick={() => setSidebarOpen(true)}>
+          <Menu size={22} />
+        </button>
+      </header>
+
+      {/* Sidebar */}
+      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+        <button className="close-btn" onClick={() => setSidebarOpen(false)}>
+          <X size={22} />
+        </button>
 
         <h2 className="logo">Players Panel</h2>
         <nav className="sidebar-nav">
-          <button className={activeTab === "home" ? "active" : ""} onClick={() => setActiveTab("home")}>
-            Home
-          </button>
-          <button className={activeTab === "leaderboard" ? "active" : ""} onClick={() => setActiveTab("leaderboard")}>
-            Leader Board
-          </button>
-         
-          <button className={activeTab === "subscription" ? "active" : ""} onClick={() => setActiveTab("subscription")}>
-            Subscription
-          </button>
+          <button className={activeTab === "home" ? "active" : ""} onClick={() => setActiveTab("home")}>Home</button>
+          <button className={activeTab === "leaderboard" ? "active" : ""} onClick={() => setActiveTab("leaderboard")}>Leader Board</button>
+          <button className={activeTab === "subscription" ? "active" : ""} onClick={() => setActiveTab("subscription")}>Subscription</button>
           <button onClick={() => setShowLogoutConfirm(true)}>Logout</button>
         </nav>
 
@@ -203,24 +212,16 @@ const PlayerDashboard: React.FC = () => {
             <strong>CODEMASTER</strong>
           </span>
         </div>
-        
       </aside>
 
       {/* Overlay for mobile sidebar */}
-      {sidebarOpen && (
-        <div
-          className="sidebar-overlay"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
-      )}
+      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>}
 
       <main className="dashboard-main">
         {activeTab === "home" && (
           <section className="tab-content home-content">
             <h1>Welcome Back, {username}!</h1>
-            <p className="home-tagline">
-              <em>The world’s last defense isn’t a gun — it’s a line of code.</em>
-            </p>
+            <p className="home-tagline"><em>The world’s last defense isn’t a gun — it’s a line of code.</em></p>
 
             <div className="home-boxes">
               <div className="info-box">
@@ -239,8 +240,7 @@ const PlayerDashboard: React.FC = () => {
                   {Object.entries(levels).map(([levelKey, stages]) => (
                     <div key={levelKey} className="level-block">
                       <button className="level-toggle-btn" onClick={() => toggleLevel(levelKey)}>
-                        {levelKey.replace("Level", "Level ")}{" "}
-                        <span>{expandedLevel === levelKey ? "▲" : "▼"}</span>
+                        {levelKey.replace("Level", "Level ")} <span>{expandedLevel === levelKey ? "▲" : "▼"}</span>
                       </button>
 
                       {expandedLevel === levelKey && (
@@ -248,10 +248,7 @@ const PlayerDashboard: React.FC = () => {
                           {stages.map((stageName) => {
                             const isCompleted = progressData?.[stageName] === true;
                             return (
-                              <div
-                                key={stageName}
-                                className={`stage-item ${isCompleted ? "completed" : "incomplete"}`}
-                              >
+                              <div key={stageName} className={`stage-item ${isCompleted ? "completed" : "incomplete"}`}>
                                 {stageName} {isCompleted ? "✅" : "❌"}
                               </div>
                             );
@@ -271,8 +268,6 @@ const PlayerDashboard: React.FC = () => {
             <LeaderBoard />
           </section>
         )}
-
-
 
         {activeTab === "subscription" && (
           <section className="tab-content subscription-content">
