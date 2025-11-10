@@ -96,7 +96,7 @@ export default function AdminDashboard() {
         : 0;
 
       // --- Subscriptions (Realtime Database) ---
-      const subsRef = ref(dbRT, "subscription");
+      const subsRef = ref(dbRT, "subscriptions");
       const subsSnap = await get(subsRef);
       let subsCount = 0;
       if (subsSnap.exists()) {
@@ -260,11 +260,11 @@ const [loadingSubscriptions, setLoadingSubscriptions] = useState(true);
 
 useEffect(() => {
   const dbRT = getDatabase(app);
-  const rootRef = ref(dbRT, "subscription"); 
+  const rootRef = ref(dbRT, "subscriptions");
 
   const listener = onValue(rootRef, (snapshot) => {
     if (!snapshot.exists()) {
-      console.log("⚠️ No data found at /subscription");
+      console.log("⚠️ No data found at /subscriptions");
       setSubscriptions([]);
       setLoadingSubscriptions(false);
       return;
@@ -273,11 +273,12 @@ useEffect(() => {
     const data = snapshot.val();
     const allSubscriptions: any[] = [];
 
-    Object.keys(data).forEach((userEmail) => {
-      const subData = data[userEmail];
+    Object.keys(data).forEach((userId) => {
+      const subData = data[userId];
       allSubscriptions.push({
-        id: subData.transactionId || userEmail,
-        userEmail,
+        userId,
+        userEmail: subData.account || "N/A",
+        name: subData.name || "N/A",
         plan: subData.plan || "N/A",
         amount: subData.amount || 0,
         date: subData.date || "N/A",
@@ -445,7 +446,7 @@ useEffect(() => {
         {/* Players tab */}
         {activeTab === "players" && (
           <section className="manage-players">
-            <h2 className="logo">Manage Players</h2>
+            <h1 className="text-3xl font-bold mb-6">👤 Manage Players</h1>
             {loadingPlayers ? (
               <p>Loading players...</p>
             ) : players.length === 0 ? (
@@ -500,7 +501,7 @@ useEffect(() => {
 
         {/* Feedbacks tab */}
         {activeTab === "feedbacks" && (
-  <section className="min-h-screen p-6 bg-black text-white">
+  <section className="min-h-screen p-6 text-white">
     <h1 className="text-3xl font-bold mb-6">📩 Feedbacks & Reports</h1>
 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -570,7 +571,7 @@ useEffect(() => {
 
       {/*Purchases*/}
       {activeTab === "purchases" && (
-  <section className="min-h-screen p-6 bg-black text-white">
+  <section className="min-h-screen p-6 text-white">
     <h1 className="text-3xl font-bold mb-6">💳 Player Subscriptions</h1>
 
     {loadingSubscriptions ? (
@@ -582,31 +583,21 @@ useEffect(() => {
         <table className="min-w-full border border-gray-700 rounded-lg">
           <thead className="bg-gray-800">
             <tr>
-              <th className="px-4 py-2 border-b border-gray-700">User Email</th>
+              <th className="px-4 py-2 border-b border-gray-700">Account</th>
+              <th className="px-4 py-2 border-b border-gray-700">Name</th>
               <th className="px-4 py-2 border-b border-gray-700">Plan</th>
               <th className="px-4 py-2 border-b border-gray-700">Amount</th>
               <th className="px-4 py-2 border-b border-gray-700">Date</th>
-              <th className="px-4 py-2 border-b border-gray-700">Status</th>
-              <th className="px-4 py-2 border-b border-gray-700">Transaction ID</th>
             </tr>
           </thead>
           <tbody>
             {subscriptions.map((sub) => (
               <tr key={sub.id} className="hover:bg-gray-900">
                 <td className="px-4 py-2 border-b border-gray-700">{sub.userEmail}</td>
+                <td className="px-4 py-2 border-b border-gray-700">{sub.name}</td>
                 <td className="px-4 py-2 border-b border-gray-700">{sub.plan}</td>
                 <td className="px-4 py-2 border-b border-gray-700">₱{sub.amount}</td>
                 <td className="px-4 py-2 border-b border-gray-700">{sub.date}</td>
-                <td className="px-4 py-2 border-b border-gray-700">
-                  {sub.hasPurchasedPro ? (
-                    <span className="text-green-400">Active</span>
-                  ) : (
-                    <span className="text-red-400">Inactive</span>
-                  )}
-                </td>
-                <td className="px-4 py-2 border-b border-gray-700">
-                  {sub.id || "N/A"}
-                </td>
               </tr>
             ))}
           </tbody>
@@ -615,7 +606,6 @@ useEffect(() => {
     )}
   </section>
 )}
-
 
 
 
