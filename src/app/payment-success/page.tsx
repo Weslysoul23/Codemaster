@@ -20,7 +20,9 @@ export default function PaymentSuccess() {
   const [userInfo, setUserInfo] = useState<{ name?: string; email?: string }>({});
   const [sending, setSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [firebaseSaved, setFirebaseSaved] = useState(false);
   const emailAttempted = useRef(false);
+  const firebaseAttempted = useRef(false);
 
   // 🌧️ Binary Rain Effect
   useEffect(() => {
@@ -53,7 +55,6 @@ export default function PaymentSuccess() {
   const sendEmailReceipt = async (auto = false) => {
     if (!userInfo?.email) return;
     if (auto && emailAttempted.current) return;
-
     emailAttempted.current = true;
     setSending(true);
 
@@ -72,7 +73,6 @@ export default function PaymentSuccess() {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) console.error("API Error:", data.error || res.statusText);
       if (data.success) setEmailSent(true);
     } catch (err) {
       console.error("Email send exception:", err);
@@ -81,17 +81,52 @@ export default function PaymentSuccess() {
     }
   };
 
-  // 🧠 Auto-send receipt on load when email is available
+  // 💾 Save to Firebase RTDB
+  const saveToFirebase = async () => {
+    if (!userInfo?.email || firebaseAttempted.current) return;
+    firebaseAttempted.current = true;
+
+    const payload = {
+      type: "payment.paid",
+      data: {
+        attributes: {
+          id: "frontend_txn_" + Date.now(),
+          amount: 29900,
+          description: "CodeMaster Pro Plan",
+          billing: {
+            email: userInfo.email,
+            name: userInfo.name || "Valued Customer",
+          },
+          created_at: Math.floor(Date.now() / 1000),
+        },
+      },
+    };
+
+    try {
+      const res = await fetch("/api/paymongo-webhook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) setFirebaseSaved(true);
+    } catch (err) {
+      console.error("Firebase save exception:", err);
+    }
+  };
+
+  // 🧠 Auto-trigger on load
   useEffect(() => {
-    if (userInfo.email && !emailSent && !sending) sendEmailReceipt(true);
-  }, [userInfo, emailSent, sending]);
+    if (userInfo.email) {
+      sendEmailReceipt(true);
+      saveToFirebase();
+    }
+  }, [userInfo]);
 
   return (
     <div className="payment-success-container min-h-screen flex flex-col items-center justify-center font-mono overflow-hidden relative text-[#00ff99] bg-black">
-      {/* Background Glow */}
       <div className="background-glow absolute inset-0"></div>
 
-      {/* Payment Info */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -110,7 +145,6 @@ export default function PaymentSuccess() {
           Your <span className="text-[#00ffaa] font-semibold">CodeMaster Pro Plan</span> has been activated.
         </p>
 
-        {/* Email Status */}
         <div className="mb-6">
           {sending ? (
             <motion.p className="text-sm opacity-80" animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity }}>
@@ -121,9 +155,13 @@ export default function PaymentSuccess() {
           ) : (
             <p className="text-sm opacity-60">Preparing your digital receipt...</p>
           )}
+          {firebaseSaved ? (
+            <p className="text-sm text-[#00ffaa]">💾 Subscription saved in Firebase</p>
+          ) : (
+            <p className="text-sm opacity-60">Saving subscription to Firebase...</p>
+          )}
         </div>
 
-        {/* Resend Button */}
         {emailSent && (
           <button
             onClick={() => sendEmailReceipt(false)}
@@ -134,7 +172,6 @@ export default function PaymentSuccess() {
           </button>
         )}
 
-        {/* Return Link */}
         <div className="mt-8">
           <Link href="/player-dashboard" className="return-btn border px-6 py-3 rounded-xl hover:bg-[#00ff99] hover:text-black transition-all duration-300 shadow-glow">
             Return to Dashboard
@@ -142,7 +179,6 @@ export default function PaymentSuccess() {
         </div>
       </motion.div>
 
-      {/* Binary Rain */}
       <div className="binary-rain absolute inset-0 overflow-hidden opacity-20">
         {binaryRain.map((drop) => (
           <motion.span
