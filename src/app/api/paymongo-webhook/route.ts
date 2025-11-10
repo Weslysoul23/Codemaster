@@ -6,10 +6,12 @@ import { getDatabase } from "firebase-admin/database";
 
 // ✅ Initialize Firebase Admin only once
 if (!getApps().length) {
-  if (!process.env.FIREBASE_PROJECT_ID ||
-      !process.env.FIREBASE_CLIENT_EMAIL ||
-      !process.env.FIREBASE_PRIVATE_KEY ||
-      !process.env.FIREBASE_DB_URL) {
+  if (
+    !process.env.FIREBASE_PROJECT_ID ||
+    !process.env.FIREBASE_CLIENT_EMAIL ||
+    !process.env.FIREBASE_PRIVATE_KEY ||
+    !process.env.FIREBASE_DB_URL
+  ) {
     console.error("Firebase environment variables are missing!");
     throw new Error("Missing Firebase credentials");
   }
@@ -32,29 +34,33 @@ const db = getDatabase();
 export async function POST(req: Request) {
   try {
     const event = await req.json();
+    console.log("Webhook received:", JSON.stringify(event, null, 2));
 
     // Only handle paid events
     if (event.type !== "payment.paid" && event.type !== "link.payment.paid") {
       return NextResponse.json({ message: "Not a paid event" });
     }
 
-    const payment = event.data.attributes;
-    const payerEmail =
-      payment.billing?.email || payment.payment_method_details?.email;
+    const payment = event.data?.attributes;
+    if (!payment) {
+      return NextResponse.json({ error: "Invalid webhook payload" }, { status: 400 });
+    }
+
+    const payerEmail = payment.billing?.email || payment.payment_method_details?.email;
     const payerName = payment.billing?.name || "Valued Customer";
     const amount = payment.amount / 100;
     const description = payment.description || "CodeMaster Pro Plan";
     const date = new Date(payment.created_at * 1000).toLocaleString();
 
     if (!payerEmail) {
-      return NextResponse.json(
-        { error: "No payer email found" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No payer email found" }, { status: 400 });
     }
 
-    // 1️⃣ Save purchase to Realtime Database
-    const subscriptionRef = db.ref(`subscription/${payerEmail.replace('.', '_')}`);
+    // ✅ Replace all dots in email to make valid Firebase keys
+    const safeEmail = payerEmail.replace(/\./g, "_");
+    const subscriptionRef = db.ref(`subscription/${safeEmail}`);
+
+    // Save purchase to Realtime Database
     await subscriptionRef.set({
       hasPurchasedPro: true,
       plan: description,
@@ -63,10 +69,8 @@ export async function POST(req: Request) {
     });
     console.log(`✅ Saved subscription for ${payerEmail} in RTDB`);
 
-    // 2️⃣ Send receipt email
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.warn("⚠️ Email credentials missing, skipping email");
-    } else {
+    // Send receipt email (non-blocking, errors will be logged but webhook continues)
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -92,19 +96,21 @@ export async function POST(req: Request) {
         `,
       };
 
-      await transporter.sendMail(mailOptions);
-      console.log("📧 Receipt sent to", payerEmail);
+      transporter.sendMail(mailOptions).then(() => {
+        console.log(`📧 Receipt sent to ${payerEmail}`);
+      }).catch((emailErr) => {
+        console.error("❌ Email send failed:", emailErr);
+      });
+    } else {
+      console.warn("⚠️ Email credentials missing, skipping email");
     }
 
     return NextResponse.json({
       success: true,
-      message: "Purchase saved to RTDB and email sent",
+      message: "Purchase saved to RTDB and email triggered",
     });
   } catch (err) {
     console.error("Webhook error:", err);
-    return NextResponse.json(
-      { success: false, error: String(err) },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: String(err) }, { status: 500 });
   }
 }
