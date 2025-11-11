@@ -205,7 +205,10 @@ export default function Home() {
         id="faq"
         className="section faq-section py-16 px-6 bg-black text-white flex justify-center"
       >
+        {/* WRAPPER FOR FAQ + IMAGE */}
         <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-6xl gap-6">
+          
+          {/* LEFT SIDE FAQ */}
           <div className="w-full md:w-1/2">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-blue-400">
               Frequently Asked Questions
@@ -215,10 +218,79 @@ export default function Home() {
             </p>
 
             <div className="space-y-3">
-              {/* FAQ items unchanged */}
+              {/* FAQ 1 */}
+              <details className="group bg-gray-900/60 p-4 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                <summary className="flex justify-between items-center cursor-pointer font-semibold text-blue-400 text-sm sm:text-base">
+                  How Can I Download CodeMaster?
+                  <span className="transition-transform group-open:rotate-180 text-gray-400">−</span>
+                </summary>
+                <div className="mt-2 text-gray-300 text-sm leading-relaxed">
+                  1. Visit our official website: codemaster-thesis.vercel.app<br/>
+                  2. On the homepage, you’ll find the Download button.<br/>
+                  3. Click the button to start downloading the game.<br/>
+                  4. Once downloaded, unzip the file.<br/>
+                  5. Open the extracted folder and run the CodeMaster application to start playing.
+                </div>
+              </details>
+
+              {/* FAQ 2 */}
+              <details className="group bg-gray-900/60 p-4 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                <summary className="flex justify-between items-center cursor-pointer font-semibold text-blue-400 text-sm sm:text-base">
+                  How can I create an account?
+                  <span className="transition-transform group-open:rotate-180 text-gray-400">−</span>
+                </summary>
+                <div className="mt-2 text-gray-300 text-sm leading-relaxed">
+                  1. First, make sure you have downloaded the game. (Follow the steps above.)<br/>
+                  2. Launch the game after installation.<br/>
+                  3. On the main screen, you’ll see a Sign In option. Click Create an Account instead.<br/>
+                  4. Fill in your username, NCST email, and password.<br/>
+                  5. After submitting, your account will be successfully created.
+                </div>
+              </details>
+
+              {/* FAQ 3 */}
+              <details className="group bg-gray-900/60 p-4 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                <summary className="flex justify-between items-center cursor-pointer font-semibold text-blue-400 text-sm sm:text-base">
+                  Can I play CodeMasater offline?
+                  <span className="transition-transform group-open:rotate-180 text-gray-400">−</span>
+                </summary>
+                <div className="mt-2 text-gray-300 text-sm leading-relaxed">
+                  Yes. The game can be played offline for the main gameplay and creative mode. <br/>
+                  However, account login, multiplayer and leaderboard features require an internet connection. 
+                </div>
+              </details>
+
+              {/* FAQ 4 */}
+              <details className="group bg-gray-900/60 p-4 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                <summary className="flex justify-between items-center cursor-pointer font-semibold text-blue-400 text-sm sm:text-base">
+                  How does the leaderboard works?
+                  <span className="transition-transform group-open:rotate-180 text-gray-400">−</span>
+                </summary>
+                <div className="mt-2 text-gray-300 text-sm leading-relaxed">
+                  1. You must sign in or create an account first to access the leaderboard.<br/>
+                  2. To appear on the leaderboard, you need to compete in Multiplayer Mode.<br/>
+                  3. Scores and rankings are automatically updated based on your in-game performance. 
+                </div>
+              </details>
+
+              {/* FAQ 5 */}
+              <details className="group bg-gray-900/60 p-4 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                <summary className="flex justify-between items-center cursor-pointer font-semibold text-blue-400 text-sm sm:text-base">
+                  Who developed CodeMaster?
+                  <span className="transition-transform group-open:rotate-180 text-gray-400">−</span>
+                </summary>
+                <div className="mt-2 text-gray-300 text-sm leading-relaxed">
+                  CodeMaster was developed by a student team from the school of <br/> 
+                  National College of Science and Technology in Dasmariñas, Cavite: <br/>
+                  Kate Crystal Miranda (Project Manager), April Joy Garcia (Game Designer), <br/>
+                  Gem Anthoinette Abad (QA/Writer), and Wesly Saul (Programmer).
+                </div>
+              </details>
             </div>
           </div>
-          <div className="w-full md:w-1/3 flex justify-center">
+
+          {/* RIGHT SIDE IMAGE */}
+          <div className="md:w-1/2 w-full flex justify-end">
             <img 
               src="/logorb.png" 
               alt="CodeMaster Orb" 
@@ -226,6 +298,7 @@ export default function Home() {
               className="rounded-xl shadow-lg object-cover" 
             />
           </div>
+
         </div>
       </section>
 
@@ -257,8 +330,7 @@ export default function Home() {
             <h3 className="text-white text-2xl font-bold mb-2">CodeMaster</h3>
             <div className="h-1 w-12 bg-blue-500 mb-4"></div>
             <p className="text-sm leading-relaxed">
-              CodeMaster — an educational adventure game where you fight cyber zombies using programming logic 
-              and problem-solving skills to restore the digital world.
+              CodeMaster is a 3D educational puzzle game that makes learning C# programming fun through coding challenges and interactive gameplay.
             </p>
           </div>
           {/* MIDDLE COLUMN */}
@@ -280,77 +352,15 @@ export default function Home() {
             <div className="h-1 w-12 bg-blue-500 mb-4"></div>
             <ul className="space-y-2 text-sm">
               <li>Building 2 Aguinaldo Highway,<br />Dasmariñas City, Cavite, Philippines</li>
-              <li>codemaster@primastron.org</li>
-              <li>
-                <button 
-                  onClick={openTerms} 
-                  className="hover:text-white underline transition text-sm"
-                >
-                  Terms & Conditions
-                </button>
-              </li>
+              <li>codemasterg7@gmail.com</li>
             </ul>
           </div>
         </div>
         <div className="text-center text-xs text-gray-400 mt-10">
-          © 2025 All rights reserved | CodeMaster by PrimAstron
+          © 2025 All rights reserved | CodeMaster
         </div>
       </footer>
 
-      {/* TERMS & CONDITIONS MODAL */}
-      {isTermsOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-          <div className="bg-gray-900 text-white p-6 rounded-xl max-w-3xl w-full relative">
-            <button 
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
-              onClick={closeTerms}
-            >
-              <X size={24} />
-            </button>
-            <h2 className="text-2xl font-bold mb-4">CodeMaster – Terms and Conditions</h2>
-            <p className="text-sm mb-2">Last Updated: November 2025</p>
-            <div className="overflow-y-auto max-h-96 space-y-2 text-gray-300 text-sm">
-              <p>
-                Welcome to CodeMaster, a 3D coding adventure game designed to help players learn 
-                and improve their programming skills through interactive gameplay. Before you log in 
-                and start playing, please read these Terms and Conditions carefully. By creating an 
-                account or playing the game, you agree to be bound by these terms.
-              </p>
-              <ol className="list-decimal list-inside space-y-1">
-                <li><strong>Acceptance of Terms:</strong> By accessing or using CodeMaster, you acknowledge that you have read, understood, and agree to comply with these Terms and Conditions. If you do not agree, please do not continue to use the game.</li>
-                <li><strong>Account Registration:</strong> Players may be required to create an account to access certain features. You agree to provide accurate and current information during registration. You are responsible for maintaining the confidentiality of your account and password.</li>
-                <li><strong>Educational Purpose:</strong> CodeMaster is an educational game created to teach and enhance programming knowledge, particularly in C# and computer logic concepts. It is not intended for gambling, profit-making, or commercial resale.</li>
-                <li><strong>Game Data and Progress:</strong> The game may collect and store your gameplay data, including scores, achievements, and progress. Data may be used to display leaderboards or for research and educational purposes. Your data will not be sold or shared with third parties without your consent.</li>
-                <li><strong>Fair Play:</strong> Players must not: use cheats, hacks, or unauthorized modifications; exploit bugs or glitches to gain unfair advantages; harass, spam, or behave inappropriately toward other players. Violation of these rules may result in account suspension or deletion.</li>
-                <li><strong>Intellectual Property:</strong> All game content, including designs, characters, logos, audio, and code, is the property of the CodeMaster Development Team and its creators. You may not reproduce, modify, or distribute any part of the game without permission.</li>
-                <li><strong>Updates and Changes:</strong> The CodeMaster team may update or modify the game and its features at any time. These changes may include gameplay adjustments, bug fixes, or new educational content.</li>
-                <li><strong>Limitation of Liability:</strong> CodeMaster and its developers are not responsible for any data loss, hardware issues, or other damages resulting from the use of the game. The game is provided “as is” without warranties of any kind.</li>
-                <li><strong>Privacy and Security:</strong> Your privacy is important to us. CodeMaster follows strict data security protocols to protect your information. For more details, refer to the Privacy Policy (if applicable).</li>
-                <li><strong>Termination:</strong> The CodeMaster team reserves the right to terminate or restrict access to your account if you violate these terms or misuse the game in any way.</li>
-                <li><strong>Refund Policy:</strong> We do not offer refunds after purchasing any subscription or paid content. Please review your purchase carefully before proceeding.</li>
-                <li><strong>Contact:</strong> For questions, feedback, or technical support, please contact the CodeMaster team through our website <a href="https://codemaster-thesis.vercel.app/" className="underline text-blue-400">here</a>.</li>
-              </ol>
-            </div>
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                onClick={closeTerms}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded"
-              >
-                Decline
-              </button>
-              <button
-                onClick={() => {
-                  closeTerms();
-                  alert("You accepted the Terms and Conditions.");
-                }}
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded text-white"
-              >
-                Accept
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
