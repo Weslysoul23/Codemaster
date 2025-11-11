@@ -318,7 +318,7 @@ const PlayerDashboard: React.FC = () => {
               <div className="plan-box">
                 <h2 className="plan-title pro">Pro</h2>
                 <p className="plan-subtitle">Best for learning C#</p>
-                <p className="plan-price">₱5</p>
+                <p className="plan-price">₱299</p>
                 <SubscribeButton />
                 <h3 className="plan-section-title">Everything in Free, plus:</h3>
                 <ul className="plan-features">
