@@ -183,62 +183,58 @@ const PlayerDashboard: React.FC = () => {
                 <X size={22} />
               </button>
 
-        <h2 className="logo">Players Panel</h2>
-      <nav className="sidebar-nav">
-        <button
-          className={activeTab === "home" ? "active" : ""}
-          onClick={() => {
-            setActiveTab("home");
-            setSidebarOpen(false);
-          }}
-        >
-          Home
-        </button>
+              <h2 className="logo">Players Panel</h2>
 
-        <button
-          className={activeTab === "leaderboard" ? "active" : ""}
-          onClick={() => {
-            setActiveTab("leaderboard");
-            setSidebarOpen(false);
-          }}
-        >
-          Leaderboard
-        </button>
+              <nav className="sidebar-nav">
+                <button
+                  className={activeTab === "home" ? "active" : ""}
+                  onClick={() => {
+                    setActiveTab("home");
+                    setSidebarOpen(false);
+                  }}
+                >
+                  Home
+                </button>
 
-        <button
-          className={activeTab === "subscription" ? "active" : ""}
-          onClick={() => {
-            setActiveTab("subscription");
-            setSidebarOpen(false);
-          }}
-        >
-          Subscription
-        </button>
+                <button
+                  className={activeTab === "leaderboard" ? "active" : ""}
+                  onClick={() => {
+                    setActiveTab("leaderboard");
+                    setSidebarOpen(false);
+                  }}
+                >
+                  Leaderboard
+                </button>
 
-        <button
-          className="logout-btn"
-          onClick={() => setShowLogoutConfirm(true)}
-        >
-          Logout
-        </button>
-      </nav>
+                <button
+                  className={activeTab === "subscription" ? "active" : ""}
+                  onClick={() => {
+                    setActiveTab("subscription");
+                    setSidebarOpen(false);
+                  }}
+                >
+                  Subscription
+                </button>
 
+                <button
+                  className="logout-btn"
+                  onClick={() => setShowLogoutConfirm(true)}
+                >
+                  Logout
+                </button>
+              </nav>
 
-        <div className="sidebar-logo">
-          <span className="glitch" data-text="CODEMASTER">
-            <strong>CODEMASTER</strong>
-          </span>
-        </div>
-        
-      </aside>
+              <div className="sidebar-logo">
+                <span className="glitch" data-text="CODEMASTER">
+                  <strong>CODEMASTER</strong>
+                </span>
+              </div>
+            </aside>
 
-      {/* Overlay for mobile sidebar */}
-      {sidebarOpen && (
-        <div
-          className="sidebar-overlay"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
-      )}
+            {/* Overlay (for mobile when sidebar open) */}
+            {sidebarOpen && (
+              <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>
+            )}
 
       <main className="dashboard-main">
         {activeTab === "home" && (
